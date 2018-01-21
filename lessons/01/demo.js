@@ -94,15 +94,28 @@ function gui(stackHelper) {
         return index;
     }
 
-    var orientation = stackFolder
-        .add(stackHelper, 'orientation', 0, 2)
-        .step(1)
-        .listen();
-    orientation.onChange(function (value) {
-        index.__max = stackHelper.orientationMaxIndex;
-        // center index
-        stackHelper.index = Math.floor(index.__max / 2);
-    });
+    var orientation = setOrientation();
+
+    function setOrientation() {
+        let minOrientation = 0;
+        let maxOrientation = 2;
+        var orientation = stackFolder
+            .add(stackHelper, 'orientation', minOrientation, maxOrientation)
+            .step(1)
+            .listen();
+        return orientation;
+    }
+
+    updateOrientation();
+
+    function updateOrientation() {
+        orientation.onChange(function (value) {
+            index.__max = stackHelper.orientationMaxIndex;
+            let setInitialSliderAtHalf = Math.floor(index.__max / 2);
+            stackHelper.index = setInitialSliderAtHalf;
+        });
+    }
+
     stackFolder.open();
 
     // slice
