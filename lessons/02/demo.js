@@ -8,11 +8,10 @@ var {container, renderer} = setRenderer();
 // Setup scene
 var scene = new THREE.Scene();
 
+
+
 // Setup camera
-var camera = new THREE.PerspectiveCamera(45, container.offsetWidth / container.offsetHeight, 0.01, 10000000);
-camera.position.x = 150;
-camera.position.y = 150;
-camera.position.z = 100;
+var camera = setCamera();
 
 // Setup controls
 var controls = new AMI.TrackballControl(camera, container);
