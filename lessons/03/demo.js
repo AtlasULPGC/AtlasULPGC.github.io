@@ -2,22 +2,11 @@
 
 var {container, renderer} = setRenderer();
 
-
-
-// Setup renderer
-
-// Setup scene
 var scene = new THREE.Scene();
 
-// Setup camera
-var camera = new AMI.OrthographicCamera(
-    container.clientWidth / -2,
-    container.clientWidth / 2,
-    container.clientHeight / 2,
-    container.clientHeight / -2,
-    0.1,
-    10000
-);
+
+
+var camera = setCamera();
 
 // Setup controls
 var controls = new AMI.TrackballOrthoControl(camera, container);
