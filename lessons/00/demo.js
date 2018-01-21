@@ -31,10 +31,20 @@ function setUrl() {
 loader
     .load(files)
     .then(function () {
-        // merge files into clean series/stack/frame structure
-        var series = loader.data[0].mergeSeries(loader.data);
-        loader.free();
-        loader = null;
+        var series = mergeFileIntoSeriesStackFramesStructure();
+
+        function mergeFileIntoSeriesStackFramesStructure() {
+            var series = loader.data[0].mergeSeries(loader.data);
+            return series;
+        }
+
+        unsetLoader();
+
+        function unsetLoader() {
+            loader.free();
+            loader = null;
+        }
+
 
         // series/stacks/frames are ready to be used
         window.console.log(series);
