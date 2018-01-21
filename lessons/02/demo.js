@@ -1,22 +1,11 @@
-/* globals AMI*/
-
-
-// Setup renderer
 var {container, renderer} = setRenderer();
 
-// Setup scene
 var scene = new THREE.Scene();
 
-
-// Setup camera
 var camera = setCamera();
 
-// Setup controls
 var controls = new AMI.TrackballControl(camera, container);
 
-/**
- * Handle window resize
- */
 function onWindowResize() {
     camera.aspect = container.offsetWidth / container.offsetHeight;
     camera.updateProjectionMatrix();
@@ -26,8 +15,6 @@ function onWindowResize() {
 
 window.addEventListener('resize', onWindowResize, false);
 
-
-// Setup lights
 var particleLight = setParticleLight();
 
 
@@ -40,11 +27,8 @@ scene.add(directionalLight);
 var pointLight = setPointLight();
 particleLight.add(pointLight);
 
-// Load STL model
 loadSTLModel(scene);
 
-
-// Setup loader
 setLoader();
 
 /**
