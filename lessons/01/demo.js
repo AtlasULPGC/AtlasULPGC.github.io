@@ -39,7 +39,6 @@ function setCamera() {
 var controls = new AMI.TrackballControl(camera, container);
 
 
-
 /**
  * Handle window resize
  */
@@ -63,20 +62,38 @@ window.addEventListener('resize', onWindowResize, false);
  * Build GUI
  */
 function gui(stackHelper) {
-    var stack = stackHelper.stack;
-    var gui = new dat.GUI({
-        autoPlace: false,
-    });
-    var customContainer = document.getElementById('my-gui-container');
-    customContainer.appendChild(gui.domElement);
+    var {stack, gui} = setGui();
 
-    // stack
-    var stackFolder = gui.addFolder('Stack');
-    // index range depends on stackHelper orientation.
-    var index = stackFolder
-        .add(stackHelper, 'index', 0, stack.dimensionsIJK.z - 1)
-        .step(1)
-        .listen();
+    function setGui() {
+        var stack = stackHelper.stack;
+        var gui = new dat.GUI({
+            autoPlace: false,
+        });
+        var customContainer = document.getElementById('my-gui-container');
+        customContainer.appendChild(gui.domElement);
+        return {stack, gui};
+    }
+
+
+    var stackFolder = setStackFolder();
+
+    function setStackFolder() {
+        var stackFolder = gui.addFolder('Stack');
+        return stackFolder;
+    }
+
+    var index = setIndexSlider();
+
+    function setIndexSlider() {
+        let minIndex = 0;
+        let maxIndex = stack.dimensionsIJK.z - 1;
+        var index = stackFolder
+            .add(stackHelper, 'index', minIndex, maxIndex)
+            .step(1)
+            .listen();
+        return index;
+    }
+
     var orientation = stackFolder
         .add(stackHelper, 'orientation', 0, 2)
         .step(1)
