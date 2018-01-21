@@ -162,20 +162,27 @@ function gui(stackHelper) {
         sliceFolder.add(stackHelper.slice, 'invert');
     }
 
-<
+
     sliceFolder.open();
 
-    // bbox
-    var bboxFolder = gui.addFolder('Bounding Box');
-    bboxFolder.add(stackHelper.bbox, 'visible');
-    bboxFolder.addColor(stackHelper.bbox, 'color');
-    bboxFolder.open();
+    setBorderBoxFolder();
 
-    // border
-    var borderFolder = gui.addFolder('Border');
-    borderFolder.add(stackHelper.border, 'visible');
-    borderFolder.addColor(stackHelper.border, 'color');
-    borderFolder.open();
+    function setBorderBoxFolder() {
+        var bboxFolder = gui.addFolder('Bounding Box');
+        bboxFolder.add(stackHelper.bbox, 'visible');
+        bboxFolder.addColor(stackHelper.bbox, 'color');
+        bboxFolder.open();
+    }
+
+    setBorderFolder();
+
+    function setBorderFolder() {
+        var borderFolder = gui.addFolder('Border');
+        borderFolder.add(stackHelper.border, 'visible');
+        borderFolder.addColor(stackHelper.border, 'color');
+        borderFolder.open();
+    }
+
 }
 
 /**
