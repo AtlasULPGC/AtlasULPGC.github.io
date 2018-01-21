@@ -1,13 +1,18 @@
 /* globals AMI*/
 
-// element to contain the progress bar
-var container = document.getElementById('container');
+var container = setProgressBar();
+
+function setProgressBar() {
+    var container = document.getElementById('container');
+    return container;
+}
+
 
 // instantiate the loader
 var loader = new AMI.VolumeLoader(container);
 
 var t2 = ['36444280', '36444294', '36444308', '36444322', '36444336'];
-var files = t2.map(function(v) {
+var files = t2.map(function (v) {
     return 'https://cdn.rawgit.com/FNNDSC/data/master/dicom/adi_brain/' + v;
 });
 
@@ -15,7 +20,7 @@ var files = t2.map(function(v) {
 // merge them into series / stacks / frames
 loader
     .load(files)
-    .then(function() {
+    .then(function () {
         // merge files into clean series/stack/frame structure
         var series = loader.data[0].mergeSeries(loader.data);
         loader.free();
@@ -77,7 +82,7 @@ loader
             seriesIndex++;
         }
     })
-    .catch(function(error) {
+    .catch(function (error) {
         window.console.log('oops... something went wrong...');
         window.console.log(error);
     });
