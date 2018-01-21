@@ -38,14 +38,23 @@ function setCamera() {
 // Setup controls
 var controls = new AMI.TrackballControl(camera, container);
 
+
+
 /**
  * Handle window resize
  */
 function onWindowResize() {
-    camera.aspect = container.offsetWidth / container.offsetHeight;
-    camera.updateProjectionMatrix();
+    updateCamera();
+    updateRenderer();
 
-    renderer.setSize(container.offsetWidth, container.offsetHeight);
+    function updateCamera() {
+        camera.aspect = container.offsetWidth / container.offsetHeight;
+        camera.updateProjectionMatrix();
+    }
+
+    function updateRenderer() {
+        renderer.setSize(container.offsetWidth, container.offsetHeight);
+    }
 }
 
 window.addEventListener('resize', onWindowResize, false);
