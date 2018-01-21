@@ -15,10 +15,16 @@ function setLoader() {
     return loader;
 }
 
-var t2 = ['36444280', '36444294', '36444308', '36444322', '36444336'];
-var files = t2.map(function (v) {
-    return 'https://cdn.rawgit.com/FNNDSC/data/master/dicom/adi_brain/' + v;
-});
+var files = setUrl();
+
+function setUrl() {
+    var urlEndingToEachFile = ['36444280', '36444294', '36444308', '36444322', '36444336'];
+    var files = urlEndingToEachFile.map(function (currentUrlEnding) {
+        return 'https://cdn.rawgit.com/FNNDSC/data/master/dicom/adi_brain/' + currentUrlEnding;
+    });
+    return files;
+}
+
 
 // once all files have been loaded (fetch + parse + add to array)
 // merge them into series / stacks / frames
