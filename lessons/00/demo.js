@@ -27,6 +27,8 @@ function setUrl() {
 
 
 // once all files have been loaded (fetch + parse + add to array)
+
+
 // merge them into series / stacks / frames
 loader
     .load(files)
@@ -79,22 +81,7 @@ loader
                 seriesDiv.appendChild(stackDiv);
 
                 // loop through frames
-                var frameIndex = 1;
-                for (var myFrame of myStack.frame) {
-                    var frameDiv = document.createElement('div');
-                    frameDiv.className += 'indent';
-                    frameDiv.insertAdjacentHTML(
-                        'beforeend',
-                        '<div> FRAME (' + frameIndex + '/' + myStack.frame.length + ')</div>'
-                    );
-                    frameDiv.insertAdjacentHTML(
-                        'beforeend',
-                        '<div class="frame"> instanceNumber: ' + myFrame.instanceNumber + '</div>'
-                    );
-
-                    stackDiv.appendChild(frameDiv);
-                    frameIndex++;
-                }
+                var {frameIndex, frameDiv} = displayFrameInfo(myStack, stackDiv);
 
                 stackIndex++;
             }
@@ -106,3 +93,23 @@ loader
         window.console.log('oops... something went wrong...');
         window.console.log(error);
     });
+
+function displayFrameInfo(myStack, stackDiv) {
+    var frameIndex = 1;
+    for (var myFrame of myStack.frame) {
+        var frameDiv = document.createElement('div');
+        frameDiv.className += 'indent';
+        frameDiv.insertAdjacentHTML(
+            'beforeend',
+            '<div> FRAME (' + frameIndex + '/' + myStack.frame.length + ')</div>'
+        );
+        frameDiv.insertAdjacentHTML(
+            'beforeend',
+            '<div class="frame"> instanceNumber: ' + myFrame.instanceNumber + '</div>'
+        );
+
+        stackDiv.appendChild(frameDiv);
+        frameIndex++;
+    }
+    return {frameIndex, frameDiv};
+}
