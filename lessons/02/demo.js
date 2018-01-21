@@ -34,7 +34,6 @@ var particleLight = setParticleLight();
 setAmbientLight();
 
 
-
 var directionalLight = setDirectionalLight();
 scene.add(directionalLight);
 
@@ -42,16 +41,7 @@ var pointLight = setPointLight();
 particleLight.add(pointLight);
 
 // Load STL model
-var loaderSTL = new THREE.STLLoader();
-loaderSTL.load('https://cdn.rawgit.com/FNNDSC/data/master/stl/adi_brain/WM.stl', function (geometry) {
-    var material = new THREE.MeshPhongMaterial({color: 0xf44336, specular: 0x111111, shininess: 200});
-    var mesh = new THREE.Mesh(geometry, material);
-    // to LPS space
-    var RASToLPS = new THREE.Matrix4();
-    RASToLPS.set(-1, 0, 0, 0, 0, -1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
-    mesh.applyMatrix(RASToLPS);
-    scene.add(mesh);
-});
+loadSTLModel(scene);
 
 // Setup loader
 var loader = new AMI.VolumeLoader(container);
