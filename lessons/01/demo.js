@@ -118,16 +118,36 @@ function gui(stackHelper) {
 
     stackFolder.open();
 
-    // slice
-    var sliceFolder = gui.addFolder('Slice');
-    sliceFolder
-        .add(stackHelper.slice, 'windowWidth', 1, stack.minMax[1] - stack.minMax[0])
-        .step(1)
-        .listen();
-    sliceFolder
-        .add(stackHelper.slice, 'windowCenter', stack.minMax[0], stack.minMax[1])
-        .step(1)
-        .listen();
+    var sliceFolder = setSliceFolder();
+
+    function setSliceFolder() {
+        var sliceFolder = gui.addFolder('Slice');
+        return sliceFolder;
+    }
+
+    let minWidth = 1;
+    let maxWidth = stack.minMax[1] - stack.minMax[0];
+
+    setWindowWidthSlider();
+
+    function setWindowWidthSlider() {
+        sliceFolder
+            .add(stackHelper.slice, 'windowWidth', minWidth, maxWidth)
+            .step(1)
+            .listen();
+    }
+
+    setWindowCenterSlider();
+
+    function setWindowCenterSlider() {
+        let centerMin = stack.minMax[0];
+        let centerMax = stack.minMax[1];
+        sliceFolder
+            .add(stackHelper.slice, 'windowCenter', centerMin, centerMax)
+            .step(1)
+            .listen();
+    }
+
     sliceFolder.add(stackHelper.slice, 'intensityAuto').listen();
     sliceFolder.add(stackHelper.slice, 'invert');
     sliceFolder.open();
