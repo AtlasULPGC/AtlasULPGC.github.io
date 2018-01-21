@@ -8,8 +8,12 @@ function setProgressBar() {
 }
 
 
-// instantiate the loader
-var loader = new AMI.VolumeLoader(container);
+var loader = setLoader();
+
+function setLoader() {
+    var loader = new AMI.VolumeLoader(container);
+    return loader;
+}
 
 var t2 = ['36444280', '36444294', '36444308', '36444322', '36444336'];
 var files = t2.map(function (v) {
