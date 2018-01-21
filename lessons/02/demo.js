@@ -1,13 +1,11 @@
 /* globals AMI*/
 
 
-
 // Setup renderer
 var {container, renderer} = setRenderer();
 
 // Setup scene
 var scene = new THREE.Scene();
-
 
 
 // Setup camera
@@ -25,19 +23,19 @@ function onWindowResize() {
 
     renderer.setSize(container.offsetWidth, container.offsetHeight);
 }
-window.addEventListener('resize', onWindowResize, false);
 
+window.addEventListener('resize', onWindowResize, false);
 
 
 // Setup lights
 var particleLight = setParticleLight();
 
 
-
 setAmbientLight();
 
-var directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-directionalLight.position.set(1, 1, 1).normalize();
+
+
+var directionalLight = setDirectionalLight();
 scene.add(directionalLight);
 
 var pointLight = new THREE.PointLight(0xffffff, 2, 800);
@@ -45,8 +43,8 @@ particleLight.add(pointLight);
 
 // Load STL model
 var loaderSTL = new THREE.STLLoader();
-loaderSTL.load('https://cdn.rawgit.com/FNNDSC/data/master/stl/adi_brain/WM.stl', function(geometry) {
-    var material = new THREE.MeshPhongMaterial({ color: 0xf44336, specular: 0x111111, shininess: 200 });
+loaderSTL.load('https://cdn.rawgit.com/FNNDSC/data/master/stl/adi_brain/WM.stl', function (geometry) {
+    var material = new THREE.MeshPhongMaterial({color: 0xf44336, specular: 0x111111, shininess: 200});
     var mesh = new THREE.Mesh(geometry, material);
     // to LPS space
     var RASToLPS = new THREE.Matrix4();
@@ -236,13 +234,13 @@ var t1 = [
     '36749964'
 ];
 
-var files = t1.map(function(v) {
+var files = t1.map(function (v) {
     return 'https://cdn.rawgit.com/FNNDSC/data/master/dicom/adi_brain/' + v;
 });
 
 loader
     .load(files)
-    .then(function() {
+    .then(function () {
         // merge files into clean series/stack/frame structure
         var series = loader.data[0].mergeSeries(loader.data);
         loader.free();
@@ -261,7 +259,7 @@ loader
         camera.updateProjectionMatrix();
         controls.target.set(centerLPS.x, centerLPS.y, centerLPS.z);
     })
-    .catch(function(error) {
+    .catch(function (error) {
         window.console.log('oops... something went wrong...');
         window.console.log(error);
     });
@@ -280,8 +278,9 @@ function animate() {
     renderer.render(scene, camera);
 
     // request new frame
-    requestAnimationFrame(function() {
+    requestAnimationFrame(function () {
         animate();
     });
 }
+
 animate();
