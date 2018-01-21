@@ -38,7 +38,7 @@ setAmbientLight();
 var directionalLight = setDirectionalLight();
 scene.add(directionalLight);
 
-var pointLight = new THREE.PointLight(0xffffff, 2, 800);
+var pointLight = setPointLight();
 particleLight.add(pointLight);
 
 // Load STL model
