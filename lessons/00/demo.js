@@ -49,22 +49,7 @@ loader
         window.console.log(series);
 
         // Display some content on the DOM
-        var seriesIndex = 1;
-        for (var mySeries of series) {
-            var seriesDiv = document.createElement('div');
-            seriesDiv.className += 'indent';
-            seriesDiv.insertAdjacentHTML('beforeend', '<div> SERIES (' + seriesIndex + '/' + series.length + ')</div>');
-            seriesDiv.insertAdjacentHTML(
-                'beforeend',
-                '<div class="series"> numberOfChannels: ' + mySeries.numberOfChannels + '</div>'
-            );
-
-            container.appendChild(seriesDiv);
-
-            // loop through stacks
-            var {stackIndex, stackDiv} = displayStackInfo(mySeries, seriesDiv);
-            seriesIndex++;
-        }
+        displaySeriesInfo(series);
     })
     .catch(function (error) {
         window.console.log('oops... something went wrong...');
@@ -113,4 +98,23 @@ function displayStackInfo(mySeries, seriesDiv) {
         stackIndex++;
     }
     return {stackIndex, stackDiv};
+}
+
+function displaySeriesInfo(series) {
+    var seriesIndex = 1;
+    for (var mySeries of series) {
+        var seriesDiv = document.createElement('div');
+        seriesDiv.className += 'indent';
+        seriesDiv.insertAdjacentHTML('beforeend', '<div> SERIES (' + seriesIndex + '/' + series.length + ')</div>');
+        seriesDiv.insertAdjacentHTML(
+            'beforeend',
+            '<div class="series"> numberOfChannels: ' + mySeries.numberOfChannels + '</div>'
+        );
+
+        container.appendChild(seriesDiv);
+
+        // loop through stacks
+        var {stackIndex, stackDiv} = displayStackInfo(mySeries, seriesDiv);
+        seriesIndex++;
+    }
 }
