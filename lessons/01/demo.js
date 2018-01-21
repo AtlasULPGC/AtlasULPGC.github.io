@@ -236,26 +236,45 @@ function setUrls() {
 loader
     .load(files)
     .then(function () {
-        // merge files into clean series/stack/frame structure
-        var series = loader.data[0].mergeSeries(loader.data);
+        var series = mergeFilesIntoSeriesStacksFramesStructure();
+
+        function mergeFilesIntoSeriesStacksFramesStructure() {
+            var series = loader.data[0].mergeSeries(loader.data);
+            return series;
+        }
+
         var stack = series[0].stack[0];
-        loader.free();
-        loader = null;
-        // be carefull that series and target stack exist!
-        var stackHelper = new AMI.StackHelper(stack);
-        stackHelper.bbox.color = 0x8bc34a;
-        stackHelper.border.color = 0xf44336;
 
-        scene.add(stackHelper);
+        unsetLoader();
 
-        // build the gui
+        function unsetLoader() {
+            loader.free();
+            loader = null;
+        }
+
+        var stackHelper = setStackHelper();
+
+        function setStackHelper() {
+            var stackHelper = new AMI.StackHelper(stack);
+            let greenColor = 0x8bc34a;
+            stackHelper.bbox.color = greenColor;
+            let redColor = 0xf44336;
+            stackHelper.border.color = redColor;
+
+            scene.add(stackHelper);
+            return stackHelper;
+        }
+
         gui(stackHelper);
 
-        // center camera and interactor to center of bouding box
-        var centerLPS = stackHelper.stack.worldCenter();
-        camera.lookAt(centerLPS.x, centerLPS.y, centerLPS.z);
-        camera.updateProjectionMatrix();
-        controls.target.set(centerLPS.x, centerLPS.y, centerLPS.z);
+        centerCamera();
+
+        function centerCamera() {
+            var centerLPS = stackHelper.stack.worldCenter();
+            camera.lookAt(centerLPS.x, centerLPS.y, centerLPS.z);
+            camera.updateProjectionMatrix();
+            controls.target.set(centerLPS.x, centerLPS.y, centerLPS.z);
+        }
     })
     .catch(function (error) {
         window.console.log('oops... something went wrong...');
