@@ -2,18 +2,8 @@
 
 var container = setProgressBar();
 
-function setProgressBar() {
-    var container = document.getElementById('container');
-    return container;
-}
-
 
 var loader = setLoader();
-
-function setLoader() {
-    var loader = new AMI.VolumeLoader(container);
-    return loader;
-}
 
 var files = setUrl();
 
