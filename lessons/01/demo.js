@@ -200,33 +200,38 @@ function animate() {
 
 animate();
 
-// Setup loader
 var loader = new AMI.VolumeLoader(container);
 
-var t2 = [
-    '36444280',
-    '36444294',
-    '36444308',
-    '36444322',
-    '36444336',
-    '36444350',
-    '36444364',
-    '36444378',
-    '36444392',
-    '36444406',
-    '36444434',
-    '36444448',
-    '36444462',
-    '36444476',
-    '36444490',
-    '36444504',
-    '36444518',
-    '36444532',
-    '36746856'
-];
-var files = t2.map(function (v) {
-    return 'https://cdn.rawgit.com/FNNDSC/data/master/dicom/adi_brain/' + v;
-});
+var files = setUrls();
+
+function setUrls() {
+    var urlEnding = [
+        '36444280',
+        '36444294',
+        '36444308',
+        '36444322',
+        '36444336',
+        '36444350',
+        '36444364',
+        '36444378',
+        '36444392',
+        '36444406',
+        '36444434',
+        '36444448',
+        '36444462',
+        '36444476',
+        '36444490',
+        '36444504',
+        '36444518',
+        '36444532',
+        '36746856'
+    ];
+    var files = urlEnding.map(function (currentUrlEnding) {
+        return 'https://cdn.rawgit.com/FNNDSC/data/master/dicom/adi_brain/' + currentUrlEnding;
+    });
+    return files;
+}
+
 
 loader
     .load(files)
