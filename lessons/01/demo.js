@@ -139,6 +139,7 @@ function gui(stackHelper) {
 
     setWindowCenterSlider();
 
+
     function setWindowCenterSlider() {
         let centerMin = stack.minMax[0];
         let centerMax = stack.minMax[1];
@@ -148,8 +149,20 @@ function gui(stackHelper) {
             .listen();
     }
 
-    sliceFolder.add(stackHelper.slice, 'intensityAuto').listen();
-    sliceFolder.add(stackHelper.slice, 'invert');
+
+    setIntensityCheckBox();
+
+    function setIntensityCheckBox() {
+        sliceFolder.add(stackHelper.slice, 'intensityAuto').listen();
+    }
+
+    setInvertCheckBox();
+
+    function setInvertCheckBox() {
+        sliceFolder.add(stackHelper.slice, 'invert');
+    }
+
+<
     sliceFolder.open();
 
     // bbox
