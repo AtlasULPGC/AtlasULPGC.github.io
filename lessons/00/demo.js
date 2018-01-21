@@ -26,9 +26,6 @@ function setUrl() {
 }
 
 
-// once all files have been loaded (fetch + parse + add to array)
-
-
 // merge them into series / stacks / frames
 loader
     .load(files)
@@ -65,27 +62,7 @@ loader
             container.appendChild(seriesDiv);
 
             // loop through stacks
-            var stackIndex = 1;
-            for (var myStack of mySeries.stack) {
-                var stackDiv = document.createElement('div');
-                stackDiv.className += 'indent';
-                stackDiv.insertAdjacentHTML(
-                    'beforeend',
-                    '<div> STACK (' + stackIndex + '/' + mySeries.stack.length + ')</div>'
-                );
-                stackDiv.insertAdjacentHTML(
-                    'beforeend',
-                    '<div class="stack"> bitsAllocated: ' + myStack.bitsAllocated + '</div>'
-                );
-
-                seriesDiv.appendChild(stackDiv);
-
-                // loop through frames
-                var {frameIndex, frameDiv} = displayFrameInfo(myStack, stackDiv);
-
-                stackIndex++;
-            }
-
+            var {stackIndex, stackDiv} = displayStackInfo(mySeries, seriesDiv);
             seriesIndex++;
         }
     })
@@ -112,4 +89,28 @@ function displayFrameInfo(myStack, stackDiv) {
         frameIndex++;
     }
     return {frameIndex, frameDiv};
+}
+
+function displayStackInfo(mySeries, seriesDiv) {
+    var stackIndex = 1;
+    for (var myStack of mySeries.stack) {
+        var stackDiv = document.createElement('div');
+        stackDiv.className += 'indent';
+        stackDiv.insertAdjacentHTML(
+            'beforeend',
+            '<div> STACK (' + stackIndex + '/' + mySeries.stack.length + ')</div>'
+        );
+        stackDiv.insertAdjacentHTML(
+            'beforeend',
+            '<div class="stack"> bitsAllocated: ' + myStack.bitsAllocated + '</div>'
+        );
+
+        seriesDiv.appendChild(stackDiv);
+
+        // loop through frames
+        var {frameIndex, frameDiv} = displayFrameInfo(myStack, stackDiv);
+
+        stackIndex++;
+    }
+    return {stackIndex, stackDiv};
 }
