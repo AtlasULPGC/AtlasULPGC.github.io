@@ -1,14 +1,10 @@
 /* globals dat, AMI*/
 
+var {container, renderer} = setRenderer();
+
+
+
 // Setup renderer
-var container = document.getElementById('container');
-var renderer = new THREE.WebGLRenderer({
-    antialias: true
-});
-renderer.setSize(container.offsetWidth, container.offsetHeight);
-renderer.setClearColor(0x353535, 1);
-renderer.setPixelRatio(window.devicePixelRatio);
-container.appendChild(renderer.domElement);
 
 // Setup scene
 var scene = new THREE.Scene();
@@ -41,6 +37,7 @@ function onWindowResize() {
 
     renderer.setSize(container.offsetWidth, container.offsetHeight);
 }
+
 window.addEventListener('resize', onWindowResize, false);
 
 /**
@@ -66,17 +63,17 @@ function gui(stackHelper) {
     // camera
     var cameraFolder = gui.addFolder('Camera');
     var invertRows = cameraFolder.add(camUtils, 'invertRows');
-    invertRows.onChange(function() {
+    invertRows.onChange(function () {
         camera.invertRows();
     });
 
     var invertColumns = cameraFolder.add(camUtils, 'invertColumns');
-    invertColumns.onChange(function() {
+    invertColumns.onChange(function () {
         camera.invertColumns();
     });
 
     var rotate45 = cameraFolder.add(camUtils, 'rotate45');
-    rotate45.onChange(function() {
+    rotate45.onChange(function () {
         camera.rotate();
     });
 
@@ -86,7 +83,7 @@ function gui(stackHelper) {
         .listen();
 
     let orientationUpdate = cameraFolder.add(camUtils, 'orientation', ['default', 'axial', 'coronal', 'sagittal']);
-    orientationUpdate.onChange(function(value) {
+    orientationUpdate.onChange(function (value) {
         camera.orientation = value;
         camera.update();
         camera.fitBox(2);
@@ -94,7 +91,7 @@ function gui(stackHelper) {
     });
 
     let conventionUpdate = cameraFolder.add(camUtils, 'convention', ['radio', 'neuro']);
-    conventionUpdate.onChange(function(value) {
+    conventionUpdate.onChange(function (value) {
         camera.convention = value;
         camera.update();
         camera.fitBox(2);
@@ -123,10 +120,11 @@ function animate() {
     renderer.render(scene, camera);
 
     // request new frame
-    requestAnimationFrame(function() {
+    requestAnimationFrame(function () {
         animate();
     });
 }
+
 animate();
 
 // Setup loader
@@ -135,7 +133,7 @@ var file = 'https://cdn.rawgit.com/FNNDSC/data/master/nifti/adi_brain/adi_brain.
 
 loader
     .load(file)
-    .then(function() {
+    .then(function () {
         // merge files into clean series/stack/frame structure
         var series = loader.data[0].mergeSeries(loader.data);
         var stack = series[0].stack[0];
@@ -182,7 +180,7 @@ loader
         camera.update();
         camera.fitBox(2);
     })
-    .catch(function(error) {
+    .catch(function (error) {
         window.console.log('oops... something went wrong...');
         window.console.log(error);
     });
