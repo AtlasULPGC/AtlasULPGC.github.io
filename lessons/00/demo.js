@@ -25,8 +25,6 @@ function setUrl() {
     return files;
 }
 
-
-// merge them into series / stacks / frames
 loader
     .load(files)
     .then(function () {
@@ -44,11 +42,6 @@ loader
             loader = null;
         }
 
-
-        // series/stacks/frames are ready to be used
-        window.console.log(series);
-
-        // Display some content on the DOM
         displaySeriesInfo(series);
     })
     .catch(function (error) {
@@ -92,8 +85,7 @@ function displayStackInfo(mySeries, seriesDiv) {
 
         seriesDiv.appendChild(stackDiv);
 
-        // loop through frames
-        var {frameIndex, frameDiv} = displayFrameInfo(myStack, stackDiv);
+        displayFrameInfo(myStack, stackDiv);
 
         stackIndex++;
     }
@@ -113,8 +105,7 @@ function displaySeriesInfo(series) {
 
         container.appendChild(seriesDiv);
 
-        // loop through stacks
-        var {stackIndex, stackDiv} = displayStackInfo(mySeries, seriesDiv);
+        displayStackInfo(mySeries, seriesDiv);
         seriesIndex++;
     }
 }
