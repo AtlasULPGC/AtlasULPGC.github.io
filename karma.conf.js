@@ -16,7 +16,7 @@ module.exports = function(karma) {
             // ,
             // 'src/core/*.spec.js',
             //'specs/**/*.spec.js',
-            'lessons/**/*.spec.js',
+            'mySpecs/**/*.spec.js',
             { pattern: 'data/**/*', included: false, watched: false, served: true }
         ],
 
@@ -25,7 +25,7 @@ module.exports = function(karma) {
         // preprocess matching files before serving them to the browser
         // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
         preprocessors: {
-            'lessons/**/*.spec.js': ['webpack']
+            'mySpecs/**/*.spec.js': ['webpack']
             //'specs/**/*.spec.js': ['webpack']
             // 'src/core/*.spec.js': ['browserify']
         },
