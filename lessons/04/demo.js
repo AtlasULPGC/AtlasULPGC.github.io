@@ -27,6 +27,8 @@ var layerMix = {
     opacity1: 1.0,
 };
 
+
+
 /**
  * Init the scene
  */
@@ -52,15 +54,7 @@ function init() {
     }
 
     // renderer
-    threeD = document.getElementById('container');
-    renderer = new THREE.WebGLRenderer({
-        antialias: true,
-        alpha: true,
-    });
-    renderer.setSize(threeD.clientWidth, threeD.clientHeight);
-    renderer.setClearColor(0x607d8b, 1);
-
-    threeD.appendChild(renderer.domElement);
+    setRenderer();
 
     // stats
     statsyay = new Stats();
