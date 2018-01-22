@@ -1,6 +1,5 @@
 /* globals Stats, dat, AMI*/
 
-// standard global letiables
 var controls;
 var threeD;
 var renderer;
@@ -9,7 +8,7 @@ var camera;
 var scene;
 var vrHelper;
 var lut;
-var ready = false;
+var fileLoadedAndGuiReady = false;
 
 
 var myStack = setStack();
@@ -24,7 +23,7 @@ function init() {
     function animate() {
         controls.update();
 
-        if (ready) {
+        if (fileLoadedAndGuiReady) {
             renderer.render(scene, camera);
         }
 

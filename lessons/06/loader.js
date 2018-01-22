@@ -25,6 +25,6 @@ function setLoader() {
         // create GUI
         buildGUI();
 
-        ready = true;
+        fileLoadedAndGuiReady = true;
     });
 }
