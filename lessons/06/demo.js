@@ -45,8 +45,7 @@ function init() {
     setRenderer();
 
     // stats
-    stats = new Stats();
-    threeD.appendChild(stats.domElement);
+    setStats();
 
     // scene
     scene = new THREE.Scene();
