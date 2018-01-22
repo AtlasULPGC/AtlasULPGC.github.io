@@ -52,6 +52,8 @@ function onWindowResize() {
 }
 
 
+
+
 /**
  * Init the scene
  */
@@ -76,12 +78,7 @@ function init() {
     }
 
     // renderer
-    threeD = document.getElementById('r3d');
-    renderer = new THREE.WebGLRenderer({
-        alpha: true
-    });
-    renderer.setSize(threeD.offsetWidth, threeD.offsetHeight);
-    threeD.appendChild(renderer.domElement);
+    setRenderer();
 
     // stats
     stats = new Stats();
