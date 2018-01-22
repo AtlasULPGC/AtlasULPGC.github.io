@@ -15,6 +15,6 @@ describe('Renderer', () => {
 
         setRenderer();
 
-        expect(document.getElementById('container')).toBe(newDiv);
+        expect(true).toBe(false);
     });
 });
