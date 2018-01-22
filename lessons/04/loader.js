@@ -1,7 +1,5 @@
 function setLoader() {
-// load sequence for each file
-// instantiate the loader
-// it loads and parses the dicom image
+
     var loader = new AMI.VolumeLoader(threeD);
 
 
