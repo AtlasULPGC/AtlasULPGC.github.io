@@ -16,3 +16,9 @@ function updateCamera(stack) {
     camera.updateProjectionMatrix();
     return centerLPS;
 }
+
+function updateCameraOnWindowResize() {
+// update the camera
+    camera.aspect = threeD.offsetWidth / threeD.offsetHeight;
+    camera.updateProjectionMatrix();
+}

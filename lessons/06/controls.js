@@ -35,13 +35,13 @@ function onMouseUp() {
     }
 }
 
+
+
 /**
  * Handle window resize event
  */
 function onWindowResize() {
-    // update the camera
-    camera.aspect = threeD.offsetWidth / threeD.offsetHeight;
-    camera.updateProjectionMatrix();
+    updateCameraOnWindowResize();
 
     // notify the renderer of the size change
     renderer.setSize(threeD.offsetWidth, threeD.offsetHeight);
