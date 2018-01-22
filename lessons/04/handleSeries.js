@@ -135,22 +135,31 @@ function handleSeries() {
     camera.fitBox(2);
 
     // CREATE LUT
+    const domTarget = 'my-lut-canvases-l0';
+    const lut = 'default';
+    const lut0 = 'linear';
+    const color = [[0, 0, 0, 0], [1, 1, 1, 1]];
+    const opacity = [[0, 1], [1, 1]];
     lutLayer0 = new AMI.LutHelper(
-        'my-lut-canvases-l0',
-        'default',
-        'linear',
-        [[0, 0, 0, 0], [1, 1, 1, 1]],
-        [[0, 1], [1, 1]]
+        domTarget,
+        lut,
+        lut0,
+        color,
+        opacity
     );
     lutLayer0.luts = AMI.LutHelper.presetLuts();
 
+    const domTargetForSecondLayer = 'my-lut-canvases-l1';
+    const segmentationLUT = stack2.segmentationLUT;
+    const segmentationLUTO = stack2.segmentationLUTO;
+    const discrete = true;
     lutLayer1 = new AMI.LutHelper(
-        'my-lut-canvases-l1',
-        'default',
-        'linear',
-        stack2.segmentationLUT,
-        stack2.segmentationLUTO,
-        true
+        domTargetForSecondLayer,
+        lut,
+        lut0,
+        segmentationLUT,
+        segmentationLUTO,
+        discrete
     );
     uniformsLayer1.uLut.value = 1;
     uniformsLayer1.uTextureLUT.value = lutLayer1.texture;
