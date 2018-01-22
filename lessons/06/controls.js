@@ -10,3 +10,7 @@ function setControls() {
     threeD.addEventListener('mouseup', onMouseUp, false);
     window.addEventListener('resize', onWindowResize, false);
 }
+
+function updateControls(centerLPS) {
+    controls.target.set(centerLPS.x, centerLPS.y, centerLPS.z);
+}

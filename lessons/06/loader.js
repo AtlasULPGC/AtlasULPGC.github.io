@@ -20,7 +20,7 @@ function setLoader() {
 
         // update camrea's and interactor's target
         var centerLPS = updateCamera(stack);
-        controls.target.set(centerLPS.x, centerLPS.y, centerLPS.z);
+        updateControls(centerLPS);
 
         // create GUI
         buildGUI();
