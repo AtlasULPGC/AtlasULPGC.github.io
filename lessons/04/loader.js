@@ -1,4 +1,4 @@
-function setLoader() {
+function setLoader(files) {
 
     var loader = new AMI.VolumeLoader(threeD);
 
@@ -12,4 +12,5 @@ function setLoader() {
             window.console.log('oops... something went wrong...');
             window.console.log(error);
         });
+    return loader;
 }

@@ -23,7 +23,6 @@ var materialLayerMix;
 init();
 
 
-
 function init() {
 
     setRenderer();
@@ -38,8 +37,10 @@ function init() {
     animate();
 }
 
-setDicomDataUrl();
+var files = setDicomDataUrl();
 
-setLoader();
+var loader = setLoader(files);
+
+
 
 
