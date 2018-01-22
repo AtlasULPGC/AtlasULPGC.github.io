@@ -1,6 +1,3 @@
-/* globals Stats, dat, AMI*/
-
-// standard global variables
 var controls;
 var renderer;
 var camera;
@@ -27,34 +24,26 @@ var layerMix = {
     opacity1: 1.0,
 };
 
-/**
- * Init the scene
- */
+init();
+
+
+
 function init() {
 
-
-    // renderer
     setRenderer();
-
-    // stats
-    statsyay = new Stats();
-    threeD.appendChild(statsyay.domElement);
+    setStats();
     setScene();
 
-    // camera
     setCamera();
 
-    // controls
+
     setControls();
 
     animate();
 }
 
-// init threeJS...
-init();
-
-var files = setDicomDataUrl();
-
-
+setDicomDataUrl();
 
 setLoader();
+
+
