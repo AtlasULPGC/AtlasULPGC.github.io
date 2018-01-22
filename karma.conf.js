@@ -4,7 +4,7 @@ const packageJSON = require('./package.json');
 
 process.env.CHROME_BIN = require('puppeteer').executablePath()
 
-module.exports = function(karma) {
+module.exports = function (karma) {
     karma.set({
         // frameworks to use
         frameworks: ['jasmine', 'sinon'],
@@ -17,7 +17,7 @@ module.exports = function(karma) {
             // 'src/core/*.spec.js',
             //'specs/**/*.spec.js',
             'mySpecs/**/*.spec.js',
-            { pattern: 'data/**/*', included: false, watched: false, served: true }
+            {pattern: 'data/**/*', included: false, watched: false, served: true}
         ],
 
         reporters: ['spec'],
@@ -25,7 +25,6 @@ module.exports = function(karma) {
         // preprocess matching files before serving them to the browser
         // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
         preprocessors: {
-            'lessons/**/*.js': ['coverage'],
             'mySpecs/**/*.spec.js': ['webpack']
             //'specs/**/*.spec.js': ['webpack']
             // 'src/core/*.spec.js': ['browserify']

@@ -1,4 +1,4 @@
-function setRenderer() {
+export function setRenderer() {
     threeD = document.getElementById('container');
     renderer = new THREE.WebGLRenderer({
         antialias: true,
