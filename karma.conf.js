@@ -25,6 +25,7 @@ module.exports = function(karma) {
         // preprocess matching files before serving them to the browser
         // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
         preprocessors: {
+            'lessons/**/*.js': ['coverage'],
             'mySpecs/**/*.spec.js': ['webpack']
             //'specs/**/*.spec.js': ['webpack']
             // 'src/core/*.spec.js': ['browserify']
