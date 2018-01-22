@@ -20,10 +20,6 @@ var meshLayerMix;
 var uniformsLayerMix;
 var materialLayerMix;
 
-var layerMix = {
-    opacity1: 1.0,
-};
-
 init();
 
 

@@ -117,3 +117,7 @@ function buildGUI(stackHelper) {
     window.addEventListener('resize', onWindowResize, false);
     onWindowResize();
 }
+
+var layerMix = {
+    opacity1: 1.0,
+};
