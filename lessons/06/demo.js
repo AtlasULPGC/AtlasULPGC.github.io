@@ -11,13 +11,9 @@ var vrHelper;
 var lut;
 var ready = false;
 
-var myStack = {
-    lut: 'random',
-    opacity: 'random',
-    steps: 256,
-    alphaCorrection: 0.5,
-    interpolation: 1
-};
+
+
+var myStack = setStack();
 
 /**
  * Handle mouse down event
