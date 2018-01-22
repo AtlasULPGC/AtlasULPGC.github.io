@@ -29,6 +29,7 @@ var layerMix = {
 
 
 
+
 /**
  * Init the scene
  */
@@ -79,14 +80,7 @@ function init() {
     });
 
     // camera
-    camera = new AMI.OrthographicCamera(
-        threeD.clientWidth / -2,
-        threeD.clientWidth / 2,
-        threeD.clientHeight / 2,
-        threeD.clientHeight / -2,
-        0.1,
-        10000
-    );
+    setCamera();
 
     // controls
     controls = new AMI.TrackballOrthoControl(camera, threeD);
