@@ -15,7 +15,8 @@ module.exports = function(karma) {
             `https://cdnjs.cloudflare.com/ajax/libs/three.js/${packageJSON.config.threeVersion}/three.js`,
             // ,
             // 'src/core/*.spec.js',
-            'specs/**/*.spec.js',
+            //'specs/**/*.spec.js',
+            'lessons/**/*.spec.js',
             { pattern: 'data/**/*', included: false, watched: false, served: true }
         ],
 
@@ -24,7 +25,8 @@ module.exports = function(karma) {
         // preprocess matching files before serving them to the browser
         // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
         preprocessors: {
-            'specs/**/*.spec.js': ['webpack']
+            'lessons/**/*.spec.js': ['webpack']
+            //'specs/**/*.spec.js': ['webpack']
             // 'src/core/*.spec.js': ['browserify']
         },
 
