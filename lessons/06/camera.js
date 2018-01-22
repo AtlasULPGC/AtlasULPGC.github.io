@@ -9,3 +9,10 @@ function setCamera() {
     camera.position.z = -350;
     camera.up.set(-0.5, 0.5, 0.5);
 }
+
+function updateCamera(stack) {
+    var centerLPS = stack.worldCenter();
+    camera.lookAt(centerLPS.x, centerLPS.y, centerLPS.z);
+    camera.updateProjectionMatrix();
+    return centerLPS;
+}

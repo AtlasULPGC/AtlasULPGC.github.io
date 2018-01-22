@@ -19,9 +19,7 @@ function setLoader() {
         setLUT();
 
         // update camrea's and interactor's target
-        var centerLPS = stack.worldCenter();
-        camera.lookAt(centerLPS.x, centerLPS.y, centerLPS.z);
-        camera.updateProjectionMatrix();
+        var centerLPS = updateCamera(stack);
         controls.target.set(centerLPS.x, centerLPS.y, centerLPS.z);
 
         // create GUI
