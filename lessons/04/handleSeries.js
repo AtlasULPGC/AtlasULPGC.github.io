@@ -33,18 +33,29 @@ function handleSeries() {
     stack2.pack();
 
     var textures2 = [];
+    const width = stack2.textureSize;
+    const height = stack2.textureSize;
+    const format = stack2.textureType;
+    const type = THREE.UnsignedByteType;
+    const mapping = THREE.UVMapping;
+    const wrapX = THREE.ClampToEdgeWrapping;
+    const wrapY = THREE.ClampToEdgeWrapping;
+    const magFilter = THREE.NearestFilter;
+    const minFilter = THREE.NearestFilter;
     for (var m = 0; m < stack2._rawData.length; m++) {
+
+        const data = stack2.rawData[m];
         var tex = new THREE.DataTexture(
-            stack2.rawData[m],
-            stack2.textureSize,
-            stack2.textureSize,
-            stack2.textureType,
-            THREE.UnsignedByteType,
-            THREE.UVMapping,
-            THREE.ClampToEdgeWrapping,
-            THREE.ClampToEdgeWrapping,
-            THREE.NearestFilter,
-            THREE.NearestFilter
+            data,
+            width,
+            height,
+            format,
+            type,
+            mapping,
+            wrapX,
+            wrapY,
+            magFilter,
+            minFilter
         );
         tex.needsUpdate = true;
         tex.flipY = true;
