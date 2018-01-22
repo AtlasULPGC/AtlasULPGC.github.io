@@ -1,3 +1,5 @@
+
+
 function setLoader() {
     var file = 'https://cdn.rawgit.com/FNNDSC/data/master/nifti/eun_brain/eun_uchar_8.nii.gz';
 
@@ -14,12 +16,7 @@ function setLoader() {
         scene.add(vrHelper);
 
         // CREATE LUT
-        lut = new AMI.LutHelper('my-tf');
-        lut.luts = AMI.LutHelper.presetLuts();
-        lut.lutsO = AMI.LutHelper.presetLutsO();
-        // update related uniforms
-        vrHelper.uniforms.uTextureLUT.value = lut.texture;
-        vrHelper.uniforms.uLut.value = 1;
+        setLUT();
 
         // update camrea's and interactor's target
         var centerLPS = stack.worldCenter();
