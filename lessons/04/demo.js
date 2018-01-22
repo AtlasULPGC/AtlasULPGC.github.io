@@ -27,9 +27,6 @@ var layerMix = {
     opacity1: 1.0,
 };
 
-
-
-
 /**
  * Init the scene
  */
@@ -83,10 +80,7 @@ function init() {
     setCamera();
 
     // controls
-    controls = new AMI.TrackballOrthoControl(camera, threeD);
-    controls.staticMoving = true;
-    controls.noRotate = true;
-    camera.controls = controls;
+    setControls();
 
     animate();
 }
