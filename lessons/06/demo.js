@@ -59,8 +59,8 @@ function onWindowResize() {
  */
 function init() {
     /**
-   * Rendering loop
-   */
+     * Rendering loop
+     */
     function animate() {
         // render
         controls.update();
@@ -72,7 +72,7 @@ function init() {
         stats.update();
 
         // request new frame
-        requestAnimationFrame(function() {
+        requestAnimationFrame(function () {
             animate();
         });
     }
@@ -88,11 +88,7 @@ function init() {
     scene = new THREE.Scene();
 
     // camera
-    camera = new THREE.PerspectiveCamera(45, threeD.offsetWidth / threeD.offsetHeight, 0.1, 100000);
-    camera.position.x = 150;
-    camera.position.y = 400;
-    camera.position.z = -350;
-    camera.up.set(-0.42, 0.86, 0.26);
+    setCamera();
 
     // controls
     controls = new AMI.TrackballControl(camera, threeD);
@@ -116,7 +112,7 @@ init();
 var file = 'https://cdn.rawgit.com/FNNDSC/data/master/nifti/eun_brain/eun_uchar_8.nii.gz';
 
 var loader = new AMI.VolumeLoader(threeD);
-loader.load(file).then(function() {
+loader.load(file).then(function () {
     var series = loader.data[0].mergeSeries(loader.data)[0];
     loader.free();
     loader = null;
