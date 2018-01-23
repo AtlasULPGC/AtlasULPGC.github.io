@@ -28,6 +28,7 @@ function init() {
     setRenderer();
     setStats();
     setScene();
+    setCTLayerTexture();
 
     setCamera();
 
