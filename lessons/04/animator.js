@@ -1,6 +1,4 @@
-/**
- * Animation loop
- */
+
 function animate() {
 
     controls.update();

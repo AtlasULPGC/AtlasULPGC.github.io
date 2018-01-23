@@ -1,17 +1,13 @@
-/**
- * Handle series
- */
+
 function handleSeries() {
-    //
-    //
-    // first stack of first series
+
     var mergedSeries = loader.data[0].mergeSeries(loader.data);
-    var stack = mergedSeries[0].stack[0];
-    var stack2 = mergedSeries[1].stack[0];
+    var ctGrayImagesStack = mergedSeries[0].stack[0];
+    var segmentationStack = mergedSeries[1].stack[0];
     loader.free();
     loader = null;
 
-    var stackHelper = new AMI.StackHelper(stack);
+    var stackHelper = new AMI.StackHelper(ctGrayImagesStack);
     stackHelper.bbox.visible = false;
     stackHelper.border.visible = false;
     stackHelper.index = 10;
@@ -28,23 +24,23 @@ function handleSeries() {
     // * Z spacing
     // * etc.
     //
-    stack2.prepare();
+    segmentationStack.prepare();
     // pixels packing for the fragment shaders now happens there
-    stack2.pack();
+    segmentationStack.pack();
 
     var textures2 = [];
-    const width = stack2.textureSize;
-    const height = stack2.textureSize;
-    const format = stack2.textureType;
+    const width = segmentationStack.textureSize;
+    const height = segmentationStack.textureSize;
+    const format = segmentationStack.textureType;
     const type = THREE.UnsignedByteType;
     const mapping = THREE.UVMapping;
     const wrapX = THREE.ClampToEdgeWrapping;
     const wrapY = THREE.ClampToEdgeWrapping;
     const magFilter = THREE.NearestFilter;
     const minFilter = THREE.NearestFilter;
-    for (var m = 0; m < stack2._rawData.length; m++) {
+    for (var m = 0; m < segmentationStack._rawData.length; m++) {
 
-        const data = stack2.rawData[m];
+        const data = segmentationStack.rawData[m];
         var tex = new THREE.DataTexture(
             data,
             width,
@@ -64,15 +60,15 @@ function handleSeries() {
 
     // create material && mesh then add it to sceneLayerSegmentation
     uniformsLayer1 = AMI.DataUniformShader.uniforms();
-    uniformsLayer1.uTextureSize.value = stack2.textureSize;
+    uniformsLayer1.uTextureSize.value = segmentationStack.textureSize;
     uniformsLayer1.uTextureContainer.value = textures2;
-    uniformsLayer1.uWorldToData.value = stack2.lps2IJK;
-    uniformsLayer1.uNumberOfChannels.value = stack2.numberOfChannels;
-    uniformsLayer1.uPixelType.value = stack2.pixelType;
-    uniformsLayer1.uBitsAllocated.value = stack2.bitsAllocated;
-    uniformsLayer1.uWindowCenterWidth.value = [stack2.windowCenter, stack2.windowWidth];
-    uniformsLayer1.uRescaleSlopeIntercept.value = [stack2.rescaleSlope, stack2.rescaleIntercept];
-    uniformsLayer1.uDataDimensions.value = [stack2.dimensionsIJK.x, stack2.dimensionsIJK.y, stack2.dimensionsIJK.z];
+    uniformsLayer1.uWorldToData.value = segmentationStack.lps2IJK;
+    uniformsLayer1.uNumberOfChannels.value = segmentationStack.numberOfChannels;
+    uniformsLayer1.uPixelType.value = segmentationStack.pixelType;
+    uniformsLayer1.uBitsAllocated.value = segmentationStack.bitsAllocated;
+    uniformsLayer1.uWindowCenterWidth.value = [segmentationStack.windowCenter, segmentationStack.windowWidth];
+    uniformsLayer1.uRescaleSlopeIntercept.value = [segmentationStack.rescaleSlope, segmentationStack.rescaleIntercept];
+    uniformsLayer1.uDataDimensions.value = [segmentationStack.dimensionsIJK.x, segmentationStack.dimensionsIJK.y, segmentationStack.dimensionsIJK.z];
     uniformsLayer1.uInterpolation.value = 0;
 
     // generate shaders on-demand!
@@ -88,7 +84,7 @@ function handleSeries() {
     // add mesh in this scene with right shaders...
     meshLayer1 = new THREE.Mesh(stackHelper.slice.geometry, materialLayer1);
     // go the LPS space
-    meshLayer1.applyMatrix(stack._ijk2LPS);
+    meshLayer1.applyMatrix(ctGrayImagesStack._ijk2LPS);
     sceneLayerSegmentation.add(meshLayer1);
 
     // Create the Mix layer
@@ -109,17 +105,17 @@ function handleSeries() {
     // add mesh in this scene with right shaders...
     meshLayerMix = new THREE.Mesh(stackHelper.slice.geometry, materialLayer1);
     // go the LPS space
-    meshLayerMix.applyMatrix(stack._ijk2LPS);
+    meshLayerMix.applyMatrix(ctGrayImagesStack._ijk2LPS);
     sceneLayerMix.add(meshLayerMix);
 
     //
     // set camera
-    var worldbb = stack.worldBoundingBox();
+    var worldbb = ctGrayImagesStack.worldBoundingBox();
     var lpsDims = new THREE.Vector3(worldbb[1] - worldbb[0], worldbb[3] - worldbb[2], worldbb[5] - worldbb[4]);
 
     // box: {halfDimensions, center}
     var box = {
-        center: stack.worldCenter().clone(),
+        center: ctGrayImagesStack.worldCenter().clone(),
         halfDimensions: new THREE.Vector3(lpsDims.x + 10, lpsDims.y + 10, lpsDims.z + 10)
     };
 
@@ -128,7 +124,7 @@ function handleSeries() {
         width: threeD.clientWidth,
         height: threeD.clientHeight,
     };
-    camera.directions = [stack.xCosine, stack.yCosine, stack.zCosine];
+    camera.directions = [ctGrayImagesStack.xCosine, ctGrayImagesStack.yCosine, ctGrayImagesStack.zCosine];
     camera.box = box;
     camera.canvas = canvas;
     camera.update();
@@ -150,8 +146,8 @@ function handleSeries() {
     lutLayer0.luts = AMI.LutHelper.presetLuts();
 
     const domTargetForSecondLayer = 'my-lut-canvases-l1';
-    const segmentationLUT = stack2.segmentationLUT;
-    const segmentationLUTO = stack2.segmentationLUTO;
+    const segmentationLUT = segmentationStack.segmentationLUT;
+    const segmentationLUTO = segmentationStack.segmentationLUTO;
     const discrete = true;
     lutLayer1 = new AMI.LutHelper(
         domTargetForSecondLayer,
