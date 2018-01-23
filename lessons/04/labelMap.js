@@ -82,3 +82,9 @@ function setMixLayer() {
         transparent: true,
     });
 }
+
+function setMeshLayerMix(stackHelper, ctGrayImagesStack) {
+    meshLayerMix = new THREE.Mesh(stackHelper.slice.geometry, materialSegmentationLayer);
+    meshLayerMix.applyMatrix(ctGrayImagesStack._ijk2LPS);
+    sceneLayerMix.add(meshLayerMix);
+}

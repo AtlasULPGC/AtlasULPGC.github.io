@@ -37,12 +37,7 @@ function handleSeries() {
 
     // Create the Mix layer
     setMixLayer();
-
-    // add mesh in this scene with right shaders...
-    meshLayerMix = new THREE.Mesh(stackHelper.slice.geometry, materialSegmentationLayer);
-    // go the LPS space
-    meshLayerMix.applyMatrix(ctGrayImagesStack._ijk2LPS);
-    sceneLayerMix.add(meshLayerMix);
+    setMeshLayerMix(stackHelper, ctGrayImagesStack);
 
     //
     // set camera
