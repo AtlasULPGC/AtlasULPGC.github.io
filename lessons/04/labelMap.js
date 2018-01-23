@@ -88,3 +88,37 @@ function setMeshLayerMix(stackHelper, ctGrayImagesStack) {
     meshLayerMix.applyMatrix(ctGrayImagesStack._ijk2LPS);
     sceneLayerMix.add(meshLayerMix);
 }
+
+function setLutForGrayImageCTLayer() {
+    const domTarget = 'my-lut-canvases-l0';
+    const lut = 'default';
+    const lut0 = 'linear';
+    const color = [[0, 0, 0, 0], [1, 1, 1, 1]];
+    const opacity = [[0, 1], [1, 1]];
+    lutLayer0 = new AMI.LutHelper(
+        domTarget,
+        lut,
+        lut0,
+        color,
+        opacity
+    );
+    lutLayer0.luts = AMI.LutHelper.presetLuts();
+    return {lut, lut0};
+}
+
+function setLutForSegmentationLayer(segmentationStack, lut, lut0) {
+    const domTargetForSecondLayer = 'my-lut-canvases-l1';
+    const segmentationLUT = segmentationStack.segmentationLUT;
+    const segmentationLUTO = segmentationStack.segmentationLUTO;
+    const discrete = true;
+    lutLayer1 = new AMI.LutHelper(
+        domTargetForSecondLayer,
+        lut,
+        lut0,
+        segmentationLUT,
+        segmentationLUTO,
+        discrete
+    );
+    uniformShaderSegmentationLayer.uLut.value = 1;
+    uniformShaderSegmentationLayer.uTextureLUT.value = lutLayer1.texture;
+}

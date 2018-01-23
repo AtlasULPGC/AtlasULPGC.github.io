@@ -1,3 +1,5 @@
+
+
 function handleSeries() {
 
     var mergedSeries = loader.data[0].mergeSeries(loader.data);
@@ -39,34 +41,8 @@ function handleSeries() {
     setCameraOnTarget(ctGrayImagesStack);
 
     // CREATE LUT
-    const domTarget = 'my-lut-canvases-l0';
-    const lut = 'default';
-    const lut0 = 'linear';
-    const color = [[0, 0, 0, 0], [1, 1, 1, 1]];
-    const opacity = [[0, 1], [1, 1]];
-    lutLayer0 = new AMI.LutHelper(
-        domTarget,
-        lut,
-        lut0,
-        color,
-        opacity
-    );
-    lutLayer0.luts = AMI.LutHelper.presetLuts();
-
-    const domTargetForSecondLayer = 'my-lut-canvases-l1';
-    const segmentationLUT = segmentationStack.segmentationLUT;
-    const segmentationLUTO = segmentationStack.segmentationLUTO;
-    const discrete = true;
-    lutLayer1 = new AMI.LutHelper(
-        domTargetForSecondLayer,
-        lut,
-        lut0,
-        segmentationLUT,
-        segmentationLUTO,
-        discrete
-    );
-    uniformShaderSegmentationLayer.uLut.value = 1;
-    uniformShaderSegmentationLayer.uTextureLUT.value = lutLayer1.texture;
+    const {lut, lut0} = setLutForGrayImageCTLayer();
+    setLutForSegmentationLayer(segmentationStack, lut, lut0);
 
     buildGUI(stackHelper);
 }
