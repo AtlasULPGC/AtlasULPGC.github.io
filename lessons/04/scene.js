@@ -1,8 +1,8 @@
 
 function setScene() {
 // scene
-    sceneLayer0 = new THREE.Scene();
-    sceneLayer1 = new THREE.Scene();
+    sceneLayerCT = new THREE.Scene();
+    sceneLayerSegmentation = new THREE.Scene();
     sceneLayerMix = new THREE.Scene();
 
 }

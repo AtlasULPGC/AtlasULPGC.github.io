@@ -16,7 +16,7 @@ function handleSeries() {
     stackHelper.border.visible = false;
     stackHelper.index = 10;
 
-    sceneLayer0.add(stackHelper);
+    sceneLayerCT.add(stackHelper);
 
     //
     //
@@ -62,7 +62,7 @@ function handleSeries() {
         textures2.push(tex);
     }
 
-    // create material && mesh then add it to sceneLayer1
+    // create material && mesh then add it to sceneLayerSegmentation
     uniformsLayer1 = AMI.DataUniformShader.uniforms();
     uniformsLayer1.uTextureSize.value = stack2.textureSize;
     uniformsLayer1.uTextureContainer.value = textures2;
@@ -89,7 +89,7 @@ function handleSeries() {
     meshLayer1 = new THREE.Mesh(stackHelper.slice.geometry, materialLayer1);
     // go the LPS space
     meshLayer1.applyMatrix(stack._ijk2LPS);
-    sceneLayer1.add(meshLayer1);
+    sceneLayerSegmentation.add(meshLayer1);
 
     // Create the Mix layer
     uniformsLayerMix = AMI.LayerUniformShader.uniforms();

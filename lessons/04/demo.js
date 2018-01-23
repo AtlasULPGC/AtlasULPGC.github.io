@@ -7,10 +7,10 @@ var threeD;
 var sceneLayerCTTextureTarget;
 var sceneLayerSegmentationTextureTarget;
 //
-var sceneLayer0;
+var sceneLayerCT;
 //
 var lutLayer0;
-var sceneLayer1;
+var sceneLayerSegmentation;
 var meshLayer1;
 var uniformsLayer1;
 var materialLayer1;
