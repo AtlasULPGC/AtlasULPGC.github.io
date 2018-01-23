@@ -49,3 +49,14 @@ function setUniformShaderSegmentationLayer(segmentationStack, textures2) {
     uniformShaderSegmentationLayer.uDataDimensions.value = [segmentationStack.dimensionsIJK.x, segmentationStack.dimensionsIJK.y, segmentationStack.dimensionsIJK.z];
     uniformShaderSegmentationLayer.uInterpolation.value = 0;
 }
+
+function generateShadersOnDemand() {
+    var fs = new AMI.DataFragmentShader(uniformShaderSegmentationLayer);
+    var vs = new AMI.DataVertexShader();
+    materialSegmentationLayer = new THREE.ShaderMaterial({
+        side: THREE.DoubleSide,
+        uniforms: uniformShaderSegmentationLayer,
+        vertexShader: vs.compute(),
+        fragmentShader: fs.compute(),
+    });
+}

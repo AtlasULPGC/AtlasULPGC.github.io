@@ -1,3 +1,5 @@
+
+
 function handleSeries() {
 
     var mergedSeries = loader.data[0].mergeSeries(loader.data);
@@ -30,15 +32,7 @@ function handleSeries() {
     // create material && mesh then add it to sceneLayerSegmentation
     setUniformShaderSegmentationLayer(segmentationStack, currentRawTexturesForLabelMap);
 
-    // generate shaders on-demand!
-    var fs = new AMI.DataFragmentShader(uniformShaderSegmentationLayer);
-    var vs = new AMI.DataVertexShader();
-    materialSegmentationLayer = new THREE.ShaderMaterial({
-        side: THREE.DoubleSide,
-        uniforms: uniformShaderSegmentationLayer,
-        vertexShader: vs.compute(),
-        fragmentShader: fs.compute(),
-    });
+    generateShadersOnDemand();
 
     // add mesh in this scene with right shaders...
     meshLayer1 = new THREE.Mesh(stackHelper.slice.geometry, materialSegmentationLayer);
