@@ -33,7 +33,7 @@ function handleSeries() {
     // generate shaders on-demand!
     var fs = new AMI.DataFragmentShader(uniformShaderSegmentationLayer);
     var vs = new AMI.DataVertexShader();
-    materialLayer1 = new THREE.ShaderMaterial({
+    materialSegmentationLayer = new THREE.ShaderMaterial({
         side: THREE.DoubleSide,
         uniforms: uniformShaderSegmentationLayer,
         vertexShader: vs.compute(),
@@ -41,7 +41,7 @@ function handleSeries() {
     });
 
     // add mesh in this scene with right shaders...
-    meshLayer1 = new THREE.Mesh(stackHelper.slice.geometry, materialLayer1);
+    meshLayer1 = new THREE.Mesh(stackHelper.slice.geometry, materialSegmentationLayer);
     // go the LPS space
     meshLayer1.applyMatrix(ctGrayImagesStack._ijk2LPS);
     sceneLayerSegmentation.add(meshLayer1);
@@ -62,7 +62,7 @@ function handleSeries() {
     });
 
     // add mesh in this scene with right shaders...
-    meshLayerMix = new THREE.Mesh(stackHelper.slice.geometry, materialLayer1);
+    meshLayerMix = new THREE.Mesh(stackHelper.slice.geometry, materialSegmentationLayer);
     // go the LPS space
     meshLayerMix.applyMatrix(ctGrayImagesStack._ijk2LPS);
     sceneLayerMix.add(meshLayerMix);
