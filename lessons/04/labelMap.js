@@ -4,7 +4,7 @@ function prepareStackToCreateLabelMap(segmentationStack) {
 }
 
 function setRawTextureForLabelMap(segmentationStack) {
-    var textures2 = [];
+    var rawTexturesForLabelMap = [];
     const width = segmentationStack.textureSize;
     const height = segmentationStack.textureSize;
     const format = segmentationStack.textureType;
@@ -31,9 +31,9 @@ function setRawTextureForLabelMap(segmentationStack) {
         );
         tex.needsUpdate = true;
         tex.flipY = true;
-        textures2.push(tex);
+        rawTexturesForLabelMap.push(tex);
     }
-    return textures2;
+    return rawTexturesForLabelMap;
 }
 
 function setUniformShaderSegmentationLayer(segmentationStack, textures2) {
