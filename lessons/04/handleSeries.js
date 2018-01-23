@@ -36,19 +36,7 @@ function handleSeries() {
     setMeshSegmentationLayer(stackHelper, ctGrayImagesStack);
 
     // Create the Mix layer
-    uniformsLayerMix = AMI.LayerUniformShader.uniforms();
-    uniformsLayerMix.uTextureBackTest0.value = sceneLayerCTTextureTarget.texture;
-    uniformsLayerMix.uTextureBackTest1.value = sceneLayerSegmentationTextureTarget.texture;
-
-    let fls = new AMI.LayerFragmentShader(uniformsLayerMix);
-    let vls = new AMI.LayerVertexShader();
-    materialLayerMix = new THREE.ShaderMaterial({
-        side: THREE.DoubleSide,
-        uniforms: uniformsLayerMix,
-        vertexShader: vls.compute(),
-        fragmentShader: fls.compute(),
-        transparent: true,
-    });
+    setMixLayer();
 
     // add mesh in this scene with right shaders...
     meshLayerMix = new THREE.Mesh(stackHelper.slice.geometry, materialSegmentationLayer);
