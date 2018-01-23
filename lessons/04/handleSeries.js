@@ -29,16 +29,11 @@ function handleSeries() {
 
     var currentRawTexturesForLabelMap = setRawTextureForLabelMap(segmentationStack);
 
-    // create material && mesh then add it to sceneLayerSegmentation
     setUniformShaderSegmentationLayer(segmentationStack, currentRawTexturesForLabelMap);
 
     generateShadersOnDemand();
 
-    // add mesh in this scene with right shaders...
-    meshLayer1 = new THREE.Mesh(stackHelper.slice.geometry, materialSegmentationLayer);
-    // go the LPS space
-    meshLayer1.applyMatrix(ctGrayImagesStack._ijk2LPS);
-    sceneLayerSegmentation.add(meshLayer1);
+    setMeshSegmentationLayer(stackHelper, ctGrayImagesStack);
 
     // Create the Mix layer
     uniformsLayerMix = AMI.LayerUniformShader.uniforms();

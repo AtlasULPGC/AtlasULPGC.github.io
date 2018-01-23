@@ -60,3 +60,9 @@ function generateShadersOnDemand() {
         fragmentShader: fs.compute(),
     });
 }
+
+function setMeshSegmentationLayer(stackHelper, ctGrayImagesStack) {
+    meshSegmentationLayer = new THREE.Mesh(stackHelper.slice.geometry, materialSegmentationLayer);
+    meshSegmentationLayer.applyMatrix(ctGrayImagesStack._ijk2LPS);
+    sceneLayerSegmentation.add(meshSegmentationLayer);
+}
