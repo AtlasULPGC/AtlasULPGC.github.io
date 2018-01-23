@@ -1,5 +1,3 @@
-
-
 function handleSeries() {
 
     var mergedSeries = loader.data[0].mergeSeries(loader.data);
@@ -27,10 +25,10 @@ function handleSeries() {
     //
     prepareStackToCreateLabelMap(segmentationStack);
 
-    var textures2 = setRawTextureForLabelMap(segmentationStack);
+    var currentRawTexturesForLabelMap = setRawTextureForLabelMap(segmentationStack);
 
     // create material && mesh then add it to sceneLayerSegmentation
-    setUniformShaderSegmentationLayer(segmentationStack, textures2);
+    setUniformShaderSegmentationLayer(segmentationStack, currentRawTexturesForLabelMap);
 
     // generate shaders on-demand!
     var fs = new AMI.DataFragmentShader(uniformShaderSegmentationLayer);
