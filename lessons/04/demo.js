@@ -4,8 +4,8 @@ var camera;
 var statsyay;
 var threeD;
 //
-var sceneLayer0TextureTarget;
-var sceneLayer1TextureTarget;
+var sceneLayerCTTextureTarget;
+var sceneLayerSegmentationTextureTarget;
 //
 var sceneLayer0;
 //

@@ -5,13 +5,13 @@ function setScene() {
     sceneLayerMix = new THREE.Scene();
 
     // render to texture!!!!
-    sceneLayer0TextureTarget = new THREE.WebGLRenderTarget(threeD.clientWidth, threeD.clientHeight, {
+    sceneLayerCTTextureTarget = new THREE.WebGLRenderTarget(threeD.clientWidth, threeD.clientHeight, {
         minFilter: THREE.LinearFilter,
         magFilter: THREE.NearestFilter,
         format: THREE.RGBAFormat,
     });
 
-    sceneLayer1TextureTarget = new THREE.WebGLRenderTarget(threeD.clientWidth, threeD.clientHeight, {
+    sceneLayerSegmentationTextureTarget = new THREE.WebGLRenderTarget(threeD.clientWidth, threeD.clientHeight, {
         minFilter: THREE.LinearFilter,
         magFilter: THREE.NearestFilter,
         format: THREE.RGBAFormat,

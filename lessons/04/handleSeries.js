@@ -93,8 +93,8 @@ function handleSeries() {
 
     // Create the Mix layer
     uniformsLayerMix = AMI.LayerUniformShader.uniforms();
-    uniformsLayerMix.uTextureBackTest0.value = sceneLayer0TextureTarget.texture;
-    uniformsLayerMix.uTextureBackTest1.value = sceneLayer1TextureTarget.texture;
+    uniformsLayerMix.uTextureBackTest0.value = sceneLayerCTTextureTarget.texture;
+    uniformsLayerMix.uTextureBackTest1.value = sceneLayerSegmentationTextureTarget.texture;
 
     let fls = new AMI.LayerFragmentShader(uniformsLayerMix);
     let vls = new AMI.LayerVertexShader();
