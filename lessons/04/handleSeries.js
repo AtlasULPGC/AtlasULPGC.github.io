@@ -30,17 +30,7 @@ function handleSeries() {
     var textures2 = setRawTextureForLabelMap(segmentationStack);
 
     // create material && mesh then add it to sceneLayerSegmentation
-    uniformShaderSegmentationLayer = AMI.DataUniformShader.uniforms();
-    uniformShaderSegmentationLayer.uTextureSize.value = segmentationStack.textureSize;
-    uniformShaderSegmentationLayer.uTextureContainer.value = textures2;
-    uniformShaderSegmentationLayer.uWorldToData.value = segmentationStack.lps2IJK;
-    uniformShaderSegmentationLayer.uNumberOfChannels.value = segmentationStack.numberOfChannels;
-    uniformShaderSegmentationLayer.uPixelType.value = segmentationStack.pixelType;
-    uniformShaderSegmentationLayer.uBitsAllocated.value = segmentationStack.bitsAllocated;
-    uniformShaderSegmentationLayer.uWindowCenterWidth.value = [segmentationStack.windowCenter, segmentationStack.windowWidth];
-    uniformShaderSegmentationLayer.uRescaleSlopeIntercept.value = [segmentationStack.rescaleSlope, segmentationStack.rescaleIntercept];
-    uniformShaderSegmentationLayer.uDataDimensions.value = [segmentationStack.dimensionsIJK.x, segmentationStack.dimensionsIJK.y, segmentationStack.dimensionsIJK.z];
-    uniformShaderSegmentationLayer.uInterpolation.value = 0;
+    setUniformShaderSegmentationLayer(segmentationStack, textures2);
 
     // generate shaders on-demand!
     var fs = new AMI.DataFragmentShader(uniformShaderSegmentationLayer);

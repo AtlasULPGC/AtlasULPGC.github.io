@@ -36,3 +36,16 @@ function setRawTextureForLabelMap(segmentationStack) {
     return textures2;
 }
 
+function setUniformShaderSegmentationLayer(segmentationStack, textures2) {
+    uniformShaderSegmentationLayer = AMI.DataUniformShader.uniforms();
+    uniformShaderSegmentationLayer.uTextureSize.value = segmentationStack.textureSize;
+    uniformShaderSegmentationLayer.uTextureContainer.value = textures2;
+    uniformShaderSegmentationLayer.uWorldToData.value = segmentationStack.lps2IJK;
+    uniformShaderSegmentationLayer.uNumberOfChannels.value = segmentationStack.numberOfChannels;
+    uniformShaderSegmentationLayer.uPixelType.value = segmentationStack.pixelType;
+    uniformShaderSegmentationLayer.uBitsAllocated.value = segmentationStack.bitsAllocated;
+    uniformShaderSegmentationLayer.uWindowCenterWidth.value = [segmentationStack.windowCenter, segmentationStack.windowWidth];
+    uniformShaderSegmentationLayer.uRescaleSlopeIntercept.value = [segmentationStack.rescaleSlope, segmentationStack.rescaleIntercept];
+    uniformShaderSegmentationLayer.uDataDimensions.value = [segmentationStack.dimensionsIJK.x, segmentationStack.dimensionsIJK.y, segmentationStack.dimensionsIJK.z];
+    uniformShaderSegmentationLayer.uInterpolation.value = 0;
+}
