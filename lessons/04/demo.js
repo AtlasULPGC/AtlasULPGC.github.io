@@ -12,7 +12,7 @@ var sceneLayerCT;
 var lutLayer0;
 var sceneLayerSegmentation;
 var meshLayer1;
-var uniformsLayer1;
+var uniformShaderSegmentationLayer;
 var materialLayer1;
 var lutLayer1;
 var sceneLayerMix;

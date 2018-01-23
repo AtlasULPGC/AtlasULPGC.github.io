@@ -30,24 +30,24 @@ function handleSeries() {
     var textures2 = setRawTextureForLabelMap(segmentationStack);
 
     // create material && mesh then add it to sceneLayerSegmentation
-    uniformsLayer1 = AMI.DataUniformShader.uniforms();
-    uniformsLayer1.uTextureSize.value = segmentationStack.textureSize;
-    uniformsLayer1.uTextureContainer.value = textures2;
-    uniformsLayer1.uWorldToData.value = segmentationStack.lps2IJK;
-    uniformsLayer1.uNumberOfChannels.value = segmentationStack.numberOfChannels;
-    uniformsLayer1.uPixelType.value = segmentationStack.pixelType;
-    uniformsLayer1.uBitsAllocated.value = segmentationStack.bitsAllocated;
-    uniformsLayer1.uWindowCenterWidth.value = [segmentationStack.windowCenter, segmentationStack.windowWidth];
-    uniformsLayer1.uRescaleSlopeIntercept.value = [segmentationStack.rescaleSlope, segmentationStack.rescaleIntercept];
-    uniformsLayer1.uDataDimensions.value = [segmentationStack.dimensionsIJK.x, segmentationStack.dimensionsIJK.y, segmentationStack.dimensionsIJK.z];
-    uniformsLayer1.uInterpolation.value = 0;
+    uniformShaderSegmentationLayer = AMI.DataUniformShader.uniforms();
+    uniformShaderSegmentationLayer.uTextureSize.value = segmentationStack.textureSize;
+    uniformShaderSegmentationLayer.uTextureContainer.value = textures2;
+    uniformShaderSegmentationLayer.uWorldToData.value = segmentationStack.lps2IJK;
+    uniformShaderSegmentationLayer.uNumberOfChannels.value = segmentationStack.numberOfChannels;
+    uniformShaderSegmentationLayer.uPixelType.value = segmentationStack.pixelType;
+    uniformShaderSegmentationLayer.uBitsAllocated.value = segmentationStack.bitsAllocated;
+    uniformShaderSegmentationLayer.uWindowCenterWidth.value = [segmentationStack.windowCenter, segmentationStack.windowWidth];
+    uniformShaderSegmentationLayer.uRescaleSlopeIntercept.value = [segmentationStack.rescaleSlope, segmentationStack.rescaleIntercept];
+    uniformShaderSegmentationLayer.uDataDimensions.value = [segmentationStack.dimensionsIJK.x, segmentationStack.dimensionsIJK.y, segmentationStack.dimensionsIJK.z];
+    uniformShaderSegmentationLayer.uInterpolation.value = 0;
 
     // generate shaders on-demand!
-    var fs = new AMI.DataFragmentShader(uniformsLayer1);
+    var fs = new AMI.DataFragmentShader(uniformShaderSegmentationLayer);
     var vs = new AMI.DataVertexShader();
     materialLayer1 = new THREE.ShaderMaterial({
         side: THREE.DoubleSide,
-        uniforms: uniformsLayer1,
+        uniforms: uniformShaderSegmentationLayer,
         vertexShader: vs.compute(),
         fragmentShader: fs.compute(),
     });
@@ -128,8 +128,8 @@ function handleSeries() {
         segmentationLUTO,
         discrete
     );
-    uniformsLayer1.uLut.value = 1;
-    uniformsLayer1.uTextureLUT.value = lutLayer1.texture;
+    uniformShaderSegmentationLayer.uLut.value = 1;
+    uniformShaderSegmentationLayer.uTextureLUT.value = lutLayer1.texture;
 
     buildGUI(stackHelper);
 }
