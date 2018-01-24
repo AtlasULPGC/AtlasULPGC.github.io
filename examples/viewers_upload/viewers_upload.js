@@ -3,16 +3,17 @@ import CoreUtils from 'base/core/core.utils';
 import LoadersVolume from 'base/loaders/loaders.volume';
 import HelpersStack from 'base/helpers/helpers.stack';
 import HelpersLut from 'base/helpers/helpers.lut';
-import CamerasOrthographic from 'base/cameras/cameras.orthographic';
 import ControlsOrthographic from 'base/controls/controls.trackballortho';
-
+import setCamera from './camera';
 // standard global variables
-let controls;
 let renderer;
-let scene;
-let camera;
 let threeD;
+[threeD, renderer] = setRenderer();
+let controls;
+let scene;
+let camera = setCamera();
 let lut;
+
 
 let ctrlDown = false;
 let drag = {
@@ -31,7 +32,6 @@ let camUtils = {
     convention: 'radio',
 };
 
-[threeD, renderer] = setRenderer();
 
 /**
  * Init the scene
@@ -57,10 +57,7 @@ function init() {
     // scene
     scene = new THREE.Scene();
     // camera
-    camera = new CamerasOrthographic(
-        threeD.clientWidth / -2, threeD.clientWidth / 2,
-        threeD.clientHeight / 2, threeD.clientHeight / -2,
-        0.1, 10000);
+
 
     // controls
     controls = new ControlsOrthographic(camera, threeD);
