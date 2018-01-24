@@ -26,12 +26,17 @@ export default function buildGUI(stackHelper, lut, camUtils, camera) {
     stackFolder.add(stackHelper.slice, 'interpolation', 0, 1).step(1).listen();
 
     // CREATE LUT
+    const domTarget = 'my-lut-canvases';
+    const predefinedLut = 'default';
+    const modeToCalculateLut = 'linear';
+    const color = [[0, 0, 0, 0], [1, 1, 1, 1]];
+    const opacity = [[0, 1], [1, 1]];
     lut = new HelpersLut(
-        'my-lut-canvases',
-        'default',
-        'linear',
-        [[0, 0, 0, 0], [1, 1, 1, 1]],
-        [[0, 1], [1, 1]]);
+        domTarget,
+        predefinedLut,
+        modeToCalculateLut,
+        color,
+        opacity);
     lut.luts = HelpersLut.presetLuts();
 
     let lutUpdate = stackFolder.add(
