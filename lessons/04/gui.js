@@ -108,6 +108,13 @@ function buildGUI(stackHelper) {
 
     window.addEventListener('resize', onWindowResize, false);
     onWindowResize();
+
+    window.addEventListener('click', onWindowClick, false);
+
+    function onWindowClick() {
+        alert('You have clicked');
+    }
+
 }
 
 var layerMix = {
