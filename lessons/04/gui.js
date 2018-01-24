@@ -49,8 +49,10 @@ function buildGUI(stackHelper) {
         stackHelper.slice.lutTexture = lutCTGrayImagesLayer.texture;
     });
 
+    const minIndex = 0;
+    const maxIndex = stack.dimensionsIJK.z - 1;
     var indexUpdate = layer0Folder
-        .add(stackHelper, 'index', 0, stack.dimensionsIJK.z - 1)
+        .add(stackHelper, 'index', minIndex, maxIndex)
         .step(1)
         .listen();
     indexUpdate.onChange(function () {
@@ -65,10 +67,9 @@ function buildGUI(stackHelper) {
 
     layer0Folder.open();
 
-    // layer mix folder
     var layerMixFolder = gui.addFolder('Segmentation');
-    var opacityLayerMix1 = layerMixFolder.add(layerMix, 'opacity1', 0, 1).step(0.01);
-    opacityLayerMix1.onChange(function (value) {
+    var opacitySegmentationLayer = layerMixFolder.add(layerMix, 'opacity1', 0, 1).step(0.01);
+    opacitySegmentationLayer.onChange(function (value) {
         uniformsLayerMix.uOpacity1.value = value;
     });
 
