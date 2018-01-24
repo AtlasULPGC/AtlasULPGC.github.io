@@ -1,25 +1,16 @@
-/**
- * Build GUI
- */
 function buildGUI(stackHelper) {
-    /**
-     * Update Layer 1
-     */
-    function updateLayer1() {
-        // update layer1 geometry...
+
+    function updateSegmentationLayer() {
+
         if (meshSegmentationLayer) {
-            // dispose geometry first
+
             meshSegmentationLayer.geometry.dispose();
             meshSegmentationLayer.geometry = stackHelper.slice.geometry;
             meshSegmentationLayer.geometry.verticesNeedUpdate = true;
         }
     }
 
-    /**
-     * Update layer mix
-     */
     function updateLayerMix() {
-        // update layer1 geometry...
         if (meshLayerMix) {
             sceneLayerMix.remove(meshLayerMix);
             meshLayerMix.material.dispose();
@@ -27,23 +18,27 @@ function buildGUI(stackHelper) {
             meshLayerMix.geometry.dispose();
             meshLayerMix.geometry = null;
 
-            // add mesh in this scene with right shaders...
             meshLayerMix = new THREE.Mesh(stackHelper.slice.geometry, materialLayerMix);
-            // go the LPS space
+
             meshLayerMix.applyMatrix(stackHelper.stack._ijk2LPS);
 
             sceneLayerMix.add(meshLayerMix);
         }
     }
 
-    var stack = stackHelper.stack;
+    function setDataObjectToInteractBetweenBrowserAndGui() {
+        var stack = stackHelper.stack;
 
-    var gui = new dat.GUI({
-        autoPlace: false,
-    });
+        var gui = new dat.GUI({
+            autoPlace: false,
+        });
 
-    var customContainer = document.getElementById('my-gui-container');
-    customContainer.appendChild(gui.domElement);
+        var customContainer = document.getElementById('my-gui-container');
+        customContainer.appendChild(gui.domElement);
+        return {stack, gui};
+    }
+
+    var {stack, gui} = setDataObjectToInteractBetweenBrowserAndGui();
 
     var layer0Folder = gui.addFolder('CT');
     layer0Folder.add(stackHelper.slice, 'invert');
@@ -59,7 +54,7 @@ function buildGUI(stackHelper) {
         .step(1)
         .listen();
     indexUpdate.onChange(function () {
-        updateLayer1();
+        updateSegmentationLayer();
         updateLayerMix();
     });
 
@@ -93,11 +88,11 @@ function buildGUI(stackHelper) {
             stackHelper.index -= 1;
         }
 
-        updateLayer1();
+        updateSegmentationLayer();
         updateLayerMix();
     });
 
-    updateLayer1();
+    updateSegmentationLayer();
     updateLayerMix();
 
     /**
