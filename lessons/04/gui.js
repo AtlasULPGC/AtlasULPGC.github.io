@@ -1,4 +1,7 @@
 function buildGUI(stackHelper) {
+    var layerMix = {
+        opacity1: 1.0,
+    };
 
     function updateSegmentationLayer() {
 
@@ -112,11 +115,14 @@ function buildGUI(stackHelper) {
     window.addEventListener('click', onWindowClick, false);
 
     function onWindowClick(event) {
-        alert('You have clicked: ' + event.clientX + " " + event.clientY);
+        if (event.clientX > 200 && event.clientX < 300) {
+            alert('You have clicked: ' + event.clientX + " " + event.clientY + ' on the segment');
+        } else {
+            alert('You have clicked: ' + event.clientX + " " + event.clientY + ' out of the segment');
+        }
+
+
     }
 
-}
 
-var layerMix = {
-    opacity1: 1.0,
-};
+}
