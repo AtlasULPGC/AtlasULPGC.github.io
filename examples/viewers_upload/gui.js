@@ -92,7 +92,8 @@ export default function buildGUI(stackHelper, lut, camUtils, camera) {
         updateLabels(camera.directionsLabel, stack.modality);
 
         index.__max = stackHelper.orientationMaxIndex;
-        stackHelper.index = Math.floor(index.__max / 2);
+        const initialSliderIsAtHalf = Math.floor(index.__max / 2);
+        stackHelper.index = initialSliderIsAtHalf;
     });
 
     let conventionUpdate = cameraFolder.add(
