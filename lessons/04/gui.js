@@ -111,8 +111,8 @@ function buildGUI(stackHelper) {
 
     window.addEventListener('click', onWindowClick, false);
 
-    function onWindowClick() {
-        alert('You have clicked');
+    function onWindowClick(event) {
+        alert('You have clicked: ' + event.clientX + " " + event.clientY);
     }
 
 }

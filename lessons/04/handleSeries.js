@@ -3,6 +3,7 @@ function handleSeries() {
     var mergedSeries = loader.data[0].mergeSeries(loader.data);
     var ctGrayImagesStack = mergedSeries[0].stack[0];
     var segmentationStack = mergedSeries[1].stack[0];
+    console.log(segmentationStack);
     loader.free();
     loader = null;
 
