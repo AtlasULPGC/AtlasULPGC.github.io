@@ -15,23 +15,40 @@ function setCamera() {
     );
 }
 
-function setCameraOnTarget(ctGrayImagesStack) {
-//
-    // set camera
+function setCameraAxisDimensions(ctGrayImagesStack) {
     var worldbb = ctGrayImagesStack.worldBoundingBox();
-    var lpsDims = new THREE.Vector3(worldbb[1] - worldbb[0], worldbb[3] - worldbb[2], worldbb[5] - worldbb[4]);
+    const xAxisRange = worldbb[1] - worldbb[0];
+    const yAxisRange = worldbb[3] - worldbb[2];
+    const zAxisRange = worldbb[5] - worldbb[4];
+    var lpsDims = new THREE.Vector3(xAxisRange, yAxisRange, zAxisRange);
+    return lpsDims;
+}
 
-    // box: {halfDimensions, center}
+function setCameraAxisCenter(lpsDims, ctGrayImagesStack) {
+    const xAxisCenter = lpsDims.x + 10;
+    const yAxisCenter = lpsDims.y + 10;
+    const zAxisCenter = lpsDims.z + 10;
     var box = {
         center: ctGrayImagesStack.worldCenter().clone(),
-        halfDimensions: new THREE.Vector3(lpsDims.x + 10, lpsDims.y + 10, lpsDims.z + 10)
+        halfDimensions: new THREE.Vector3(xAxisCenter, yAxisCenter, zAxisCenter)
     };
+    return box;
+}
 
-    // init and zoom
+function setCanvasInitAndZoom() {
     var canvas = {
         width: threeD.clientWidth,
         height: threeD.clientHeight,
     };
+    return canvas;
+}
+
+function setCameraOnTarget(ctGrayImagesStack) {
+    var lpsDims = setCameraAxisDimensions(ctGrayImagesStack);
+
+    var box = setCameraAxisCenter(lpsDims, ctGrayImagesStack);
+
+    var canvas = setCanvasInitAndZoom();
     camera.directions = [ctGrayImagesStack.xCosine, ctGrayImagesStack.yCosine, ctGrayImagesStack.zCosine];
     camera.box = box;
     camera.canvas = canvas;
