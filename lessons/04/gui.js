@@ -7,11 +7,11 @@ function buildGUI(stackHelper) {
      */
     function updateLayer1() {
         // update layer1 geometry...
-        if (meshLayer1) {
+        if (meshSegmentationLayer) {
             // dispose geometry first
-            meshLayer1.geometry.dispose();
-            meshLayer1.geometry = stackHelper.slice.geometry;
-            meshLayer1.geometry.verticesNeedUpdate = true;
+            meshSegmentationLayer.geometry.dispose();
+            meshSegmentationLayer.geometry = stackHelper.slice.geometry;
+            meshSegmentationLayer.geometry.verticesNeedUpdate = true;
         }
     }
 

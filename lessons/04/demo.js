@@ -11,7 +11,7 @@ var sceneLayerCT;
 //
 var lutLayer0;
 var sceneLayerSegmentation;
-var meshLayer1;
+var meshSegmentationLayer;
 var uniformShaderSegmentationLayer;
 var materialSegmentationLayer;
 var lutLayer1;
