@@ -57,11 +57,11 @@ function init() {
     animate();
 }
 
+
+
 window.onload = function () {
     // hookup load button
-    document.getElementById('buttoninput').onclick = function () {
-        document.getElementById('filesinput').click();
-    };
+    setLoadButtonWithFileInput();
 
     // init threeJS...
     init();
