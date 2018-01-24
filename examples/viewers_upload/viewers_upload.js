@@ -67,18 +67,7 @@ window.onload = function () {
     init();
 
 
-    /**
-     * Filter array of data by extension
-     * extension {String}
-     * item {Object}
-     * @return {Boolean}
-     */
-    function _filterByExtension(extension, item) {
-        if (item.extension.toUpperCase() === extension.toUpperCase()) {
-            return true;
-        }
-        return false;
-    }
+
 
 
     // hook up file input listener

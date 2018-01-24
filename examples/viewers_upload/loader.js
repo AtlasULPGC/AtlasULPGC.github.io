@@ -129,3 +129,10 @@ export default function readMultipleFiles(evt, scene, camera, lut, camUtils, con
             window.console.log(error);
         });
 }
+
+function _filterByExtension(extension, item) {
+    if (item.extension.toUpperCase() === extension.toUpperCase()) {
+        return true;
+    }
+    return false;
+}
