@@ -75,7 +75,6 @@ function buildGUI(stackHelper) {
 
     layerMixFolder.open();
 
-    // hook up callbacks
     controls.addEventListener('OnScroll', function (e) {
         if (e.delta > 0) {
             if (stackHelper.index >= stack.dimensionsIJK.z - 1) {
@@ -96,9 +95,6 @@ function buildGUI(stackHelper) {
     updateSegmentationLayer();
     updateLayerMix();
 
-    /**
-     * Handle window resize
-     */
     function onWindowResize() {
         var threeD = document.getElementById('container');
         camera.canvas = {

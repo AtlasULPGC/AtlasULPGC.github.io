@@ -1,5 +1,3 @@
-
-
 function handleSeries() {
 
     var mergedSeries = loader.data[0].mergeSeries(loader.data);
@@ -15,16 +13,6 @@ function handleSeries() {
 
     sceneLayerCT.add(stackHelper);
 
-    //
-    //
-    // create labelmap....
-    // we only care about the geometry....
-    // get first stack from series
-    // prepare it
-    // * ijk2LPS transforms
-    // * Z spacing
-    // * etc.
-    //
     prepareStackToCreateLabelMap(segmentationStack);
 
     var currentRawTexturesForLabelMap = setRawTextureForLabelMap(segmentationStack);
@@ -35,12 +23,10 @@ function handleSeries() {
 
     setMeshSegmentationLayer(stackHelper, ctGrayImagesStack);
 
-    // Create the Mix layer
     setMixLayer();
     setMeshLayerMix(stackHelper, ctGrayImagesStack);
     setCameraOnTarget(ctGrayImagesStack);
 
-    // CREATE LUT
     const {lut, lut0} = setLutForGrayImageCTLayer();
     setLutForSegmentationLayer(segmentationStack, lut, lut0);
 
