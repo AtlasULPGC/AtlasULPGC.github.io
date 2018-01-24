@@ -3,15 +3,15 @@ import CoreUtils from 'base/core/core.utils';
 import LoadersVolume from 'base/loaders/loaders.volume';
 import HelpersStack from 'base/helpers/helpers.stack';
 import HelpersLut from 'base/helpers/helpers.lut';
-import ControlsOrthographic from 'base/controls/controls.trackballortho';
 import setCamera from './camera';
+import setControls from './controls';
 // standard global variables
 let renderer;
 let threeD;
 [threeD, renderer] = setRenderer();
-let controls;
-let scene;
 let camera = setCamera();
+let controls = setControls(controls, camera);
+let scene;
 let lut;
 
 
@@ -60,10 +60,7 @@ function init() {
 
 
     // controls
-    controls = new ControlsOrthographic(camera, threeD);
-    controls.staticMoving = true;
-    controls.noRotate = true;
-    camera.controls = controls;
+
 
     animate();
 }
