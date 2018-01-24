@@ -51,8 +51,10 @@ export default function buildGUI(stackHelper, lut, camUtils, camera) {
         stackHelper.slice.lutTexture = lut.texture;
     });
 
+    const minIndex = 0;
+    const maxIndex = stack.dimensionsIJK.z - 1;
     let index = stackFolder.add(
-        stackHelper, 'index', 0, stack.dimensionsIJK.z - 1).step(1).listen();
+        stackHelper, 'index', minIndex, maxIndex).step(1).listen();
     stackFolder.open();
 
     // camera
