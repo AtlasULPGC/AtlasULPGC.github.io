@@ -52959,6 +52959,11 @@ var ShadersUniform = function () {
         type: 'v3',
         value: [.8, .8, .8],
         typeGLSL: 'vec3'
+      },
+      'uAlgorithm': {
+        type: 'i',
+        value: 0,
+        typeGLSL: 'int'
       }
     };
   };
@@ -53043,7 +53048,7 @@ var ShadersFragment = function () {
 
   ShadersFragment.prototype.main = function main() {
     // need to pre-call main to fill up the functions list
-    this._main = '\nvoid getIntensity(in vec3 dataCoordinates, out float intensity, out vec3 gradient){\n\n  vec4 dataValue = vec4(0., 0., 0., 0.);\n  ' + Object(__WEBPACK_IMPORTED_MODULE_0__interpolation_shaders_interpolation__["a" /* default */])(this, 'dataCoordinates', 'dataValue', 'gradient') + '\n\n  intensity = dataValue.r;\n\n  // rescale/slope\n  intensity = intensity*uRescaleSlopeIntercept[0] + uRescaleSlopeIntercept[1];\n  // window level\n  float windowMin = uWindowCenterWidth[0] - uWindowCenterWidth[1] * 0.5;\n  intensity = ( intensity - windowMin ) / uWindowCenterWidth[1];\n}\n\nmat4 inverse(mat4 m) {\n  float\n    a00 = m[0][0], a01 = m[0][1], a02 = m[0][2], a03 = m[0][3],\n    a10 = m[1][0], a11 = m[1][1], a12 = m[1][2], a13 = m[1][3],\n    a20 = m[2][0], a21 = m[2][1], a22 = m[2][2], a23 = m[2][3],\n    a30 = m[3][0], a31 = m[3][1], a32 = m[3][2], a33 = m[3][3],\n\n    b00 = a00 * a11 - a01 * a10,\n    b01 = a00 * a12 - a02 * a10,\n    b02 = a00 * a13 - a03 * a10,\n    b03 = a01 * a12 - a02 * a11,\n    b04 = a01 * a13 - a03 * a11,\n    b05 = a02 * a13 - a03 * a12,\n    b06 = a20 * a31 - a21 * a30,\n    b07 = a20 * a32 - a22 * a30,\n    b08 = a20 * a33 - a23 * a30,\n    b09 = a21 * a32 - a22 * a31,\n    b10 = a21 * a33 - a23 * a31,\n    b11 = a22 * a33 - a23 * a32,\n\n    det = b00 * b11 - b01 * b10 + b02 * b09 + b03 * b08 - b04 * b07 + b05 * b06;\n\n  return mat4(\n    a11 * b11 - a12 * b10 + a13 * b09,\n    a02 * b10 - a01 * b11 - a03 * b09,\n    a31 * b05 - a32 * b04 + a33 * b03,\n    a22 * b04 - a21 * b05 - a23 * b03,\n    a12 * b08 - a10 * b11 - a13 * b07,\n    a00 * b11 - a02 * b08 + a03 * b07,\n    a32 * b02 - a30 * b05 - a33 * b01,\n    a20 * b05 - a22 * b02 + a23 * b01,\n    a10 * b10 - a11 * b08 + a13 * b06,\n    a01 * b08 - a00 * b10 - a03 * b06,\n    a30 * b04 - a31 * b02 + a33 * b00,\n    a21 * b02 - a20 * b04 - a23 * b00,\n    a11 * b07 - a10 * b09 - a12 * b06,\n    a00 * b09 - a01 * b07 + a02 * b06,\n    a31 * b01 - a30 * b03 - a32 * b00,\n    a20 * b03 - a21 * b01 + a22 * b00) / det;\n}\n\n/**\n * Adapted from original sources\n * \n * Original code: \n * http://jamie-wong.com/2016/07/15/ray-marching-signed-distance-functions/\n * https://www.shadertoy.com/view/lt33z7\n * \n * The vec3 returned is the RGB color of the light\'s contribution.\n *\n * k_a: Ambient color\n * k_d: Diffuse color\n * k_s: Specular color\n * alpha: Shininess coefficient\n * p: position of point being lit\n * eye: the position of the camera\n * lightPos: the position of the light\n * lightIntensity: color/intensity of the light\n *\n * See https://en.wikipedia.org/wiki/Phong_reflection_model#Description\n */\nvec3 phongShading(vec3 k_a, vec3 k_d, vec3 k_s, float shininess, vec3 p, vec3 eye,\n  vec3 lightPos, vec3 lightIntensity, vec3 normal) {\n  vec3 N = normal;\n  vec3 L = normalize(lightPos - p);\n  vec3 V = normalize(eye - p);\n  vec3 R = normalize(reflect(-L, N));\n\n  float dotLN = dot(L, N);\n  float dotRV = dot(R, V);\n\n  if (dotLN < 0.0) {\n    // Light not visible from this point on the surface\n    return k_a;\n  } \n\n  if (dotRV < 0.0) {\n    // Light reflection in opposite direction as viewer, apply only diffuse\n    // component\n    return k_a + lightIntensity * (k_d * dotLN);\n  }\n\n  return k_a + lightIntensity * (k_d * dotLN  + k_s * pow(dotRV, shininess));\n}\n\nvoid main(void) {\n  const int maxSteps = 1024;\n\n  // the ray\n  vec3 rayOrigin = cameraPosition;\n  vec3 rayDirection = normalize(vPos.xyz - rayOrigin);\n\n  vec3 lightOrigin = uLightPositionInCamera == 1 ? cameraPosition : uLightPosition;\n\n  // the Axe-Aligned B-Box\n  vec3 AABBMin = vec3(uWorldBBox[0], uWorldBBox[2], uWorldBBox[4]);\n  vec3 AABBMax = vec3(uWorldBBox[1], uWorldBBox[3], uWorldBBox[5]);\n\n  // Intersection ray/bbox\n  float tNear, tFar;\n  bool intersect = false;\n  ' + __WEBPACK_IMPORTED_MODULE_1__helpers_shaders_helpers_intersectBox__["a" /* default */].api(this, 'rayOrigin', 'rayDirection', 'AABBMin', 'AABBMax', 'tNear', 'tFar', 'intersect') + '\n  if (tNear < 0.0) tNear = 0.0;\n\n  // init the ray marching\n  float tCurrent = tNear;\n  float tStep = (tFar - tNear) / float(uSteps);\n  vec4 accumulatedColor = vec4(0.0);\n  float accumulatedAlpha = 0.0;\n  mat4 dataToWorld = inverse(uWorldToData);\n\n  for(int rayStep = 0; rayStep < maxSteps; rayStep++){\n    vec3 currentPosition = rayOrigin + rayDirection * tCurrent;\n    // some non-linear FUN\n    // some occlusion issue to be fixed\n    vec3 transformedPosition = currentPosition; //transformPoint(currentPosition, uAmplitude, uFrequence);\n    // world to data coordinates\n    // rounding trick\n    // first center of first voxel in data space is CENTERED on (0,0,0)\n    vec4 dataCoordinatesRaw = uWorldToData * vec4(transformedPosition, 1.0);\n    vec3 currentVoxel = vec3(dataCoordinatesRaw.x, dataCoordinatesRaw.y, dataCoordinatesRaw.z);\n    float intensity = 0.0;\n    vec3 gradient = vec3(0., 0., 0.);\n    getIntensity(currentVoxel, intensity, gradient);\n    // map gradient to world space and normalize before using\n    // we avoid to call "normalize" as it may be undefined if vector length == 0.\n    gradient = (vec3(dataToWorld * vec4(gradient, 0.)));\n    if (length(gradient) > 0.0) {\n      gradient = normalize(gradient);\n    }\n\n    vec4 colorSample;\n    float alphaSample;\n    if(uLut == 1){\n      vec4 colorFromLUT = texture2D( uTextureLUT, vec2( intensity, 1.0) );\n      // 256 colors\n      colorSample = colorFromLUT;\n      alphaSample = colorFromLUT.a;\n    }\n    else{\n      alphaSample = intensity;\n      colorSample.r = colorSample.g = colorSample.b = intensity;\n    }\n\n    if (uShading == 1 && uInterpolation != 0) {\n      vec3 ambientComponent = uSampleColorToAmbient == 1 ? colorSample.xyz : uAmbientColor;\n      ambientComponent *= uAmbient;\n      vec3 diffuseComponent = uSampleColorToDiffuse == 1 ? colorSample.xyz : uDiffuseColor;\n      diffuseComponent *= uDiffuse;\n      vec3 specularComponent = uSpecular * uSpecularColor;\n      float shininess = uShininess;\n      vec3 intensity = uIntensity;\n\n      colorSample.xyz += phongShading(\n        ambientComponent,\n        diffuseComponent,\n        specularComponent,\n        shininess,\n        currentPosition.xyz,\n        rayOrigin.xyz,\n        lightOrigin.xyz,\n        intensity,\n        gradient);\n    }\n\n    alphaSample = 1.0 - pow((1.0- alphaSample),tStep*uAlphaCorrection);\n    alphaSample *= (1.0 - accumulatedAlpha);\n\n    accumulatedColor += alphaSample * colorSample;\n    accumulatedAlpha += alphaSample;\n\n    tCurrent += tStep;\n\n    if(tCurrent > tFar || accumulatedAlpha >= 1.0 ) break;\n  }\n\n  gl_FragColor = vec4(accumulatedColor.xyz, accumulatedAlpha);\n}\n   ';
+    this._main = '\nvoid getIntensity(in vec3 dataCoordinates, out float intensity, out vec3 gradient){\n\n  vec4 dataValue = vec4(0., 0., 0., 0.);\n  ' + Object(__WEBPACK_IMPORTED_MODULE_0__interpolation_shaders_interpolation__["a" /* default */])(this, 'dataCoordinates', 'dataValue', 'gradient') + '\n\n  intensity = dataValue.r;\n\n  // rescale/slope\n  intensity = intensity*uRescaleSlopeIntercept[0] + uRescaleSlopeIntercept[1];\n  // window level\n  float windowMin = uWindowCenterWidth[0] - uWindowCenterWidth[1] * 0.5;\n  intensity = ( intensity - windowMin ) / uWindowCenterWidth[1];\n}\n\nmat4 inverse(mat4 m) {\n  float\n    a00 = m[0][0], a01 = m[0][1], a02 = m[0][2], a03 = m[0][3],\n    a10 = m[1][0], a11 = m[1][1], a12 = m[1][2], a13 = m[1][3],\n    a20 = m[2][0], a21 = m[2][1], a22 = m[2][2], a23 = m[2][3],\n    a30 = m[3][0], a31 = m[3][1], a32 = m[3][2], a33 = m[3][3],\n\n    b00 = a00 * a11 - a01 * a10,\n    b01 = a00 * a12 - a02 * a10,\n    b02 = a00 * a13 - a03 * a10,\n    b03 = a01 * a12 - a02 * a11,\n    b04 = a01 * a13 - a03 * a11,\n    b05 = a02 * a13 - a03 * a12,\n    b06 = a20 * a31 - a21 * a30,\n    b07 = a20 * a32 - a22 * a30,\n    b08 = a20 * a33 - a23 * a30,\n    b09 = a21 * a32 - a22 * a31,\n    b10 = a21 * a33 - a23 * a31,\n    b11 = a22 * a33 - a23 * a32,\n\n    det = b00 * b11 - b01 * b10 + b02 * b09 + b03 * b08 - b04 * b07 + b05 * b06;\n\n  return mat4(\n    a11 * b11 - a12 * b10 + a13 * b09,\n    a02 * b10 - a01 * b11 - a03 * b09,\n    a31 * b05 - a32 * b04 + a33 * b03,\n    a22 * b04 - a21 * b05 - a23 * b03,\n    a12 * b08 - a10 * b11 - a13 * b07,\n    a00 * b11 - a02 * b08 + a03 * b07,\n    a32 * b02 - a30 * b05 - a33 * b01,\n    a20 * b05 - a22 * b02 + a23 * b01,\n    a10 * b10 - a11 * b08 + a13 * b06,\n    a01 * b08 - a00 * b10 - a03 * b06,\n    a30 * b04 - a31 * b02 + a33 * b00,\n    a21 * b02 - a20 * b04 - a23 * b00,\n    a11 * b07 - a10 * b09 - a12 * b06,\n    a00 * b09 - a01 * b07 + a02 * b06,\n    a31 * b01 - a30 * b03 - a32 * b00,\n    a20 * b03 - a21 * b01 + a22 * b00) / det;\n}\n\n/**\n * Adapted from original sources\n * \n * Original code: \n * http://jamie-wong.com/2016/07/15/ray-marching-signed-distance-functions/\n * https://www.shadertoy.com/view/lt33z7\n * \n * The vec3 returned is the RGB color of the light\'s contribution.\n *\n * k_a: Ambient color\n * k_d: Diffuse color\n * k_s: Specular color\n * alpha: Shininess coefficient\n * p: position of point being lit\n * eye: the position of the camera\n * lightPos: the position of the light\n * lightIntensity: color/intensity of the light\n *\n * See https://en.wikipedia.org/wiki/Phong_reflection_model#Description\n */\nvec3 phongShading(vec3 k_a, vec3 k_d, vec3 k_s, float shininess, vec3 p, vec3 eye,\n  vec3 lightPos, vec3 lightIntensity, vec3 normal) {\n  vec3 N = normal;\n  vec3 L = lightPos - p;\n  if (length(L) > 0.) {\n    L = L / length(L);\n  }\n  vec3 V = eye - p;\n  if (length(V) > 0.) {\n    V = V / length(V);\n  }\n  vec3 R = reflect(-L, N);\n  if (length(R) > 0.) {\n    R = R / length(R);\n  }\n\n  // https://en.wikipedia.org/wiki/Blinn%E2%80%93Phong_shading_model\n  vec3 h = L + V;\n  vec3 H = h;\n  if (length(h) > 0.) {\n    H = H / length(h);\n  }\n\n  float dotLN = dot(L, N);\n  float dotRV = dot(R, V);\n\n  if (dotLN < 0.) {\n    // Light not visible from this point on the surface\n    return k_a;\n  } \n\n  if (dotRV < 0.) {\n    // Light reflection in opposite direction as viewer, apply only diffuse\n    // component\n    return k_a + lightIntensity * (k_d * dotLN);\n  }\n\n  float specAngle = max(dot(H, normal), 0.0);\n  float specular = pow(dotRV, shininess); //pow(specAngle, shininess); // \n  return k_a + lightIntensity * (k_d * dotLN  + k_s * specular);\n}\n\n\nfloat PHI = 1.61803398874989484820459 * 00000.1; // Golden Ratio   \nfloat PI  = 3.14159265358979323846264 * 00000.1; // PI\nfloat SRT = 1.41421356237309504880169 * 10000.0; // Square Root of Two\n\n// Gold Noise function ?  Should use a texture\n//\nfloat gold_noise(in vec2 coordinate, in float seed)\n{\n    return fract(sin(dot(coordinate*seed, vec2(PHI, PI)))*SRT);\n}\n\nvoid main(void) {\n  const int maxSteps = 1024;\n\n  // the ray\n  vec3 rayOrigin = cameraPosition;\n  vec3 rayDirection = normalize(vPos.xyz - rayOrigin);\n\n  vec3 lightOrigin = uLightPositionInCamera == 1 ? cameraPosition : uLightPosition;\n\n  // the Axe-Aligned B-Box\n  vec3 AABBMin = vec3(uWorldBBox[0], uWorldBBox[2], uWorldBBox[4]);\n  vec3 AABBMax = vec3(uWorldBBox[1], uWorldBBox[3], uWorldBBox[5]);\n\n  // Intersection ray/bbox\n  float tNear, tFar;\n  bool intersect = false;\n  ' + __WEBPACK_IMPORTED_MODULE_1__helpers_shaders_helpers_intersectBox__["a" /* default */].api(this, 'rayOrigin', 'rayDirection', 'AABBMin', 'AABBMax', 'tNear', 'tFar', 'intersect') + '\n  if (tNear < 0.0) tNear = 0.0;\n\n  // init the ray marching\n  float tCurrent = tNear;\n  float tStep = (tFar - tNear) / float(uSteps);\n  vec4 accumulatedColor = vec4(0.0);\n  float accumulatedAlpha = 0.0;\n\n  // MIP volume rendering\n  float maxIntensity = 0.0;\n\n  mat4 dataToWorld = inverse(uWorldToData);\n\n  // rayOrigin -= rayDirection * 0.1; // gold_noise(vPos.xz, vPos.y) / 100.;  \n\n  for(int rayStep = 0; rayStep < maxSteps; rayStep++){\n    vec3 currentPosition = rayOrigin + rayDirection * tCurrent;\n    // some non-linear FUN\n    // some occlusion issue to be fixed\n    vec3 transformedPosition = currentPosition; //transformPoint(currentPosition, uAmplitude, uFrequence);\n    // world to data coordinates\n    // rounding trick\n    // first center of first voxel in data space is CENTERED on (0,0,0)\n    vec4 dataCoordinatesRaw = uWorldToData * vec4(transformedPosition, 1.0);\n    vec3 currentVoxel = vec3(dataCoordinatesRaw.x, dataCoordinatesRaw.y, dataCoordinatesRaw.z);\n    float intensity = 0.0;\n    vec3 gradient = vec3(0., 0., 0.);\n    getIntensity(currentVoxel, intensity, gradient);\n    // map gradient to world space and normalize before using\n    // we avoid to call "normalize" as it may be undefined if vector length == 0.\n    gradient = (vec3(dataToWorld * vec4(gradient, 0.)));\n    if (length(gradient) > 0.0) {\n      gradient = normalize(gradient);\n    }\n\n    vec4 colorSample;\n    float alphaSample;\n    if(uLut == 1){\n      vec4 colorFromLUT = texture2D( uTextureLUT, vec2( intensity, 1.0) );\n      // 256 colors\n      colorSample = colorFromLUT;\n      alphaSample = colorFromLUT.a;\n    }\n    else{\n      alphaSample = intensity;\n      colorSample.r = colorSample.g = colorSample.b = intensity;\n    }\n\n    // ray marching algorithm\n    // shading on\n    // interpolation on\n    if (uAlgorithm == 0 && uShading == 1 && uInterpolation != 0) {\n      //  && alphaSample > .3\n      vec3 ambientComponent = uSampleColorToAmbient == 1 ? colorSample.xyz : uAmbientColor;\n      ambientComponent *= uAmbient;\n      vec3 diffuseComponent = uSampleColorToDiffuse == 1 ? colorSample.xyz : uDiffuseColor;\n      diffuseComponent *= uDiffuse;\n      vec3 specularComponent = uSpecular * uSpecularColor;\n      float shininess = uShininess;\n      vec3 vIntensity = uIntensity;\n\n      colorSample.xyz += phongShading(\n        ambientComponent,\n        diffuseComponent,\n        specularComponent,\n        shininess,\n        currentPosition.xyz,\n        rayOrigin.xyz,\n        lightOrigin.xyz,\n        vIntensity,\n        gradient);\n    }\n\n    alphaSample = 1.0 - pow((1.0- alphaSample),tStep*uAlphaCorrection);\n    alphaSample *= (1.0 - accumulatedAlpha);\n\n    accumulatedColor += alphaSample * colorSample;\n    accumulatedAlpha += alphaSample;\n\n    tCurrent += tStep;\n\n    if (tCurrent > tFar || (uAlgorithm == 0 && accumulatedAlpha >= 1.0)) break;\n\n    if (uAlgorithm == 1 && (intensity >= maxIntensity)) {\n      maxIntensity = intensity;\n      accumulatedColor = colorSample;\n      accumulatedAlpha = 1.;\n    }\n  }\n\n  gl_FragColor = vec4(accumulatedColor.xyz, accumulatedAlpha);\n}\n   ';
   };
 
   ShadersFragment.prototype.compute = function compute() {
@@ -66572,6 +66577,7 @@ var HelpersVolumeRendering = function (_HelpersMaterialMixin) {
     _this._material = null;
     _this._geometry = null;
 
+    _this._algorithm = 0; // ray marching
     _this._interpolation = 1; // default to trilinear interpolation
     _this._shading = 1; // shading is on by default
     _this._shininess = 10.0;
@@ -66624,6 +66630,7 @@ var HelpersVolumeRendering = function (_HelpersMaterialMixin) {
     this._uniforms.uInterpolation.value = this._interpolation;
     this._uniforms.uShading.value = this._shading;
     this._uniforms.uShininess.value = this._shininess;
+    this._uniforms.uAlgorithm.value = this._algorithm;
 
     this._createMaterial({
       side: THREE.BackSide,
@@ -66682,6 +66689,15 @@ var HelpersVolumeRendering = function (_HelpersMaterialMixin) {
     set: function set(shininess) {
       this._shininess = shininess;
       this._uniforms.uShininess.value = this._shininess;
+    }
+  }, {
+    key: 'algorithm',
+    get: function get() {
+      return this._algorithm;
+    },
+    set: function set(algorithm) {
+      this._algorithm = algorithm;
+      this._uniforms.uAlgorithm.value = this._algorithm;
     }
   }]);
 
@@ -94093,476 +94109,476 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
  */
 
 var WidgetsBiRuler = function (_WidgetsBase) {
-    _inherits(WidgetsBiRuler, _WidgetsBase);
+        _inherits(WidgetsBiRuler, _WidgetsBase);
 
-    function WidgetsBiRuler(targetMesh, controls, camera, container) {
-        _classCallCheck(this, WidgetsBiRuler);
+        function WidgetsBiRuler(targetMesh, controls, camera, container) {
+                _classCallCheck(this, WidgetsBiRuler);
 
-        var _this = _possibleConstructorReturn(this, _WidgetsBase.call(this));
+                var _this = _possibleConstructorReturn(this, _WidgetsBase.call(this));
 
-        _this._targetMesh = targetMesh;
-        _this._controls = controls;
-        _this._camera = camera;
-        _this._container = container;
+                _this._targetMesh = targetMesh;
+                _this._controls = controls;
+                _this._camera = camera;
+                _this._container = container;
 
-        _this._active = true;
-        _this._initOrtho = false;
+                _this._active = true;
+                _this._initOrtho = false;
 
-        _this._worldPosition = new __WEBPACK_IMPORTED_MODULE_2_three__["f" /* Vector3 */]();
-        if (_this._targetMesh !== null) {
-            _this._worldPosition = _this._targetMesh.position;
+                _this._worldPosition = new __WEBPACK_IMPORTED_MODULE_2_three__["f" /* Vector3 */]();
+                if (_this._targetMesh !== null) {
+                        _this._worldPosition = _this._targetMesh.position;
+                }
+
+                // mesh stuff
+                _this._material = null;
+                _this._geometry = null;
+                _this._mesh = null;
+
+                // dom stuff
+                _this._line = null;
+                _this._distance = null;
+
+                // add handles
+                _this._handles = [];
+
+                // first handle
+                var firstHandle = new __WEBPACK_IMPORTED_MODULE_1__widgets_handle__["a" /* default */](_this._targetMesh, _this._controls, _this._camera, _this._container);
+                firstHandle.worldPosition = _this._worldPosition;
+                firstHandle.hovered = true;
+                _this.add(firstHandle);
+
+                _this._handles.push(firstHandle);
+
+                var secondHandle = new __WEBPACK_IMPORTED_MODULE_1__widgets_handle__["a" /* default */](_this._targetMesh, _this._controls, _this._camera, _this._container);
+                secondHandle.worldPosition = _this._worldPosition;
+                secondHandle.hovered = true;
+                // active and tracking might be redundant
+                secondHandle.active = true;
+                secondHandle.tracking = true;
+                _this.add(secondHandle);
+
+                _this._handles.push(secondHandle);
+
+                // third handle
+                var thirdHandle = new __WEBPACK_IMPORTED_MODULE_1__widgets_handle__["a" /* default */](_this._targetMesh, _this._controls, _this._camera, _this._container);
+                thirdHandle.worldPosition = _this._worldPosition;
+                thirdHandle.hovered = true;
+                _this.add(thirdHandle);
+
+                _this._handles.push(thirdHandle);
+
+                // fourth handle
+                var fourthHandle = new __WEBPACK_IMPORTED_MODULE_1__widgets_handle__["a" /* default */](_this._targetMesh, _this._controls, _this._camera, _this._container);
+                fourthHandle.worldPosition = _this._worldPosition;
+                fourthHandle.hovered = true;
+                _this.add(fourthHandle);
+
+                _this._handles.push(fourthHandle);
+
+                // Create ruler
+                _this.create();
+
+                _this.onMove = _this.onMove.bind(_this);
+                _this.addEventListeners();
+
+                _this._orientation = null;
+                _this._slice = null;
+                return _this;
         }
 
-        // mesh stuff
-        _this._material = null;
-        _this._geometry = null;
-        _this._mesh = null;
-
-        // dom stuff
-        _this._line = null;
-        _this._distance = null;
-
-        // add handles
-        _this._handles = [];
-
-        // first handle
-        var firstHandle = new __WEBPACK_IMPORTED_MODULE_1__widgets_handle__["a" /* default */](_this._targetMesh, _this._controls, _this._camera, _this._container);
-        firstHandle.worldPosition = _this._worldPosition;
-        firstHandle.hovered = true;
-        _this.add(firstHandle);
-
-        _this._handles.push(firstHandle);
-
-        var secondHandle = new __WEBPACK_IMPORTED_MODULE_1__widgets_handle__["a" /* default */](_this._targetMesh, _this._controls, _this._camera, _this._container);
-        secondHandle.worldPosition = _this._worldPosition;
-        secondHandle.hovered = true;
-        // active and tracking might be redundant
-        secondHandle.active = true;
-        secondHandle.tracking = true;
-        _this.add(secondHandle);
-
-        _this._handles.push(secondHandle);
-
-        // third handle
-        var thirdHandle = new __WEBPACK_IMPORTED_MODULE_1__widgets_handle__["a" /* default */](_this._targetMesh, _this._controls, _this._camera, _this._container);
-        thirdHandle.worldPosition = _this._worldPosition;
-        thirdHandle.hovered = true;
-        _this.add(thirdHandle);
-
-        _this._handles.push(thirdHandle);
-
-        // fourth handle
-        var fourthHandle = new __WEBPACK_IMPORTED_MODULE_1__widgets_handle__["a" /* default */](_this._targetMesh, _this._controls, _this._camera, _this._container);
-        fourthHandle.worldPosition = _this._worldPosition;
-        fourthHandle.hovered = true;
-        _this.add(fourthHandle);
-
-        _this._handles.push(fourthHandle);
-
-        // Create ruler
-        _this.create();
-
-        _this.onMove = _this.onMove.bind(_this);
-        _this.addEventListeners();
-
-        _this._orientation = null;
-        _this._slice = null;
-        return _this;
-    }
-
-    WidgetsBiRuler.prototype.addEventListeners = function addEventListeners() {
-        this._container.addEventListener('mousewheel', this.onMove);
-        this._container.addEventListener('DOMMouseScroll', this.onMove);
-    };
-
-    WidgetsBiRuler.prototype.onMove = function onMove(evt) {
-        this._dragged = true;
-
-        this._handles[0].onMove(evt);
-        this._handles[1].onMove(evt);
-        this._handles[2].onMove(evt);
-        this._handles[3].onMove(evt);
-
-        this._hovered = this._handles[0].hovered || this._handles[1].hovered || this._handles[2].hovered || this._handles[3].hovered;
-
-        this.update();
-    };
-
-    WidgetsBiRuler.prototype.onStart = function onStart(evt) {
-        this._dragged = false;
-
-        this._handles[0].onStart(evt);
-        this._handles[1].onStart(evt);
-        this._handles[2].onStart(evt);
-        this._handles[3].onStart(evt);
-
-        this._active = this._handles[0].active || this._handles[1].active || this._handles[2].active || this._handles[3].active;
-        this.update();
-    };
-
-    WidgetsBiRuler.prototype.onEnd = function onEnd(evt) {
-        // First Handle
-        this._handles[0].onEnd(evt);
-        this._handles[2].onEnd(evt);
-        this._handles[3].onEnd(evt);
-
-        window.console.log(this);
-
-        // Second Handle
-        if (this._dragged || !this._handles[1].tracking) {
-            this._handles[1].tracking = false;
-            this._handles[1].onEnd(evt);
-        } else {
-            this._handles[1].tracking = false;
-        }
-
-        // State of ruler widget
-        this._active = this._handles[0].active || this._handles[1].active || this._handles[2].active || this._handles[3].active;
-        this.update();
-    };
-
-    WidgetsBiRuler.prototype.create = function create() {
-        this.createMesh();
-        this.createDOM();
-    };
-
-    WidgetsBiRuler.prototype.hideDOM = function hideDOM() {
-        this._line.style.display = 'none';
-        this._distance.style.display = 'none';
-        this._line2.style.display = 'none';
-        this._distance2.style.display = 'none';
-
-        for (var index in this._handles) {
-            this._handles[index].hideDOM();
-        }
-
-        this._dashline.style.display = 'none';
-    };
-
-    WidgetsBiRuler.prototype.showDOM = function showDOM() {
-        this._line.style.display = '';
-        this._distance.style.display = '';
-        this._line2.style.display = '';
-        this._distance2.style.display = '';
-
-        for (var index in this._handles) {
-            this._handles[index].showDOM();
-        }
-
-        this._dashline.style.display = '';
-    };
-
-    WidgetsBiRuler.prototype.hideMesh = function hideMesh() {
-        this._mesh.visible = false;
-        this._mesh2.visible = false;
-        this._handles[0].visible = false;
-        this._handles[1].visible = false;
-        this._handles[2].visible = false;
-        this._handles[3].visible = false;
-    };
-
-    WidgetsBiRuler.prototype.showMesh = function showMesh() {
-        this._mesh.visible = true;
-        this._mesh2.visible = true;
-        this._handles[0].visible = true;
-        this._handles[1].visible = true;
-        this._handles[2].visible = true;
-        this._handles[3].visible = true;
-    };
-
-    WidgetsBiRuler.prototype.show = function show() {
-        this.showDOM();
-        this.showMesh();
-    };
-
-    WidgetsBiRuler.prototype.hide = function hide() {
-        this.hideDOM();
-        this.hideMesh();
-    };
-
-    WidgetsBiRuler.prototype.update = function update() {
-        this.updateColor();
-
-        // mesh stuff
-        this.updateMeshColor();
-        this.updateMeshPosition();
-
-        // DOM stuff
-        this.updateDOMPosition();
-        this.updateDOMColor();
-    };
-
-    WidgetsBiRuler.prototype.createMesh = function createMesh() {
-        // geometry
-        this._geometry = new THREE.Geometry();
-        this._geometry.vertices.push(this._handles[0].worldPosition);
-        this._geometry.vertices.push(this._handles[1].worldPosition);
-
-        // geometry
-        this._geometry2 = new THREE.Geometry();
-        this._geometry2.vertices.push(this._handles[2].worldPosition);
-        this._geometry2.vertices.push(this._handles[3].worldPosition);
-
-        // material
-        this._material = new THREE.LineBasicMaterial();
-        this._material2 = new THREE.LineBasicMaterial();
-        this.updateMeshColor();
-
-        // mesh
-        this._mesh = new THREE.Line(this._geometry, this._material);
-        this._mesh.visible = true;
-        this._mesh2 = new THREE.Line(this._geometry2, this._material2);
-        this._mesh2.visible = true;
-
-        // add it!
-        this.add(this._mesh);
-        this.add(this._mesh2);
-    };
-
-    WidgetsBiRuler.prototype.updateMeshColor = function updateMeshColor() {
-        if (this._material) {
-            this._material.color.set(this._color);
-        }
-        if (this._material2) {
-            this._material2.color.set(this._color);
-        }
-    };
-
-    WidgetsBiRuler.prototype.updateMeshPosition = function updateMeshPosition() {
-        if (this._geometry) {
-            this._geometry.verticesNeedUpdate = true;
-        }
-        if (this._geometry2) {
-            this._geometry2.verticesNeedUpdate = true;
-        }
-    };
-
-    WidgetsBiRuler.prototype.createDOM = function createDOM() {
-        // add line!
-        this._line = document.createElement('div');
-        this._line.setAttribute('class', 'widgets handle line');
-        this._line.style.position = 'absolute';
-        this._line.style.transformOrigin = '0 100%';
-        this._line.style.marginTop = '-1px';
-        this._line.style.height = '2px';
-        this._line.style.width = '3px';
-        this._container.appendChild(this._line);
-
-        // add distance!
-        this._distance = document.createElement('div');
-        this._distance.setAttribute('class', 'widgets handle distance');
-        this._distance.style.border = '2px solid';
-        this._distance.style.backgroundColor = '#F9F9F9';
-        // this._distance.style.opacity = '0.5';
-        this._distance.style.color = '#353535';
-        this._distance.style.padding = '4px';
-        this._distance.style.position = 'absolute';
-        this._distance.style.transformOrigin = '0 100%';
-        this._distance.innerHTML = 'Hello, world!';
-        this._container.appendChild(this._distance);
-
-        // add line!
-        this._line2 = document.createElement('div');
-        this._line2.setAttribute('class', 'widgets handle line');
-        this._line2.style.position = 'absolute';
-        this._line2.style.transformOrigin = '0 100%';
-        this._line2.style.marginTop = '-1px';
-        this._line2.style.height = '2px';
-        this._line2.style.width = '3px';
-        this._container.appendChild(this._line2);
-
-        // add distance!
-        this._distance2 = document.createElement('div');
-        this._distance2.setAttribute('class', 'widgets handle distance');
-        this._distance.style.border = '2px solid';
-        this._distance.style.backgroundColor = '#F9F9F9';
-        // this._distance2.style.opacity = '0.5';
-        this._distance2.style.color = '#353535';
-        this._distance2.style.padding = '4px';
-        this._distance2.style.position = 'absolute';
-        this._distance2.style.transformOrigin = '0 100%';
-        this._distance2.innerHTML = 'Hello, world!';
-        this._container.appendChild(this._distance2);
-
-        // add dash line
-        this._dashline = document.createElement('div');
-        this._dashline.setAttribute('class', 'widgets handle dashline');
-        this._dashline.style.position = 'absolute';
-        this._dashline.style.border = 'none';
-        this._dashline.style.borderTop = '2.5px dashed #F9F9F9';
-        this._dashline.style.transformOrigin = '0 100%';
-        this._dashline.style.height = '1px';
-        this._dashline.style.width = '50%';
-        this._container.appendChild(this._dashline);
-
-        this.updateDOMColor();
-    };
-
-    WidgetsBiRuler.prototype.updateDOMPosition = function updateDOMPosition() {
-        // update rulers lines and text!
-        var x1 = this._handles[0].screenPosition.x;
-        var y1 = this._handles[0].screenPosition.y;
-        var x2 = this._handles[1].screenPosition.x;
-        var y2 = this._handles[1].screenPosition.y;
-
-        // let x0 = x1 + (x2 - x1)/2;
-        // let y0 = y1 + (y2 - y1)/2;
-        var x0 = x2;
-        var y0 = y2;
-
-        if (y1 >= y2) {
-            y0 = y2 - 30;
-        } else {
-            y0 = y2 + 30;
-        }
-
-        var length = Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
-        var angle = Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI;
-
-        var posY = y1 - this._container.offsetHeight;
-
-        // update line
-        var transform = 'translate3D(' + x1 + 'px,' + posY + 'px, 0)';
-        transform += ' rotate(' + angle + 'deg)';
-
-        this._line.style.transform = transform;
-        this._line.style.width = length + 'px';
-
-        // update distance
-        var w0 = this._handles[0].worldPosition;
-        var w1 = this._handles[1].worldPosition;
-
-        this._distance.innerHTML = Math.sqrt((w0.x - w1.x) * (w0.x - w1.x) + (w0.y - w1.y) * (w0.y - w1.y) + (w0.z - w1.z) * (w0.z - w1.z)).toFixed(2) + ' mm';
-        this._distanceValue = Math.sqrt((w0.x - w1.x) * (w0.x - w1.x) + (w0.y - w1.y) * (w0.y - w1.y) + (w0.z - w1.z) * (w0.z - w1.z)).toFixed(2);
-        var posY0 = y0 - this._container.offsetHeight - this._distance.offsetHeight / 2;
-        x0 -= this._distance.offsetWidth / 2;
-
-        var transform2 = 'translate3D(' + Math.round(x0) + 'px,' + Math.round(posY0) + 'px, 0)';
-        this._distance.style.transform = transform2;
-
-        // update rulers lines 2 and text!
-        var x3 = this._handles[2].screenPosition.x;
-        var y3 = this._handles[2].screenPosition.y;
-        var x4 = this._handles[3].screenPosition.x;
-        var y4 = this._handles[3].screenPosition.y;
-
-        // let x0 = x1 + (x2 - x1)/2;
-        // let y0 = y1 + (y2 - y1)/2;
-        var x02 = x4;
-        var y02 = y4;
-
-        if (y3 >= y4) {
-            y02 = y4 - 30;
-        } else {
-            y02 = y4 + 30;
-        }
-
-        length = Math.sqrt((x3 - x4) * (x3 - x4) + (y3 - y4) * (y3 - y4));
-        angle = Math.atan2(y4 - y3, x4 - x3) * 180 / Math.PI;
-
-        posY = y3 - this._container.offsetHeight;
-
-        // update line
-        transform = 'translate3D(' + x3 + 'px,' + posY + 'px, 0)';
-        transform += ' rotate(' + angle + 'deg)';
-
-        this._line2.style.transform = transform;
-        this._line2.style.width = length + 'px';
-
-        // update distance
-        var w02 = this._handles[2].worldPosition;
-        var w12 = this._handles[3].worldPosition;
-
-        this._distance2.innerHTML = Math.sqrt((w02.x - w12.x) * (w02.x - w12.x) + (w02.y - w12.y) * (w02.y - w12.y) + (w02.z - w12.z) * (w02.z - w12.z)).toFixed(2) + ' mm';
-        this._distance2Value = Math.sqrt((w02.x - w12.x) * (w02.x - w12.x) + (w02.y - w12.y) * (w02.y - w12.y) + (w02.z - w12.z) * (w02.z - w12.z)).toFixed(2);
-        var posY02 = y02 - this._container.offsetHeight - this._distance2.offsetHeight / 2;
-        x02 -= this._distance2.offsetWidth / 2;
-
-        transform2 = 'translate3D(' + Math.round(x02) + 'px,' + Math.round(posY02) + 'px, 0)';
-        this._distance2.style.transform = transform2;
-
-        // update dash line
-
-        var l1center = this.getPointInBetweenByPerc(this._handles[0].worldPosition, this._handles[1].worldPosition, 0.5);
-        var l2center = this.getPointInBetweenByPerc(this._handles[2].worldPosition, this._handles[3].worldPosition, 0.5);
-
-        var screen1 = this._handles[0].worldToScreen(l1center, this._camera, this._container);
-        var screen2 = this._handles[0].worldToScreen(l2center, this._camera, this._container);
-
-        x1 = screen1.x;
-        y1 = screen1.y;
-        x2 = screen2.x;
-        y2 = screen2.y;
-
-        length = Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
-        angle = Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI;
-
-        posY = y1 - this._container.offsetHeight;
-
-        // update line
-        transform = 'translate3D(' + x1 + 'px,' + posY + 'px, 0)';
-        transform += ' rotate(' + angle + 'deg)';
-
-        this._dashline.style.transform = transform;
-        this._dashline.style.width = length + 'px';
-    };
-
-    WidgetsBiRuler.prototype.updateDOMColor = function updateDOMColor() {
-        this._line.style.backgroundColor = '' + this._color;
-        this._distance.style.borderColor = '' + this._color;
-
-        this._line2.style.backgroundColor = '' + this._color;
-        this._distance2.style.borderColor = '' + this._color;
-    };
-
-    WidgetsBiRuler.prototype.getPointInBetweenByPerc = function getPointInBetweenByPerc(pointA, pointB, percentage) {
-        var dir = pointB.clone().sub(pointA);
-        var len = dir.length();
-        dir = dir.normalize().multiplyScalar(len * percentage);
-        return pointA.clone().add(dir);
-    };
-
-    WidgetsBiRuler.prototype.initOrtho = function initOrtho() {
-        this._initOrtho = true;
-
-        var pcenter = this.getPointInBetweenByPerc(this._handles[0].worldPosition, this._handles[1].worldPosition, 0.5);
-        this._handles[2].worldPosition = this.getPointInBetweenByPerc(this._handles[0].worldPosition, this._handles[1].worldPosition, 0.25);
-        this._handles[3].worldPosition = this.getPointInBetweenByPerc(this._handles[0].worldPosition, this._handles[1].worldPosition, 0.75);
-
-        this._handles[2].worldPosition.x = pcenter.x - Math.sqrt((pcenter.y - this._handles[2].worldPosition.y) * (pcenter.y - this._handles[2].worldPosition.y));
-        this._handles[2].worldPosition.y = pcenter.y + Math.sqrt((pcenter.x - this._handles[2].worldPosition.x) * (pcenter.x - this._handles[2].worldPosition.x));
-
-        this._handles[3].worldPosition.x = pcenter.x + Math.sqrt((pcenter.y - this._handles[2].worldPosition.y) * (pcenter.y - this._handles[2].worldPosition.y));
-        this._handles[3].worldPosition.y = pcenter.y - Math.sqrt((pcenter.x - this._handles[2].worldPosition.x) * (pcenter.x - this._handles[2].worldPosition.x));
-    };
-
-    _createClass(WidgetsBiRuler, [{
-        key: 'worldPosition',
-        get: function get() {
-            return this._worldPosition;
-        },
-        set: function set(worldPosition) {
-            this._worldPosition = worldPosition;
-            this._handles[0].worldPosition = this._worldPosition;
-            this._handles[1].worldPosition = this._worldPosition;
-            this._handles[2].worldPosition = this._worldPosition;
-            this._handles[3].worldPosition = this._worldPosition;
-
-            this.update();
-        }
-    }, {
-        key: 'shotestDistance',
-        get: function get() {
-            return this._distanceValue < this._distance2Value ? this._distanceValue : this._distance2Value;
-        }
-    }, {
-        key: 'longestDistance',
-        get: function get() {
-            return this._distanceValue > this._distance2Value ? this._distanceValue : this._distance2Value;
-        }
-    }]);
-
-    return WidgetsBiRuler;
+        WidgetsBiRuler.prototype.addEventListeners = function addEventListeners() {
+                this._container.addEventListener('mousewheel', this.onMove);
+                this._container.addEventListener('DOMMouseScroll', this.onMove);
+        };
+
+        WidgetsBiRuler.prototype.onMove = function onMove(evt) {
+                this._dragged = true;
+
+                this._handles[0].onMove(evt);
+                this._handles[1].onMove(evt);
+                this._handles[2].onMove(evt);
+                this._handles[3].onMove(evt);
+
+                this._hovered = this._handles[0].hovered || this._handles[1].hovered || this._handles[2].hovered || this._handles[3].hovered;
+
+                this.update();
+        };
+
+        WidgetsBiRuler.prototype.onStart = function onStart(evt) {
+                this._dragged = false;
+
+                this._handles[0].onStart(evt);
+                this._handles[1].onStart(evt);
+                this._handles[2].onStart(evt);
+                this._handles[3].onStart(evt);
+
+                this._active = this._handles[0].active || this._handles[1].active || this._handles[2].active || this._handles[3].active;
+                this.update();
+        };
+
+        WidgetsBiRuler.prototype.onEnd = function onEnd(evt) {
+                // First Handle
+                this._handles[0].onEnd(evt);
+                this._handles[2].onEnd(evt);
+                this._handles[3].onEnd(evt);
+
+                window.console.log(this);
+
+                // Second Handle
+                if (this._dragged || !this._handles[1].tracking) {
+                        this._handles[1].tracking = false;
+                        this._handles[1].onEnd(evt);
+                } else {
+                        this._handles[1].tracking = false;
+                }
+
+                // State of ruler widget
+                this._active = this._handles[0].active || this._handles[1].active || this._handles[2].active || this._handles[3].active;
+                this.update();
+        };
+
+        WidgetsBiRuler.prototype.create = function create() {
+                this.createMesh();
+                this.createDOM();
+        };
+
+        WidgetsBiRuler.prototype.hideDOM = function hideDOM() {
+                this._line.style.display = 'none';
+                this._distance.style.display = 'none';
+                this._line2.style.display = 'none';
+                this._distance2.style.display = 'none';
+
+                for (var index in this._handles) {
+                        this._handles[index].hideDOM();
+                }
+
+                this._dashline.style.display = 'none';
+        };
+
+        WidgetsBiRuler.prototype.showDOM = function showDOM() {
+                this._line.style.display = '';
+                this._distance.style.display = '';
+                this._line2.style.display = '';
+                this._distance2.style.display = '';
+
+                for (var index in this._handles) {
+                        this._handles[index].showDOM();
+                }
+
+                this._dashline.style.display = '';
+        };
+
+        WidgetsBiRuler.prototype.hideMesh = function hideMesh() {
+                this._mesh.visible = false;
+                this._mesh2.visible = false;
+                this._handles[0].visible = false;
+                this._handles[1].visible = false;
+                this._handles[2].visible = false;
+                this._handles[3].visible = false;
+        };
+
+        WidgetsBiRuler.prototype.showMesh = function showMesh() {
+                this._mesh.visible = true;
+                this._mesh2.visible = true;
+                this._handles[0].visible = true;
+                this._handles[1].visible = true;
+                this._handles[2].visible = true;
+                this._handles[3].visible = true;
+        };
+
+        WidgetsBiRuler.prototype.show = function show() {
+                this.showDOM();
+                this.showMesh();
+        };
+
+        WidgetsBiRuler.prototype.hide = function hide() {
+                this.hideDOM();
+                this.hideMesh();
+        };
+
+        WidgetsBiRuler.prototype.update = function update() {
+                this.updateColor();
+
+                // mesh stuff
+                this.updateMeshColor();
+                this.updateMeshPosition();
+
+                // DOM stuff
+                this.updateDOMPosition();
+                this.updateDOMColor();
+        };
+
+        WidgetsBiRuler.prototype.createMesh = function createMesh() {
+                // geometry
+                this._geometry = new THREE.Geometry();
+                this._geometry.vertices.push(this._handles[0].worldPosition);
+                this._geometry.vertices.push(this._handles[1].worldPosition);
+
+                // geometry
+                this._geometry2 = new THREE.Geometry();
+                this._geometry2.vertices.push(this._handles[2].worldPosition);
+                this._geometry2.vertices.push(this._handles[3].worldPosition);
+
+                // material
+                this._material = new THREE.LineBasicMaterial();
+                this._material2 = new THREE.LineBasicMaterial();
+                this.updateMeshColor();
+
+                // mesh
+                this._mesh = new THREE.Line(this._geometry, this._material);
+                this._mesh.visible = true;
+                this._mesh2 = new THREE.Line(this._geometry2, this._material2);
+                this._mesh2.visible = true;
+
+                // add it!
+                this.add(this._mesh);
+                this.add(this._mesh2);
+        };
+
+        WidgetsBiRuler.prototype.updateMeshColor = function updateMeshColor() {
+                if (this._material) {
+                        this._material.color.set(this._color);
+                }
+                if (this._material2) {
+                        this._material2.color.set(this._color);
+                }
+        };
+
+        WidgetsBiRuler.prototype.updateMeshPosition = function updateMeshPosition() {
+                if (this._geometry) {
+                        this._geometry.verticesNeedUpdate = true;
+                }
+                if (this._geometry2) {
+                        this._geometry2.verticesNeedUpdate = true;
+                }
+        };
+
+        WidgetsBiRuler.prototype.createDOM = function createDOM() {
+                // add line!
+                this._line = document.createElement('div');
+                this._line.setAttribute('class', 'widgets handle line');
+                this._line.style.position = 'absolute';
+                this._line.style.transformOrigin = '0 100%';
+                this._line.style.marginTop = '-1px';
+                this._line.style.height = '2px';
+                this._line.style.width = '3px';
+                this._container.appendChild(this._line);
+
+                // add distance!
+                this._distance = document.createElement('div');
+                this._distance.setAttribute('class', 'widgets handle distance');
+                this._distance.style.border = '2px solid';
+                this._distance.style.backgroundColor = '#F9F9F9';
+                // this._distance.style.opacity = '0.5';
+                this._distance.style.color = '#353535';
+                this._distance.style.padding = '4px';
+                this._distance.style.position = 'absolute';
+                this._distance.style.transformOrigin = '0 100%';
+                this._distance.innerHTML = 'Hello, world!';
+                this._container.appendChild(this._distance);
+
+                // add line!
+                this._line2 = document.createElement('div');
+                this._line2.setAttribute('class', 'widgets handle line');
+                this._line2.style.position = 'absolute';
+                this._line2.style.transformOrigin = '0 100%';
+                this._line2.style.marginTop = '-1px';
+                this._line2.style.height = '2px';
+                this._line2.style.width = '3px';
+                this._container.appendChild(this._line2);
+
+                // add distance!
+                this._distance2 = document.createElement('div');
+                this._distance2.setAttribute('class', 'widgets handle distance');
+                this._distance.style.border = '2px solid';
+                this._distance.style.backgroundColor = '#F9F9F9';
+                // this._distance2.style.opacity = '0.5';
+                this._distance2.style.color = '#353535';
+                this._distance2.style.padding = '4px';
+                this._distance2.style.position = 'absolute';
+                this._distance2.style.transformOrigin = '0 100%';
+                this._distance2.innerHTML = 'Hello, world!';
+                this._container.appendChild(this._distance2);
+
+                // add dash line
+                this._dashline = document.createElement('div');
+                this._dashline.setAttribute('class', 'widgets handle dashline');
+                this._dashline.style.position = 'absolute';
+                this._dashline.style.border = 'none';
+                this._dashline.style.borderTop = '2.5px dashed #F9F9F9';
+                this._dashline.style.transformOrigin = '0 100%';
+                this._dashline.style.height = '1px';
+                this._dashline.style.width = '50%';
+                this._container.appendChild(this._dashline);
+
+                this.updateDOMColor();
+        };
+
+        WidgetsBiRuler.prototype.updateDOMPosition = function updateDOMPosition() {
+                // update rulers lines and text!
+                var x1 = this._handles[0].screenPosition.x;
+                var y1 = this._handles[0].screenPosition.y;
+                var x2 = this._handles[1].screenPosition.x;
+                var y2 = this._handles[1].screenPosition.y;
+
+                // let x0 = x1 + (x2 - x1)/2;
+                // let y0 = y1 + (y2 - y1)/2;
+                var x0 = x2;
+                var y0 = y2;
+
+                if (y1 >= y2) {
+                        y0 = y2 - 30;
+                } else {
+                        y0 = y2 + 30;
+                }
+
+                var length = Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
+                var angle = Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI;
+
+                var posY = y1 - this._container.offsetHeight;
+
+                // update line
+                var transform = 'translate3D(' + x1 + 'px,' + posY + 'px, 0)';
+                transform += ' rotate(' + angle + 'deg)';
+
+                this._line.style.transform = transform;
+                this._line.style.width = length + 'px';
+
+                // update distance
+                var w0 = this._handles[0].worldPosition;
+                var w1 = this._handles[1].worldPosition;
+
+                this._distance.innerHTML = Math.sqrt((w0.x - w1.x) * (w0.x - w1.x) + (w0.y - w1.y) * (w0.y - w1.y) + (w0.z - w1.z) * (w0.z - w1.z)).toFixed(2) + ' mm';
+                this._distanceValue = Math.sqrt((w0.x - w1.x) * (w0.x - w1.x) + (w0.y - w1.y) * (w0.y - w1.y) + (w0.z - w1.z) * (w0.z - w1.z)).toFixed(2);
+                var posY0 = y0 - this._container.offsetHeight - this._distance.offsetHeight / 2;
+                x0 -= this._distance.offsetWidth / 2;
+
+                var transform2 = 'translate3D(' + Math.round(x0) + 'px,' + Math.round(posY0) + 'px, 0)';
+                this._distance.style.transform = transform2;
+
+                // update rulers lines 2 and text!
+                var x3 = this._handles[2].screenPosition.x;
+                var y3 = this._handles[2].screenPosition.y;
+                var x4 = this._handles[3].screenPosition.x;
+                var y4 = this._handles[3].screenPosition.y;
+
+                // let x0 = x1 + (x2 - x1)/2;
+                // let y0 = y1 + (y2 - y1)/2;
+                var x02 = x4;
+                var y02 = y4;
+
+                if (y3 >= y4) {
+                        y02 = y4 - 30;
+                } else {
+                        y02 = y4 + 30;
+                }
+
+                length = Math.sqrt((x3 - x4) * (x3 - x4) + (y3 - y4) * (y3 - y4));
+                angle = Math.atan2(y4 - y3, x4 - x3) * 180 / Math.PI;
+
+                posY = y3 - this._container.offsetHeight;
+
+                // update line
+                transform = 'translate3D(' + x3 + 'px,' + posY + 'px, 0)';
+                transform += ' rotate(' + angle + 'deg)';
+
+                this._line2.style.transform = transform;
+                this._line2.style.width = length + 'px';
+
+                // update distance
+                var w02 = this._handles[2].worldPosition;
+                var w12 = this._handles[3].worldPosition;
+
+                this._distance2.innerHTML = Math.sqrt((w02.x - w12.x) * (w02.x - w12.x) + (w02.y - w12.y) * (w02.y - w12.y) + (w02.z - w12.z) * (w02.z - w12.z)).toFixed(2) + ' mm';
+                this._distance2Value = Math.sqrt((w02.x - w12.x) * (w02.x - w12.x) + (w02.y - w12.y) * (w02.y - w12.y) + (w02.z - w12.z) * (w02.z - w12.z)).toFixed(2);
+                var posY02 = y02 - this._container.offsetHeight - this._distance2.offsetHeight / 2;
+                x02 -= this._distance2.offsetWidth / 2;
+
+                transform2 = 'translate3D(' + Math.round(x02) + 'px,' + Math.round(posY02) + 'px, 0)';
+                this._distance2.style.transform = transform2;
+
+                // update dash line
+
+                var l1center = this.getPointInBetweenByPerc(this._handles[0].worldPosition, this._handles[1].worldPosition, 0.5);
+                var l2center = this.getPointInBetweenByPerc(this._handles[2].worldPosition, this._handles[3].worldPosition, 0.5);
+
+                var screen1 = this._handles[0].worldToScreen(l1center, this._camera, this._container);
+                var screen2 = this._handles[0].worldToScreen(l2center, this._camera, this._container);
+
+                x1 = screen1.x;
+                y1 = screen1.y;
+                x2 = screen2.x;
+                y2 = screen2.y;
+
+                length = Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
+                angle = Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI;
+
+                posY = y1 - this._container.offsetHeight;
+
+                // update line
+                transform = 'translate3D(' + x1 + 'px,' + posY + 'px, 0)';
+                transform += ' rotate(' + angle + 'deg)';
+
+                this._dashline.style.transform = transform;
+                this._dashline.style.width = length + 'px';
+        };
+
+        WidgetsBiRuler.prototype.updateDOMColor = function updateDOMColor() {
+                this._line.style.backgroundColor = '' + this._color;
+                this._distance.style.borderColor = '' + this._color;
+
+                this._line2.style.backgroundColor = '' + this._color;
+                this._distance2.style.borderColor = '' + this._color;
+        };
+
+        WidgetsBiRuler.prototype.getPointInBetweenByPerc = function getPointInBetweenByPerc(pointA, pointB, percentage) {
+                var dir = pointB.clone().sub(pointA);
+                var len = dir.length();
+                dir = dir.normalize().multiplyScalar(len * percentage);
+                return pointA.clone().add(dir);
+        };
+
+        WidgetsBiRuler.prototype.initOrtho = function initOrtho() {
+                this._initOrtho = true;
+
+                var pcenter = this.getPointInBetweenByPerc(this._handles[0].worldPosition, this._handles[1].worldPosition, 0.5);
+                this._handles[2].worldPosition = this.getPointInBetweenByPerc(this._handles[0].worldPosition, this._handles[1].worldPosition, 0.25);
+                this._handles[3].worldPosition = this.getPointInBetweenByPerc(this._handles[0].worldPosition, this._handles[1].worldPosition, 0.75);
+
+                this._handles[2].worldPosition.x = pcenter.x - Math.sqrt((pcenter.y - this._handles[2].worldPosition.y) * (pcenter.y - this._handles[2].worldPosition.y));
+                this._handles[2].worldPosition.y = pcenter.y + Math.sqrt((pcenter.x - this._handles[2].worldPosition.x) * (pcenter.x - this._handles[2].worldPosition.x));
+
+                this._handles[3].worldPosition.x = pcenter.x + Math.sqrt((pcenter.y - this._handles[2].worldPosition.y) * (pcenter.y - this._handles[2].worldPosition.y));
+                this._handles[3].worldPosition.y = pcenter.y - Math.sqrt((pcenter.x - this._handles[2].worldPosition.x) * (pcenter.x - this._handles[2].worldPosition.x));
+        };
+
+        _createClass(WidgetsBiRuler, [{
+                key: 'worldPosition',
+                get: function get() {
+                        return this._worldPosition;
+                },
+                set: function set(worldPosition) {
+                        this._worldPosition = worldPosition;
+                        this._handles[0].worldPosition = this._worldPosition;
+                        this._handles[1].worldPosition = this._worldPosition;
+                        this._handles[2].worldPosition = this._worldPosition;
+                        this._handles[3].worldPosition = this._worldPosition;
+
+                        this.update();
+                }
+        }, {
+                key: 'shotestDistance',
+                get: function get() {
+                        return this._distanceValue < this._distance2Value ? this._distanceValue : this._distance2Value;
+                }
+        }, {
+                key: 'longestDistance',
+                get: function get() {
+                        return this._distanceValue > this._distance2Value ? this._distanceValue : this._distance2Value;
+                }
+        }]);
+
+        return WidgetsBiRuler;
 }(__WEBPACK_IMPORTED_MODULE_0__widgets_base__["a" /* default */]);
 
 /* harmony default export */ __webpack_exports__["a"] = (WidgetsBiRuler);
@@ -95828,7 +95844,7 @@ var WidgetsVoxelProbe = function (_WidgetsBase) {
 /* 178 */
 /***/ (function(module, exports) {
 
-module.exports = {"name":"ami.js","version":"0.0.23-dev","main":"build/ami.js","keywords":["ami","ami.js","three.js","webgl","dicom","nifti","awesome","medical","imaging","xtk","nrrd","vtk","stl","trk"],"author":{"name":"Nicolas Rannou","email":"nicolas@eunate.ch","url":"https://eunate.ch"},"license":"Apache-2.0","repository":{"type":"git","url":"https://fnndsc.github.io/ami"},"config":{"threeVersion":"87","amiCDN":"https://cdnjs.cloudflare.com/ajax/libs/ami.js","gaKey":"UA-39303022-3","babel":"--module-bind js=babel-loader --colors --display-error-details"},"dependencies":{"dicom-parser":"1.7.3","image-JPEG2000":"OHIF/image-JPEG2000#master","jpeg-lossless-decoder-js":"1.2.3","math-float32-to-binary-string":"^1.0.0","nifti-reader-js":"v0.5.3","nrrd-js":"^0.2.1","pako":"1.0.1","three":"0.87.0"},"scripts":{"build:ami":"webpack --config webpack.config.build.js","build:ami:prod":"cross-env NODE_ENV=production yarn build:ami","build:clean":"rimraf -rf build/*","build:clean:hot":"rimraf -rf build/*.hot-update.*","dev:ami":"webpack --config webpack.config.build.js --hot --watch --colors","dist:ami":"yarn build:clean && yarn build:ami && yarn build:ami:prod && yarn doc","dist:examples":"node ./scripts/buildDist.js && node ./scripts/router.js examples deploy","dist:clean":"rimraf -rf dist/*","analyze:ami":"cross-env NODE_WEBPACK_ANALYZE=true yarn build:ami","analyze:ami:prod":"cross-env NODE_WEBPACK_ANALYZE=true yarn build:ami:prod","clean":"yarn build:clean && yarn dist:clean","example":"node ./scripts/router.js examples","lesson":"node ./scripts/router.js lessons","gen:index:examples":"node ./scripts/genIndexFiles.js examples","gen:index:examples:ga":"cross-env NODE_GA=true node ./scripts/genIndexFiles.js examples","gen:index:lessons":"node ./scripts/genIndexFiles.js lessons","gen:index:lessons:cdn":"node ./scripts/genIndexFiles.js lessons cdn","test":"karma start","lint":"eslint src/**/*.js","doc":"jsdoc -p -r -R README.md -c jsdoc.json -d dist/doc src","ami":"yarn lint && yarn dist:ami && yarn test","deploy":"yarn dist:clean && yarn build:clean && yarn dist:ami && yarn dist:examples && gh-pages -d dist"},"devDependencies":{"babel-cli":"latest","babel-core":"^6.26.0","babel-loader":"^7.1.2","babel-preset-env":"^1.6.0","babel-runtime":"^6.26.0","compression-webpack-plugin":"^1.0.1","cross-env":"^3.2.3","eslint":"latest","eslint-config-google":"latest","gh-pages":"latest","glslify":"5.1.0","jasmine-core":"latest","jsdoc":"jsdoc3/jsdoc#master","karma":"latest","karma-chrome-launcher":"^2.2.0","karma-jasmine":"latest","karma-sinon":"^1.0.5","karma-spec-reporter":"latest","karma-webpack":"^2.0.4","live-server":"^1.1.0","puppeteer":"^0.13.0","rimraf":"^2.6.1","rollup-plugin-node-builtins":"^2.1.2","shelljs":"latest","sinon":"^2.0.0","uglifyjs-webpack-plugin":"^1.0.0-beta.3","webpack":"^3.7.1","webpack-bundle-analyzer":"^2.9.0","webpack-dev-server":"^2.9.1","webpack-watch-livereload-plugin":"^0.0.1"},"engines":{"node":">=6.9.0"}}
+module.exports = {"name":"ami.js","version":"0.0.23-dev","main":"build/ami.js","keywords":["ami","ami.js","three.js","webgl","dicom","nifti","awesome","medical","imaging","xtk","nrrd","vtk","stl","trk"],"author":{"name":"Nicolas Rannou","email":"nicolas@eunate.ch","url":"https://eunate.ch"},"license":"Apache-2.0","repository":{"type":"git","url":"https://fnndsc.github.io/ami"},"config":{"threeVersion":"87","amiCDN":"https://cdnjs.cloudflare.com/ajax/libs/ami.js","gaKey":"UA-39303022-3","babel":"--module-bind js=babel-loader --colors --display-error-details"},"dependencies":{"dicom-parser":"1.7.3","image-JPEG2000":"OHIF/image-JPEG2000#master","jpeg-lossless-decoder-js":"1.2.3","karma-coverage":"^1.1.1","math-float32-to-binary-string":"^1.0.0","nifti-reader-js":"v0.5.3","nrrd-js":"^0.2.1","pako":"1.0.1","three":"0.87.0"},"scripts":{"build:ami":"webpack --config webpack.config.build.js","build:ami:prod":"cross-env NODE_ENV=production yarn build:ami","build:clean":"rimraf -rf build/*","build:clean:hot":"rimraf -rf build/*.hot-update.*","dev:ami":"webpack --config webpack.config.build.js --hot --watch --colors","dist:ami":"yarn build:clean && yarn build:ami && yarn build:ami:prod && yarn doc","dist:examples":"node ./scripts/buildDist.js && node ./scripts/router.js examples deploy","dist:clean":"rimraf -rf dist/*","analyze:ami":"cross-env NODE_WEBPACK_ANALYZE=true yarn build:ami","analyze:ami:prod":"cross-env NODE_WEBPACK_ANALYZE=true yarn build:ami:prod","clean":"yarn build:clean && yarn dist:clean","example":"node ./scripts/router.js examples","lesson":"node ./scripts/router.js lessons","gen:index:examples":"node ./scripts/genIndexFiles.js examples","gen:index:examples:ga":"cross-env NODE_GA=true node ./scripts/genIndexFiles.js examples","gen:index:lessons":"node ./scripts/genIndexFiles.js lessons","gen:index:lessons:cdn":"node ./scripts/genIndexFiles.js lessons cdn","test":"karma start","lint":"eslint src/**/*.js","doc":"jsdoc -p -r -R README.md -c jsdoc.json -d dist/doc src","ami":"yarn lint && yarn dist:ami && yarn test","deploy":"yarn dist:clean && yarn build:clean && yarn dist:ami && yarn dist:examples && gh-pages -d dist"},"devDependencies":{"babel-cli":"latest","babel-core":"^6.26.0","babel-loader":"^7.1.2","babel-preset-env":"^1.6.0","babel-runtime":"^6.26.0","compression-webpack-plugin":"^1.0.1","cross-env":"^3.2.3","eslint":"latest","eslint-config-google":"latest","gh-pages":"latest","glslify":"5.1.0","jasmine-core":"latest","jsdoc":"jsdoc3/jsdoc#master","karma":"^2.0.0","karma-chrome-launcher":"^2.2.0","karma-jasmine":"latest","karma-sinon":"^1.0.5","karma-spec-reporter":"latest","karma-webpack":"^2.0.4","live-server":"^1.1.0","puppeteer":"^0.13.0","rimraf":"^2.6.1","rollup-plugin-node-builtins":"^2.1.2","shelljs":"latest","sinon":"^2.0.0","uglifyjs-webpack-plugin":"^1.0.0-beta.3","webpack":"^3.7.1","webpack-bundle-analyzer":"^2.9.0","webpack-dev-server":"^2.9.1","webpack-watch-livereload-plugin":"^0.0.1"},"engines":{"node":">=6.9.0"}}
 
 /***/ })
 /******/ ]);
