@@ -1,15 +1,17 @@
 import HelpersStack from 'base/helpers/helpers.stack';
 import buildGUI from './gui';
 
+function cleanLoaderAndProgressBar(loader) {
+    loader.free();
+    loader = null;
+}
+
 /**
  * Visulaize incoming data
  */
 export default function handleSeries(seriesContainer, loader, scene, camera, lut, camUtils, controls) {
-    // cleanup the loader and its progress bar
-    loader.free();
-    loader = null;
-    // prepare for slice visualization
-    // first stack of first series
+
+    cleanLoaderAndProgressBar(loader);
     let stack = seriesContainer[0].mergeSeries(seriesContainer)[0].stack[0];
 
     let stackHelper = new HelpersStack(stack);
@@ -22,10 +24,13 @@ export default function handleSeries(seriesContainer, loader, scene, camera, lut
 
     // set camera
     let worldbb = stack.worldBoundingBox();
+    const xAxisCenter = (worldbb[1] - worldbb[0]) / 2;
+    const yAxisCenter = (worldbb[3] - worldbb[2]) / 2;
+    const zAxisCenter = (worldbb[5] - worldbb[4]) / 2;
     let lpsDims = new THREE.Vector3(
-        (worldbb[1] - worldbb[0]) / 2,
-        (worldbb[3] - worldbb[2]) / 2,
-        (worldbb[5] - worldbb[4]) / 2
+        xAxisCenter,
+        yAxisCenter,
+        zAxisCenter
     );
 
     // box: {halfDimensions, center}
