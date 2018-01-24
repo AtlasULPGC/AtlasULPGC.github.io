@@ -48,10 +48,10 @@ function buildGUI(stackHelper) {
     var layer0Folder = gui.addFolder('CT');
     layer0Folder.add(stackHelper.slice, 'invert');
 
-    var lutUpdate = layer0Folder.add(stackHelper.slice, 'lut', lutLayer0.lutsAvailable());
+    var lutUpdate = layer0Folder.add(stackHelper.slice, 'lut', lutCTGrayImagesLayer.lutsAvailable());
     lutUpdate.onChange(function (value) {
-        lutLayer0.lut = value;
-        stackHelper.slice.lutTexture = lutLayer0.texture;
+        lutCTGrayImagesLayer.lut = value;
+        stackHelper.slice.lutTexture = lutCTGrayImagesLayer.texture;
     });
 
     var indexUpdate = layer0Folder

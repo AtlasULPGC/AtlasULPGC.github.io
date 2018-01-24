@@ -9,12 +9,12 @@ var sceneLayerSegmentationTextureTarget;
 //
 var sceneLayerCT;
 //
-var lutLayer0;
+var lutCTGrayImagesLayer;
 var sceneLayerSegmentation;
 var meshSegmentationLayer;
 var uniformShaderSegmentationLayer;
 var materialSegmentationLayer;
-var lutLayer1;
+var lutSegmentationLayer;
 var sceneLayerMix;
 var meshLayerMix;
 var uniformsLayerMix;

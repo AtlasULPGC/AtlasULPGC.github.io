@@ -95,14 +95,14 @@ function setLutForGrayImageCTLayer() {
     const lut0 = 'linear';
     const color = [[0, 0, 0, 0], [1, 1, 1, 1]];
     const opacity = [[0, 1], [1, 1]];
-    lutLayer0 = new AMI.LutHelper(
+    lutCTGrayImagesLayer = new AMI.LutHelper(
         domTarget,
         lut,
         lut0,
         color,
         opacity
     );
-    lutLayer0.luts = AMI.LutHelper.presetLuts();
+    lutCTGrayImagesLayer.luts = AMI.LutHelper.presetLuts();
     return {lut, lut0};
 }
 
@@ -111,7 +111,7 @@ function setLutForSegmentationLayer(segmentationStack, lut, lut0) {
     const segmentationLUT = segmentationStack.segmentationLUT;
     const segmentationLUTO = segmentationStack.segmentationLUTO;
     const discrete = true;
-    lutLayer1 = new AMI.LutHelper(
+    lutSegmentationLayer = new AMI.LutHelper(
         domTargetForSecondLayer,
         lut,
         lut0,
@@ -120,5 +120,5 @@ function setLutForSegmentationLayer(segmentationStack, lut, lut0) {
         discrete
     );
     uniformShaderSegmentationLayer.uLut.value = 1;
-    uniformShaderSegmentationLayer.uTextureLUT.value = lutLayer1.texture;
+    uniformShaderSegmentationLayer.uTextureLUT.value = lutSegmentationLayer.texture;
 }
