@@ -3,6 +3,7 @@
 import readMultipleFiles from './loader';
 import setCamera from './camera';
 import setControls from './controls';
+import startReadingFromFilesInputOnChangeEvent from './readingEventFromFilesInput';
 
 let renderer;
 let threeD;
@@ -44,9 +45,5 @@ window.onload = function () {
     setLoadButtonWithFileInput();
 
     init();
-    
-    document.getElementById('filesinput')
-        .addEventListener('change', function (event) {
-            readMultipleFiles(event, scene, camera, lut, camUtils, controls)
-        }, false);
+    startReadingFromFilesInputOnChangeEvent(scene, camera, lut, camUtils, controls);
 };
