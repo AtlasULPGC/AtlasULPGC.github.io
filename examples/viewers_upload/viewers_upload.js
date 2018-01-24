@@ -1,6 +1,5 @@
 /* globals dat*/
 
-import readMultipleFiles from './loader';
 import setCamera from './camera';
 import setControls from './controls';
 import startReadingFromFilesInputOnChangeEvent from './readingEventFromFilesInput';
@@ -13,7 +12,6 @@ let controls = setControls(controls, camera);
 let scene;
 let lut;
 
-
 let camUtils = {
     invertRows: false,
     invertColumns: false,
@@ -25,25 +23,20 @@ let camUtils = {
 function init() {
 
     function animate() {
-
         controls.update();
         renderer.render(scene, camera);
-
         requestAnimationFrame(function () {
             animate();
         });
     }
 
     scene = new THREE.Scene();
-
     animate();
 }
 
 
 window.onload = function () {
-
     setLoadButtonWithFileInput();
-
     init();
     startReadingFromFilesInputOnChangeEvent(scene, camera, lut, camUtils, controls);
 };

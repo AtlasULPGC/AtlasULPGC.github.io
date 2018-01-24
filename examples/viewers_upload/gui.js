@@ -11,11 +11,15 @@ export default function buildGUI(stackHelper, lut, camUtils, camera) {
     customContainer.appendChild(gui.domElement);
 
     let stackFolder = gui.addFolder('Stack');
+    const minWidth = 1;
+    const maxWidth = stack.minMax[1] - stack.minMax[0];
     stackFolder.add(
-        stackHelper.slice, 'windowWidth', 1, stack.minMax[1] - stack.minMax[0])
+        stackHelper.slice, 'windowWidth', minWidth, maxWidth)
         .step(1).listen();
+    const minCenter = stack.minMax[0];
+    const maxCenter = stack.minMax[1];
     stackFolder.add(
-        stackHelper.slice, 'windowCenter', stack.minMax[0], stack.minMax[1])
+        stackHelper.slice, 'windowCenter', minCenter, maxCenter)
         .step(1).listen();
     stackFolder.add(stackHelper.slice, 'intensityAuto').listen();
     stackFolder.add(stackHelper.slice, 'invert');
