@@ -4,7 +4,6 @@
 import CoreUtils from 'base/core/core.utils';
 import HelpersBoundingBox from 'base/helpers/helpers.boundingbox';
 import HelpersContour from 'base/helpers/helpers.contour';
-import HelpersLocalizer from 'base/helpers/helpers.localizer';
 import LoadersVolume from 'base/loaders/loaders.volume';
 import setRenderer3D from './renderer3d';
 import {calculateCameraCanvas, setCamera3d, setUpCameraWhenInitializingStackHelper} from './camera3d';
@@ -18,6 +17,7 @@ import {
 } from './stackHelper';
 import {calculateWorldCenter} from './camera3d';
 import {calculateCameraBox} from "./camera3d";
+import {initHelpersLocalizer} from "./localizerHelper";
 // standard global variables
 let stats;
 let ready = false;
@@ -206,23 +206,7 @@ function initHelpersStack(rendererObj, stack) {
     rendererObj.scene.add(rendererObj.stackHelper);
 }
 
-function initHelpersLocalizer(rendererObj, stack, referencePlane, localizers) {
-    rendererObj.localizerHelper = new HelpersLocalizer(
-        stack, rendererObj.stackHelper.slice.geometry, referencePlane);
 
-    for (let i = 0; i < localizers.length; i++) {
-        rendererObj.localizerHelper['plane' + (i + 1)] = localizers[i].plane;
-        rendererObj.localizerHelper['color' + (i + 1)] = localizers[i].color;
-    }
-
-    rendererObj.localizerHelper.canvasWidth =
-        rendererObj.domElement.clientWidth;
-    rendererObj.localizerHelper.canvasHeight =
-        rendererObj.domElement.clientHeight;
-
-    rendererObj.localizerScene = new THREE.Scene();
-    rendererObj.localizerScene.add(rendererObj.localizerHelper);
-}
 
 /**
  * Init the quadview
