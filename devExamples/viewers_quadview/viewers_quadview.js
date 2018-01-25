@@ -7,12 +7,14 @@ import HelpersContour from 'base/helpers/helpers.contour';
 import HelpersLocalizer from 'base/helpers/helpers.localizer';
 import LoadersVolume from 'base/loaders/loaders.volume';
 import setRenderer3D from './renderer3d';
-import setCamera3d from './camera3d';
+import {setCamera3d} from './camera3d';
 import setControls3d from 'controls3d';
 import setRenderer2d from './renderer2d';
 import setCamera2d from './camera2d';
 import setControls2d from './controls2d';
 import setStackHelper from './stackHelper';
+import {calculateWorldCenter} from './camera3d';
+
 // standard global variables
 let stats;
 let ready = false;
@@ -178,13 +180,9 @@ function initHelpersStack(rendererObj, stack) {
 
     setStackHelper(rendererObj, stack);
 
-    // set camera
-    let worldbb = stack.worldBoundingBox();
-    let lpsDims = new THREE.Vector3(
-        (worldbb[1] - worldbb[0]) / 2,
-        (worldbb[3] - worldbb[2]) / 2,
-        (worldbb[5] - worldbb[4]) / 2
-    );
+
+// set camera
+    let lpsDims = calculateWorldCenter(stack);
 
     // box: {halfDimensions, center}
     let box = {

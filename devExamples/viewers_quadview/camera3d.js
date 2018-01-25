@@ -1,4 +1,4 @@
-export default function setCamera3d(renderObj) {
+function setCamera3d(renderObj) {
     const fieldOfView = 45;
     const aspectRatio = renderObj.domElement.clientWidth / renderObj.domElement.clientHeight;
     const near = 0.1;
@@ -10,3 +10,19 @@ export default function setCamera3d(renderObj) {
     renderObj.camera.position.y = 250;
     renderObj.camera.position.z = 250;
 }
+
+function calculateWorldCenter(stack) {
+    let worldbb = stack.worldBoundingBox();
+    const xAxisCenter = (worldbb[1] - worldbb[0]) / 2;
+    const yAxisCenter = (worldbb[3] - worldbb[2]) / 2;
+    const zAxisCenter = (worldbb[5] - worldbb[4]) / 2;
+    let lpsDims = new THREE.Vector3(
+        xAxisCenter,
+        yAxisCenter,
+        zAxisCenter
+    );
+    return lpsDims;
+}
+
+export {setCamera3d};
+export {calculateWorldCenter};
