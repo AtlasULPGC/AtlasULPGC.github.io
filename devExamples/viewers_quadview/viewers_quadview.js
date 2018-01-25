@@ -11,7 +11,7 @@ import LoadersVolume from 'base/loaders/loaders.volume';
 import setRenderer3D from './renderer3d';
 import setCamera3d from './camera3d';
 import setControls3d from 'controls3d';
-
+import setRenderer2d from './renderer2d';
 // standard global variables
 let stats;
 let ready = false;
@@ -156,18 +156,9 @@ function initRenderer3D(renderObj) {
 }
 
 function initRenderer2D(rendererObj) {
-    // renderer
-    rendererObj.domElement = document.getElementById(rendererObj.domId);
-    rendererObj.renderer = new THREE.WebGLRenderer({
-        antialias: true,
-    });
-    rendererObj.renderer.autoClear = false;
-    rendererObj.renderer.localClippingEnabled = true;
-    rendererObj.renderer.setSize(
-        rendererObj.domElement.clientWidth, rendererObj.domElement.clientHeight);
-    rendererObj.renderer.setClearColor(0x121212, 1);
-    rendererObj.renderer.domElement.id = rendererObj.targetID;
-    rendererObj.domElement.appendChild(rendererObj.renderer.domElement);
+
+// renderer
+    setRenderer2d(rendererObj);
 
     // camera
     rendererObj.camera = new CamerasOrthographic(
@@ -747,6 +738,7 @@ window.onload = function () {
             window.addEventListener('resize', onWindowResize, false);
             // load meshes on the stack is all set
             let meshesLoaded = 0;
+
             function loadSTLObject(object) {
                 const stlLoader = new THREE.STLLoader();
                 stlLoader.load(object.location, function (geometry) {
