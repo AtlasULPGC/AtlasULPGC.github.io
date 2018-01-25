@@ -41,7 +41,21 @@ function calculateCameraCanvas(rendererObj) {
     return canvas;
 }
 
+
+function setUpCameraWhenInitializingStackHelper(rendererObj, stack, box, canvas) {
+    rendererObj.camera.directions =
+        [stack.xCosine, stack.yCosine, stack.zCosine];
+    rendererObj.camera.box = box;
+    rendererObj.camera.canvas = canvas;
+    rendererObj.camera.orientation = rendererObj.sliceOrientation;
+    rendererObj.camera.update();
+    const useBestWidthOrHeightToRecalculateSize = 2;
+    const initialZoomFactor = 1;
+    rendererObj.camera.fitBox(useBestWidthOrHeightToRecalculateSize, initialZoomFactor);
+}
+
 export {setCamera3d};
 export {calculateWorldCenter};
 export {calculateCameraBox};
 export {calculateCameraCanvas};
+export {setUpCameraWhenInitializingStackHelper};

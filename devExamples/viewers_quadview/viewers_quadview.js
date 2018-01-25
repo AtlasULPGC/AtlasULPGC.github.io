@@ -7,7 +7,7 @@ import HelpersContour from 'base/helpers/helpers.contour';
 import HelpersLocalizer from 'base/helpers/helpers.localizer';
 import LoadersVolume from 'base/loaders/loaders.volume';
 import setRenderer3D from './renderer3d';
-import {calculateCameraCanvas, setCamera3d} from './camera3d';
+import {calculateCameraCanvas, setCamera3d, setUpCameraWhenInitializingStackHelper} from './camera3d';
 import setControls3d from 'controls3d';
 import setRenderer2d from './renderer2d';
 import setCamera2d from './camera2d';
@@ -189,17 +189,11 @@ function initHelpersStack(rendererObj, stack) {
     let box = calculateCameraBox(stack, lpsDims);
 
 
-
 // init and zoom
     let canvas = calculateCameraCanvas(rendererObj);
 
-    rendererObj.camera.directions =
-        [stack.xCosine, stack.yCosine, stack.zCosine];
-    rendererObj.camera.box = box;
-    rendererObj.camera.canvas = canvas;
-    rendererObj.camera.orientation = rendererObj.sliceOrientation;
-    rendererObj.camera.update();
-    rendererObj.camera.fitBox(2, 1);
+
+    setUpCameraWhenInitializingStackHelper(rendererObj, stack, box, canvas);
 
     rendererObj.stackHelper.orientation = rendererObj.camera.stackOrientation;
     rendererObj.stackHelper.index =
