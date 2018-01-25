@@ -1,4 +1,5 @@
 import {initHelpersStack} from "./viewers_quadview";
+import {initHelpersLocalizer} from "./localizerHelper";
 
 function setAxialSlice(axialRenderer, stack, renderer3d) {
     initHelpersStack(axialRenderer, stack);
@@ -15,6 +16,19 @@ function setCoronalSlice(coronalRenderer, stack, renderer3d) {
     renderer3d.scene.add(coronalRenderer.scene);
 }
 
+function setAxialSliceBetweenSagittalAndCoronal(axialRenderer, stack, axialPlane, sagittalPlane, sagittalRenderer, coronalPlane, coronalRenderer) {
+    initHelpersLocalizer(axialRenderer, stack, axialPlane, [
+        {
+            plane: sagittalPlane,
+            color: new THREE.Color(sagittalRenderer.stackHelper.borderColor),
+        },
+        {
+            plane: coronalPlane,
+            color: new THREE.Color(coronalRenderer.stackHelper.borderColor),
+        },
+    ]);
+}
+
 function setPlanes(axialRenderer, sagittalRenderer, coronalRenderer) {
     let axialPlane = axialRenderer.stackHelper.slice.cartesianEquation();
     let sagittalPlane = sagittalRenderer.stackHelper.slice.cartesianEquation();
@@ -22,4 +36,4 @@ function setPlanes(axialRenderer, sagittalRenderer, coronalRenderer) {
     return {axialPlane, sagittalPlane, coronalPlane};
 }
 
-export {setAxialSlice, setSagittalSlice, setCoronalSlice, setPlanes};
+export {setAxialSlice, setSagittalSlice, setCoronalSlice, setPlanes, setAxialSliceBetweenSagittalAndCoronal};
