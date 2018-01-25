@@ -22,6 +22,7 @@ import {initHelpersLocalizer} from "./localizerHelper";
 import {setURLForData} from "./urlData";
 import {centerControlsOnStack, setControls3d} from "./controls3d";
 import {setBoundingBoxHelper} from "./boundingBoxHelper";
+import {setTextureTargetFor2dPlanesIn3dViewer} from "./texture";
 // standard global variables
 let stats;
 let ready = false;
@@ -330,15 +331,8 @@ window.onload = function () {
             initHelpersStack(r1, stack);
             r0.scene.add(r1.scene);
 
-            redTextureTarget = new THREE.WebGLRenderTarget(
-                r1.domElement.clientWidth,
-                r1.domElement.clientHeight,
-                {
-                    minFilter: THREE.LinearFilter,
-                    magFilter: THREE.NearestFilter,
-                    format: THREE.RGBAFormat,
-                }
-            );
+
+            redTextureTarget = setTextureTargetFor2dPlanesIn3dViewer(redTextureTarget, r1);
 
             redContourHelper = new HelpersContour(stack, r1.stackHelper.slice.geometry);
             redContourHelper.canvasWidth = redTextureTarget.width;
