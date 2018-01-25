@@ -10,7 +10,6 @@ import {
     calculateCameraCanvas, centerCamera3dOnStack, setCamera3d,
     setUpCameraWhenInitializingStackHelper
 } from './camera3d';
-import setControls3d from 'controls3d';
 import setRenderer2d from './renderer2d';
 import setCamera2d from './camera2d';
 import setControls2d from './controls2d';
@@ -22,6 +21,7 @@ import {calculateWorldCenter} from './camera3d';
 import {calculateCameraBox} from "./camera3d";
 import {initHelpersLocalizer} from "./localizerHelper";
 import {setURLForData} from "./urlData";
+import {centerControlsOnStack, setControls3d} from "./controls3d";
 // standard global variables
 let stats;
 let ready = false;
@@ -318,7 +318,9 @@ window.onload = function () {
             stack.prepare();
 
             let centerLPS = centerCamera3dOnStack(stack, r0);
-            r0.controls.target.set(centerLPS.x, centerLPS.y, centerLPS.z);
+
+
+            centerControlsOnStack(centerLPS, r0);
 
             // bouding box
             let boxHelper = new HelpersBoundingBox(stack);
