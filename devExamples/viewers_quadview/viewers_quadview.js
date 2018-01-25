@@ -12,7 +12,7 @@ import setControls3d from 'controls3d';
 import setRenderer2d from './renderer2d';
 import setCamera2d from './camera2d';
 import setControls2d from './controls2d';
-import setStackHelper from './stackHelper';
+import {setStackHelper, orientateStackHelperInTheSameDirectionAsTheCamera} from './stackHelper';
 import {calculateWorldCenter} from './camera3d';
 import {calculateCameraBox} from "./camera3d";
 // standard global variables
@@ -195,7 +195,8 @@ function initHelpersStack(rendererObj, stack) {
 
     setUpCameraWhenInitializingStackHelper(rendererObj, stack, box, canvas);
 
-    rendererObj.stackHelper.orientation = rendererObj.camera.stackOrientation;
+
+    orientateStackHelperInTheSameDirectionAsTheCamera(rendererObj);
     rendererObj.stackHelper.index =
         Math.floor(rendererObj.stackHelper.orientationMaxIndex / 2);
     rendererObj.scene.add(rendererObj.stackHelper);

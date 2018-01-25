@@ -1,6 +1,6 @@
 import HelpersStack from 'base/helpers/helpers.stack';
 
-export default function setStackHelper(rendererObj, stack) {
+function setStackHelper(rendererObj, stack) {
     rendererObj.stackHelper = new HelpersStack(stack);
     rendererObj.stackHelper.bbox.visible = false;
     rendererObj.stackHelper.borderColor = rendererObj.sliceColor;
@@ -9,3 +9,10 @@ export default function setStackHelper(rendererObj, stack) {
     rendererObj.stackHelper.slice.canvasHeight =
         rendererObj.domElement.clientHeight;
 }
+
+function orientateStackHelperInTheSameDirectionAsTheCamera(rendererObj) {
+    rendererObj.stackHelper.orientation = rendererObj.camera.stackOrientation;
+}
+
+export {setStackHelper};
+export {orientateStackHelperInTheSameDirectionAsTheCamera};
