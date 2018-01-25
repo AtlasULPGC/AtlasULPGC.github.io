@@ -27,7 +27,7 @@ import {setContourHelper} from "./contourHelper";
 import {setGui} from "./gui";
 import {
     setAxialSlice, setAxialSliceBetweenSagittalAndCoronal, setCoronalSlice, setPlanes,
-    setSagittalSlice
+    setSagittalSlice, setSagittalSliceBetweenAxialAndCoronal
 } from "./slicesIn3dRenderer";
 // standard global variables
 let stats;
@@ -359,17 +359,10 @@ window.onload = function () {
 // localizer red slice
             setAxialSliceBetweenSagittalAndCoronal(axialRenderer, stack, axialPlane, sagittalPlane, sagittalRenderer, coronalPlane, coronalRenderer);
 
-            // localizer yellow slice
-            initHelpersLocalizer(sagittalRenderer, stack, sagittalPlane, [
-                {
-                    plane: axialPlane,
-                    color: new THREE.Color(axialRenderer.stackHelper.borderColor),
-                },
-                {
-                    plane: coronalPlane,
-                    color: new THREE.Color(coronalRenderer.stackHelper.borderColor),
-                },
-            ]);
+
+
+// localizer yellow slice
+            setSagittalSliceBetweenAxialAndCoronal(sagittalRenderer, stack, sagittalPlane, axialPlane, axialRenderer, coronalPlane, coronalRenderer);
 
             // localizer green slice
             initHelpersLocalizer(coronalRenderer, stack, coronalPlane, [
