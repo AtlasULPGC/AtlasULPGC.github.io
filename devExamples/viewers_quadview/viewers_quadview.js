@@ -2,7 +2,6 @@
 
 
 import CoreUtils from 'base/core/core.utils';
-import HelpersBoundingBox from 'base/helpers/helpers.boundingbox';
 import HelpersContour from 'base/helpers/helpers.contour';
 import LoadersVolume from 'base/loaders/loaders.volume';
 import setRenderer3D from './renderer3d';
@@ -22,6 +21,7 @@ import {calculateCameraBox} from "./camera3d";
 import {initHelpersLocalizer} from "./localizerHelper";
 import {setURLForData} from "./urlData";
 import {centerControlsOnStack, setControls3d} from "./controls3d";
+import {setBoundingBoxHelper} from "./boundingBoxHelper";
 // standard global variables
 let stats;
 let ready = false;
@@ -322,9 +322,9 @@ window.onload = function () {
 
             centerControlsOnStack(centerLPS, r0);
 
-            // bouding box
-            let boxHelper = new HelpersBoundingBox(stack);
-            r0.scene.add(boxHelper);
+
+// bouding box
+            setBoundingBoxHelper(stack, r0);
 
             // red slice
             initHelpersStack(r1, stack);
