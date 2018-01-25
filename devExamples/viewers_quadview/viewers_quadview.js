@@ -25,7 +25,7 @@ import {setBoundingBoxHelper} from "./boundingBoxHelper";
 import {setTextureTargetFor2dPlanesIn3dViewer} from "./texture";
 import {setContourHelper} from "./contourHelper";
 import {setGui} from "./gui";
-import {setAxialSlice} from "./slicesIn3dRenderer";
+import {setAxialSlice, setSagittalSlice} from "./slicesIn3dRenderer";
 // standard global variables
 let stats;
 let ready = false;
@@ -340,9 +340,9 @@ window.onload = function () {
             redContourScene = new THREE.Scene();
             redContourScene.add(redContourHelper);
 
-            // yellow slice
-            initHelpersStack(sagittalRenderer, stack);
-            renderer3d.scene.add(sagittalRenderer.scene);
+
+// yellow slice
+            setSagittalSlice(sagittalRenderer, stack, renderer3d);
 
             // green slice
             initHelpersStack(coronalRenderer, stack);

@@ -5,4 +5,9 @@ function setAxialSlice(axialRenderer, stack, renderer3d) {
     renderer3d.scene.add(axialRenderer.scene);
 }
 
-export {setAxialSlice};
+function setSagittalSlice(sagittalRenderer, stack, renderer3d) {
+    initHelpersStack(sagittalRenderer, stack);
+    renderer3d.scene.add(sagittalRenderer.scene);
+}
+
+export {setAxialSlice, setSagittalSlice};
