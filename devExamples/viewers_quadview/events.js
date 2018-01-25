@@ -34,4 +34,17 @@ function checkOnWhatRendererHasBeenTriggeredTheEvent(event, renderer3d, axialRen
     return {mouse, camera, stackHelper, scene};
 }
 
-export {checkOnWhatRendererHasBeenTriggeredTheEvent};
+function updateSliceIndex(ijk, axialRenderer, sagittalRenderer, coronalRenderer) {
+    axialRenderer.stackHelper.index =
+        ijk.getComponent((axialRenderer.stackHelper.orientation + 2) % 3);
+    sagittalRenderer.stackHelper.index =
+        ijk.getComponent((sagittalRenderer.stackHelper.orientation + 2) % 3);
+    coronalRenderer.stackHelper.index =
+        ijk.getComponent((coronalRenderer.stackHelper.orientation + 2) % 3);
+}
+
+function doubleClickIsOnSlice(intersects) {
+    return intersects.length > 0;
+}
+
+export {checkOnWhatRendererHasBeenTriggeredTheEvent, updateSliceIndex, doubleClickIsOnSlice};

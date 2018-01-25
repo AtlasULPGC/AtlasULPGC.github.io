@@ -30,7 +30,7 @@ import {
     setPlanes,
     setSagittalSlice, setSagittalSliceBetweenAxialAndCoronal
 } from "./slicesIn3dRenderer";
-import {checkOnWhatRendererHasBeenTriggeredTheEvent} from "./events";
+import {checkOnWhatRendererHasBeenTriggeredTheEvent, doubleClickIsOnSlice, updateSliceIndex} from "./events";
 // standard global variables
 let stats;
 let ready = false;
@@ -416,16 +416,11 @@ window.onload = function () {
                 raycaster.setFromCamera(mouse, camera);
 
                 const intersects = raycaster.intersectObjects(scene.children, true);
-                if (intersects.length > 0) {
-                    let ijk =
-                        CoreUtils.worldToData(stackHelper.stack.lps2IJK, intersects[0].point);
 
-                    axialRenderer.stackHelper.index =
-                        ijk.getComponent((axialRenderer.stackHelper.orientation + 2) % 3);
-                    sagittalRenderer.stackHelper.index =
-                        ijk.getComponent((sagittalRenderer.stackHelper.orientation + 2) % 3);
-                    coronalRenderer.stackHelper.index =
-                        ijk.getComponent((coronalRenderer.stackHelper.orientation + 2) % 3);
+
+                if (doubleClickIsOnSlice(intersects)) {
+                    let ijk = CoreUtils.worldToData(stackHelper.stack.lps2IJK, intersects[0].point);
+                    updateSliceIndex(ijk, axialRenderer, sagittalRenderer, coronalRenderer);
 
                     onCoronalChanged();
                     onAxialChanged();
