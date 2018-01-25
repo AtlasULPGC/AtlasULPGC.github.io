@@ -24,6 +24,7 @@ import {centerControlsOnStack, setControls3d} from "./controls3d";
 import {setBoundingBoxHelper} from "./boundingBoxHelper";
 import {setTextureTargetFor2dPlanesIn3dViewer} from "./texture";
 import {setContourHelper} from "./contourHelper";
+import {setGui} from "./gui";
 // standard global variables
 let stats;
 let ready = false;
@@ -388,37 +389,7 @@ window.onload = function () {
                     color: new THREE.Color(sagittalRenderer.stackHelper.borderColor),
                 },
             ]);
-
-            let gui = new dat.GUI({
-                autoPlace: false,
-            });
-
-            let customContainer = document.getElementById('my-gui-container');
-            customContainer.appendChild(gui.domElement);
-
-            // Red
-            let stackFolder1 = gui.addFolder('Axial (Red)');
-            let redChanged = stackFolder1.add(
-                axialRenderer.stackHelper,
-                'index', 0, axialRenderer.stackHelper.orientationMaxIndex).step(1).listen();
-            stackFolder1.add(
-                axialRenderer.stackHelper.slice, 'interpolation', 0, 1).step(1).listen();
-
-            // Yellow
-            let stackFolder2 = gui.addFolder('Sagittal (yellow)');
-            let yellowChanged = stackFolder2.add(
-                sagittalRenderer.stackHelper,
-                'index', 0, sagittalRenderer.stackHelper.orientationMaxIndex).step(1).listen();
-            stackFolder2.add(
-                sagittalRenderer.stackHelper.slice, 'interpolation', 0, 1).step(1).listen();
-
-            // Green
-            let stackFolder3 = gui.addFolder('Coronal (green)');
-            let greenChanged = stackFolder3.add(
-                coronalRenderer.stackHelper,
-                'index', 0, coronalRenderer.stackHelper.orientationMaxIndex).step(1).listen();
-            stackFolder3.add(
-                coronalRenderer.stackHelper.slice, 'interpolation', 0, 1).step(1).listen();
+            let {redChanged, yellowChanged, greenChanged} = setGui(axialRenderer, sagittalRenderer, coronalRenderer);
 
             /**
              * Update Layer Mix
