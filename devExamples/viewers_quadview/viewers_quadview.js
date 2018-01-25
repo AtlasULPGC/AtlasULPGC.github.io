@@ -349,42 +349,42 @@ window.onload = function () {
             renderer3d.scene.add(coronalRenderer.scene);
 
             // create new mesh with Localizer shaders
-            let plane1 = axialRenderer.stackHelper.slice.cartesianEquation();
-            let plane2 = sagittalRenderer.stackHelper.slice.cartesianEquation();
-            let plane3 = coronalRenderer.stackHelper.slice.cartesianEquation();
+            let axialPlane = axialRenderer.stackHelper.slice.cartesianEquation();
+            let sagittalPlane = sagittalRenderer.stackHelper.slice.cartesianEquation();
+            let coronalPlane = coronalRenderer.stackHelper.slice.cartesianEquation();
 
             // localizer red slice
-            initHelpersLocalizer(axialRenderer, stack, plane1, [
+            initHelpersLocalizer(axialRenderer, stack, axialPlane, [
                 {
-                    plane: plane2,
+                    plane: sagittalPlane,
                     color: new THREE.Color(sagittalRenderer.stackHelper.borderColor),
                 },
                 {
-                    plane: plane3,
+                    plane: coronalPlane,
                     color: new THREE.Color(coronalRenderer.stackHelper.borderColor),
                 },
             ]);
 
             // localizer yellow slice
-            initHelpersLocalizer(sagittalRenderer, stack, plane2, [
+            initHelpersLocalizer(sagittalRenderer, stack, sagittalPlane, [
                 {
-                    plane: plane1,
+                    plane: axialPlane,
                     color: new THREE.Color(axialRenderer.stackHelper.borderColor),
                 },
                 {
-                    plane: plane3,
+                    plane: coronalPlane,
                     color: new THREE.Color(coronalRenderer.stackHelper.borderColor),
                 },
             ]);
 
             // localizer green slice
-            initHelpersLocalizer(coronalRenderer, stack, plane3, [
+            initHelpersLocalizer(coronalRenderer, stack, coronalPlane, [
                 {
-                    plane: plane1,
+                    plane: axialPlane,
                     color: new THREE.Color(axialRenderer.stackHelper.borderColor),
                 },
                 {
-                    plane: plane2,
+                    plane: sagittalPlane,
                     color: new THREE.Color(sagittalRenderer.stackHelper.borderColor),
                 },
             ]);
