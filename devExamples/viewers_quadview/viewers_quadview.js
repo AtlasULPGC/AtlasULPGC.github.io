@@ -5,7 +5,6 @@ import CoreUtils from 'base/core/core.utils';
 import HelpersBoundingBox from 'base/helpers/helpers.boundingbox';
 import HelpersContour from 'base/helpers/helpers.contour';
 import HelpersLocalizer from 'base/helpers/helpers.localizer';
-import HelpersStack from 'base/helpers/helpers.stack';
 import LoadersVolume from 'base/loaders/loaders.volume';
 import setRenderer3D from './renderer3d';
 import setCamera3d from './camera3d';
@@ -13,6 +12,7 @@ import setControls3d from 'controls3d';
 import setRenderer2d from './renderer2d';
 import setCamera2d from './camera2d';
 import setControls2d from './controls2d';
+import setStackHelper from './stackHelper';
 // standard global variables
 let stats;
 let ready = false;
@@ -174,13 +174,9 @@ function initRenderer2D(rendererObj) {
 }
 
 function initHelpersStack(rendererObj, stack) {
-    rendererObj.stackHelper = new HelpersStack(stack);
-    rendererObj.stackHelper.bbox.visible = false;
-    rendererObj.stackHelper.borderColor = rendererObj.sliceColor;
-    rendererObj.stackHelper.slice.canvasWidth =
-        rendererObj.domElement.clientWidth;
-    rendererObj.stackHelper.slice.canvasHeight =
-        rendererObj.domElement.clientHeight;
+
+
+    setStackHelper(rendererObj, stack);
 
     // set camera
     let worldbb = stack.worldBoundingBox();
