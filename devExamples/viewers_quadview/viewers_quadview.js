@@ -23,6 +23,7 @@ import {setURLForData} from "./urlData";
 import {centerControlsOnStack, setControls3d} from "./controls3d";
 import {setBoundingBoxHelper} from "./boundingBoxHelper";
 import {setTextureTargetFor2dPlanesIn3dViewer} from "./texture";
+import {setContourHelper} from "./contourHelper";
 // standard global variables
 let stats;
 let ready = false;
@@ -334,10 +335,8 @@ window.onload = function () {
 
             redTextureTarget = setTextureTargetFor2dPlanesIn3dViewer(redTextureTarget, r1);
 
-            redContourHelper = new HelpersContour(stack, r1.stackHelper.slice.geometry);
-            redContourHelper.canvasWidth = redTextureTarget.width;
-            redContourHelper.canvasHeight = redTextureTarget.height;
-            redContourHelper.textureToFilter = redTextureTarget.texture;
+
+            redContourHelper = setContourHelper(redContourHelper, stack, r1, redTextureTarget);
             redContourScene = new THREE.Scene();
             redContourScene.add(redContourHelper);
 
