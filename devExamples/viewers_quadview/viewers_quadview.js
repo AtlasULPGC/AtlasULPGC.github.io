@@ -10,7 +10,7 @@ import {
     setUpCameraWhenInitializingStackHelper
 } from './camera3d';
 import setRenderer2d from './renderer2d';
-import setCamera2d from './camera2d';
+import {setCamera2d, update2dViewersWithNewIntersectionPlanes} from './camera2d';
 import setControls2d from './controls2d';
 import {
     setStackHelper, orientateStackHelperInTheSameDirectionAsTheCamera,
@@ -376,37 +376,17 @@ window.onload = function () {
 
 
 
-            function updateClipPlane(refObj, currentPlaneWhereIntersectionUpdateIsProduced) {
-                const stackHelper = refObj.stackHelper;
-                const camera = refObj.camera;
-                let vertices = stackHelper.slice.geometry.vertices;
-                let p1 = new THREE.Vector3(vertices[0].x, vertices[0].y, vertices[0].z)
-                    .applyMatrix4(stackHelper._stack.ijk2LPS);
-                let p2 = new THREE.Vector3(vertices[1].x, vertices[1].y, vertices[1].z)
-                    .applyMatrix4(stackHelper._stack.ijk2LPS);
-                let p3 = new THREE.Vector3(vertices[2].x, vertices[2].y, vertices[2].z)
-                    .applyMatrix4(stackHelper._stack.ijk2LPS);
-
-                currentPlaneWhereIntersectionUpdateIsProduced.setFromCoplanarPoints(p1, p2, p3);
-
-                let cameraDirection = new THREE.Vector3(1, 1, 1);
-                cameraDirection.applyQuaternion(camera.quaternion);
-
-                if (cameraDirection.dot(currentPlaneWhereIntersectionUpdateIsProduced.normal) > 0) {
-                    currentPlaneWhereIntersectionUpdateIsProduced.negate();
-                }
-            }
 
             function onYellowChanged() {
                 updateLocalizer(sagittalRenderer, [axialRenderer.localizerHelper, coronalRenderer.localizerHelper]);
-                updateClipPlane(sagittalRenderer, sagittalIntersectionPlane);
+                update2dViewersWithNewIntersectionPlanes(sagittalRenderer, sagittalIntersectionPlane);
             }
 
             yellowChanged.onChange(onYellowChanged);
 
             function onRedChanged() {
                 updateLocalizer(axialRenderer, [sagittalRenderer.localizerHelper, coronalRenderer.localizerHelper]);
-                updateClipPlane(axialRenderer, axialIntersectionPlane);
+                update2dViewersWithNewIntersectionPlanes(axialRenderer, axialIntersectionPlane);
 
                 if (redContourHelper) {
                     redContourHelper.geometry = axialRenderer.stackHelper.slice.geometry;
@@ -417,7 +397,7 @@ window.onload = function () {
 
             function onGreenChanged() {
                 updateLocalizer(coronalRenderer, [axialRenderer.localizerHelper, sagittalRenderer.localizerHelper]);
-                updateClipPlane(coronalRenderer, coronalIntersectionPlane);
+                update2dViewersWithNewIntersectionPlanes(coronalRenderer, coronalIntersectionPlane);
             }
 
             greenChanged.onChange(onGreenChanged);
