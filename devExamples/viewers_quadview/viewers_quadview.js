@@ -368,7 +368,7 @@ window.onload = function () {
 
 // localizer green slice
             setCoronalSliceBetweenAxialAndSagittal(coronalRenderer, stack, coronalPlane, axialPlane, axialRenderer, sagittalPlane, sagittalRenderer);
-            let {redChanged, yellowChanged, greenChanged} = setGui(axialRenderer, sagittalRenderer, coronalRenderer);
+            let {redChanged: axialChanged, yellowChanged: sagittalChanged, greenChanged: coronalChanged} = setGui(axialRenderer, sagittalRenderer, coronalRenderer);
 
             /**
              * Update Layer Mix
@@ -377,14 +377,14 @@ window.onload = function () {
 
 
 
-            function onYellowChanged() {
+            function onSagittalChanged() {
                 updateLocalizer(sagittalRenderer, [axialRenderer.localizerHelper, coronalRenderer.localizerHelper]);
                 update2dViewersWithNewIntersectionPlanes(sagittalRenderer, sagittalIntersectionPlane);
             }
 
-            yellowChanged.onChange(onYellowChanged);
+            sagittalChanged.onChange(onSagittalChanged);
 
-            function onRedChanged() {
+            function onAxialChanged() {
                 updateLocalizer(axialRenderer, [sagittalRenderer.localizerHelper, coronalRenderer.localizerHelper]);
                 update2dViewersWithNewIntersectionPlanes(axialRenderer, axialIntersectionPlane);
 
@@ -393,14 +393,14 @@ window.onload = function () {
                 }
             }
 
-            redChanged.onChange(onRedChanged);
+            axialChanged.onChange(onAxialChanged);
 
-            function onGreenChanged() {
+            function onCoronalChanged() {
                 updateLocalizer(coronalRenderer, [axialRenderer.localizerHelper, sagittalRenderer.localizerHelper]);
                 update2dViewersWithNewIntersectionPlanes(coronalRenderer, coronalIntersectionPlane);
             }
 
-            greenChanged.onChange(onGreenChanged);
+            coronalChanged.onChange(onCoronalChanged);
 
             function onDoubleClick(event) {
                 const canvas = event.target.parentElement;
@@ -451,9 +451,9 @@ window.onload = function () {
                     coronalRenderer.stackHelper.index =
                         ijk.getComponent((coronalRenderer.stackHelper.orientation + 2) % 3);
 
-                    onGreenChanged();
-                    onRedChanged();
-                    onYellowChanged();
+                    onCoronalChanged();
+                    onAxialChanged();
+                    onSagittalChanged();
                 }
             }
 
@@ -548,9 +548,9 @@ window.onload = function () {
                     stackHelper.index -= 1;
                 }
 
-                onGreenChanged();
-                onRedChanged();
-                onYellowChanged();
+                onCoronalChanged();
+                onAxialChanged();
+                onSagittalChanged();
             }
 
             // event listeners
@@ -649,9 +649,9 @@ window.onload = function () {
 
                     meshesLoaded++;
 
-                    onGreenChanged();
-                    onRedChanged();
-                    onYellowChanged();
+                    onCoronalChanged();
+                    onAxialChanged();
+                    onSagittalChanged();
 
                     // good to go
                     if (meshesLoaded === data.size) {

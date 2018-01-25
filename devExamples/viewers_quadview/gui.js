@@ -8,7 +8,7 @@ function setGui(axialRenderer, sagittalRenderer, coronalRenderer) {
 
     // Red
     let stackFolder1 = gui.addFolder('Axial (Red)');
-    let redChanged = stackFolder1.add(
+    let axialChanged = stackFolder1.add(
         axialRenderer.stackHelper,
         'index', 0, axialRenderer.stackHelper.orientationMaxIndex).step(1).listen();
     stackFolder1.add(
@@ -16,7 +16,7 @@ function setGui(axialRenderer, sagittalRenderer, coronalRenderer) {
 
     // Yellow
     let stackFolder2 = gui.addFolder('Sagittal (yellow)');
-    let yellowChanged = stackFolder2.add(
+    let sagittalChanged = stackFolder2.add(
         sagittalRenderer.stackHelper,
         'index', 0, sagittalRenderer.stackHelper.orientationMaxIndex).step(1).listen();
     stackFolder2.add(
@@ -24,12 +24,12 @@ function setGui(axialRenderer, sagittalRenderer, coronalRenderer) {
 
     // Green
     let stackFolder3 = gui.addFolder('Coronal (green)');
-    let greenChanged = stackFolder3.add(
+    let coronalChanged = stackFolder3.add(
         coronalRenderer.stackHelper,
         'index', 0, coronalRenderer.stackHelper.orientationMaxIndex).step(1).listen();
     stackFolder3.add(
         coronalRenderer.stackHelper.slice, 'interpolation', 0, 1).step(1).listen();
-    return {redChanged, yellowChanged, greenChanged};
+    return {redChanged: axialChanged, yellowChanged: sagittalChanged, greenChanged: coronalChanged};
 }
 
 export {setGui};
