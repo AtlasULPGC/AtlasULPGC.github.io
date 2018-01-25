@@ -10,6 +10,7 @@ import HelpersLocalizer from 'base/helpers/helpers.localizer';
 import HelpersStack from 'base/helpers/helpers.stack';
 import LoadersVolume from 'base/loaders/loaders.volume';
 import setRenderer3D from './renderer3d';
+import setCamera3d from './camera3d';
 
 // standard global variables
 let stats;
@@ -133,13 +134,9 @@ function initRenderer3D(renderObj) {
 // renderer
     setRenderer3D(renderObj);
 
-    // camera
-    renderObj.camera = new THREE.PerspectiveCamera(
-        45, renderObj.domElement.clientWidth / renderObj.domElement.clientHeight,
-        0.1, 100000);
-    renderObj.camera.position.x = 250;
-    renderObj.camera.position.y = 250;
-    renderObj.camera.position.z = 250;
+
+// camera
+    setCamera3d(renderObj);
 
     // controls
     renderObj.controls = new ControlsTrackball(
