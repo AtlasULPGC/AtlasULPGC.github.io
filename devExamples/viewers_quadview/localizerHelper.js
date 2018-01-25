@@ -17,5 +17,31 @@ function initHelpersLocalizer(rendererObj, stack, referencePlane, localizers) {
     rendererObj.localizerScene = new THREE.Scene();
     rendererObj.localizerScene.add(rendererObj.localizerHelper);
 }
+function updateLocalizer(referenceRenderer, localizerHelpersToDetermineAxisMovement) {
+    let refHelper = referenceRenderer.stackHelper;
+    let localizerHelper = referenceRenderer.localizerHelper;
+    let plane = refHelper.slice.cartesianEquation();
+    localizerHelper.referencePlane = plane;
 
-export {initHelpersLocalizer};
+
+    readAndAssignPlanesToDetermineAxisMovement(localizerHelpersToDetermineAxisMovement, plane);
+
+    localizerHelper.geometry = refHelper.slice.geometry;
+}
+
+function readAndAssignPlanesToDetermineAxisMovement(localizerHelpersToDetermineAxisMovement, plane) {
+    for (let i = 0; i < localizerHelpersToDetermineAxisMovement.length; i++) {
+        const currentPlanesSize = 2;
+        for (let j = 0; j < currentPlanesSize; j++) {
+            let currentPlaneToDetermineAxisMovement = localizerHelpersToDetermineAxisMovement[i]['plane' + (j + 1)];
+
+            if (currentPlaneToDetermineAxisMovement &&
+                plane.x.toFixed(6) === currentPlaneToDetermineAxisMovement.x.toFixed(6) &&
+                plane.y.toFixed(6) === currentPlaneToDetermineAxisMovement.y.toFixed(6) &&
+                plane.z.toFixed(6) === currentPlaneToDetermineAxisMovement.z.toFixed(6)) {
+                localizerHelpersToDetermineAxisMovement[i]['plane' + (j + 1)] = plane;
+            }
+        }
+    }
+}
+export {initHelpersLocalizer, updateLocalizer};

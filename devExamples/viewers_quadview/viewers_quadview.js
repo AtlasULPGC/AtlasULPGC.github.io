@@ -18,7 +18,7 @@ import {
 } from './stackHelper';
 import {calculateWorldCenter} from './camera3d';
 import {calculateCameraBox} from "./camera3d";
-import {initHelpersLocalizer} from "./localizerHelper";
+import {initHelpersLocalizer, updateLocalizer} from "./localizerHelper";
 import {setURLForData} from "./urlData";
 import {centerControlsOnStack, setControls3d} from "./controls3d";
 import {setBoundingBoxHelper} from "./boundingBoxHelper";
@@ -373,30 +373,8 @@ window.onload = function () {
             /**
              * Update Layer Mix
              */
-            function updateLocalizer(referenceRenderer, localizerHelpersToDetermineAxisMovement) {
-                let refHelper = referenceRenderer.stackHelper;
-                let localizerHelper = referenceRenderer.localizerHelper;
-                let plane = refHelper.slice.cartesianEquation();
-                localizerHelper.referencePlane = plane;
 
-                // bit of a hack... works fine for this application
-                for (let i = 0; i < localizerHelpersToDetermineAxisMovement.length; i++) {
-                    const currentPlanesSize = 2;
-                    for (let j = 0; j < currentPlanesSize; j++) {
-                        let currentPlaneToDetermineAxisMovement = localizerHelpersToDetermineAxisMovement[i]['plane' + (j + 1)];
 
-                        if (currentPlaneToDetermineAxisMovement &&
-                            plane.x.toFixed(6) === currentPlaneToDetermineAxisMovement.x.toFixed(6) &&
-                            plane.y.toFixed(6) === currentPlaneToDetermineAxisMovement.y.toFixed(6) &&
-                            plane.z.toFixed(6) === currentPlaneToDetermineAxisMovement.z.toFixed(6)) {
-                            localizerHelpersToDetermineAxisMovement[i]['plane' + (j + 1)] = plane;
-                        }
-                    }
-                }
-
-                // update the geometry will create a new mesh
-                localizerHelper.geometry = refHelper.slice.geometry;
-            }
 
             function updateClipPlane(refObj, clipPlane) {
                 const stackHelper = refObj.stackHelper;
