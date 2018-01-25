@@ -19,6 +19,8 @@ function setInitialStackHelperIndexAtHalf(rendererObj) {
         Math.floor(rendererObj.stackHelper.orientationMaxIndex / 2);
 }
 
+
+
 export {setStackHelper};
 export {orientateStackHelperInTheSameDirectionAsTheCamera};
 export {setInitialStackHelperIndexAtHalf};

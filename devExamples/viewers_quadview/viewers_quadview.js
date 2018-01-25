@@ -25,6 +25,7 @@ import {setBoundingBoxHelper} from "./boundingBoxHelper";
 import {setTextureTargetFor2dPlanesIn3dViewer} from "./texture";
 import {setContourHelper} from "./contourHelper";
 import {setGui} from "./gui";
+import {setAxialSlice} from "./slicesIn3dRenderer";
 // standard global variables
 let stats;
 let ready = false;
@@ -329,14 +330,12 @@ window.onload = function () {
 // bouding box
             setBoundingBoxHelper(stack, renderer3d);
 
-            // red slice
-            initHelpersStack(axialRenderer, stack);
-            renderer3d.scene.add(axialRenderer.scene);
+
+// red slice
+            setAxialSlice(axialRenderer, stack, renderer3d);
 
 
             redTextureTarget = setTextureTargetFor2dPlanesIn3dViewer(redTextureTarget, axialRenderer);
-
-
             redContourHelper = setContourHelper(redContourHelper, stack, axialRenderer, redTextureTarget);
             redContourScene = new THREE.Scene();
             redContourScene.add(redContourHelper);
@@ -730,3 +729,4 @@ window.onload = function () {
             window.console.log(error);
         });
 };
+export {initHelpersStack};
