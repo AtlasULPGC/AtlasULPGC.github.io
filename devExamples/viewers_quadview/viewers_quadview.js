@@ -46,7 +46,7 @@ const r0 = {
 };
 
 // 2d axial renderer
-const r1 = {
+const axialRenderer = {
     domId: 'r1',
     domElement: null,
     renderer: null,
@@ -225,7 +225,7 @@ function init() {
         if (ready) {
             // render
             r0.controls.update();
-            r1.controls.update();
+            axialRenderer.controls.update();
             r2.controls.update();
             r3.controls.update();
 
@@ -233,24 +233,24 @@ function init() {
             r0.renderer.render(r0.scene, r0.camera);
 
             // r1
-            r1.renderer.clear();
-            r1.renderer.render(r1.scene, r1.camera);
+            axialRenderer.renderer.clear();
+            axialRenderer.renderer.render(axialRenderer.scene, axialRenderer.camera);
             // mesh
-            r1.renderer.clearDepth();
+            axialRenderer.renderer.clearDepth();
             data.forEach(function (object, key) {
                 object.materialFront.clippingPlanes = [clipPlane1];
                 object.materialBack.clippingPlanes = [clipPlane1];
-                r1.renderer.render(object.scene, r1.camera, redTextureTarget, true);
-                r1.renderer.clearDepth();
+                axialRenderer.renderer.render(object.scene, axialRenderer.camera, redTextureTarget, true);
+                axialRenderer.renderer.clearDepth();
                 redContourHelper.contourWidth = object.selected ? 1 : 1;
                 redContourHelper.contourOpacity = object.selected ? 1 : .2;
-                r1.renderer.render(redContourScene, r1.camera);
-                r1.renderer.clearDepth();
+                axialRenderer.renderer.render(redContourScene, axialRenderer.camera);
+                axialRenderer.renderer.clearDepth();
             });
 
             // localizer
-            r1.renderer.clearDepth();
-            r1.renderer.render(r1.localizerScene, r1.camera);
+            axialRenderer.renderer.clearDepth();
+            axialRenderer.renderer.render(axialRenderer.localizerScene, axialRenderer.camera);
 
             // r2
             r2.renderer.clear();
@@ -291,7 +291,7 @@ function init() {
 
     // renderers
     initRenderer3D(r0);
-    initRenderer2D(r1);
+    initRenderer2D(axialRenderer);
     initRenderer2D(r2);
     initRenderer2D(r3);
 
@@ -329,14 +329,14 @@ window.onload = function () {
             setBoundingBoxHelper(stack, r0);
 
             // red slice
-            initHelpersStack(r1, stack);
-            r0.scene.add(r1.scene);
+            initHelpersStack(axialRenderer, stack);
+            r0.scene.add(axialRenderer.scene);
 
 
-            redTextureTarget = setTextureTargetFor2dPlanesIn3dViewer(redTextureTarget, r1);
+            redTextureTarget = setTextureTargetFor2dPlanesIn3dViewer(redTextureTarget, axialRenderer);
 
 
-            redContourHelper = setContourHelper(redContourHelper, stack, r1, redTextureTarget);
+            redContourHelper = setContourHelper(redContourHelper, stack, axialRenderer, redTextureTarget);
             redContourScene = new THREE.Scene();
             redContourScene.add(redContourHelper);
 
@@ -349,12 +349,12 @@ window.onload = function () {
             r0.scene.add(r3.scene);
 
             // create new mesh with Localizer shaders
-            let plane1 = r1.stackHelper.slice.cartesianEquation();
+            let plane1 = axialRenderer.stackHelper.slice.cartesianEquation();
             let plane2 = r2.stackHelper.slice.cartesianEquation();
             let plane3 = r3.stackHelper.slice.cartesianEquation();
 
             // localizer red slice
-            initHelpersLocalizer(r1, stack, plane1, [
+            initHelpersLocalizer(axialRenderer, stack, plane1, [
                 {
                     plane: plane2,
                     color: new THREE.Color(r2.stackHelper.borderColor),
@@ -369,7 +369,7 @@ window.onload = function () {
             initHelpersLocalizer(r2, stack, plane2, [
                 {
                     plane: plane1,
-                    color: new THREE.Color(r1.stackHelper.borderColor),
+                    color: new THREE.Color(axialRenderer.stackHelper.borderColor),
                 },
                 {
                     plane: plane3,
@@ -381,7 +381,7 @@ window.onload = function () {
             initHelpersLocalizer(r3, stack, plane3, [
                 {
                     plane: plane1,
-                    color: new THREE.Color(r1.stackHelper.borderColor),
+                    color: new THREE.Color(axialRenderer.stackHelper.borderColor),
                 },
                 {
                     plane: plane2,
@@ -399,10 +399,10 @@ window.onload = function () {
             // Red
             let stackFolder1 = gui.addFolder('Axial (Red)');
             let redChanged = stackFolder1.add(
-                r1.stackHelper,
-                'index', 0, r1.stackHelper.orientationMaxIndex).step(1).listen();
+                axialRenderer.stackHelper,
+                'index', 0, axialRenderer.stackHelper.orientationMaxIndex).step(1).listen();
             stackFolder1.add(
-                r1.stackHelper.slice, 'interpolation', 0, 1).step(1).listen();
+                axialRenderer.stackHelper.slice, 'interpolation', 0, 1).step(1).listen();
 
             // Yellow
             let stackFolder2 = gui.addFolder('Sagittal (yellow)');
@@ -468,25 +468,25 @@ window.onload = function () {
             }
 
             function onYellowChanged() {
-                updateLocalizer(r2, [r1.localizerHelper, r3.localizerHelper]);
+                updateLocalizer(r2, [axialRenderer.localizerHelper, r3.localizerHelper]);
                 updateClipPlane(r2, clipPlane2);
             }
 
             yellowChanged.onChange(onYellowChanged);
 
             function onRedChanged() {
-                updateLocalizer(r1, [r2.localizerHelper, r3.localizerHelper]);
-                updateClipPlane(r1, clipPlane1);
+                updateLocalizer(axialRenderer, [r2.localizerHelper, r3.localizerHelper]);
+                updateClipPlane(axialRenderer, clipPlane1);
 
                 if (redContourHelper) {
-                    redContourHelper.geometry = r1.stackHelper.slice.geometry;
+                    redContourHelper.geometry = axialRenderer.stackHelper.slice.geometry;
                 }
             }
 
             redChanged.onChange(onRedChanged);
 
             function onGreenChanged() {
-                updateLocalizer(r3, [r1.localizerHelper, r2.localizerHelper]);
+                updateLocalizer(r3, [axialRenderer.localizerHelper, r2.localizerHelper]);
                 updateClipPlane(r3, clipPlane3);
             }
 
@@ -506,13 +506,13 @@ window.onload = function () {
                 switch (id) {
                     case '0':
                         camera = r0.camera;
-                        stackHelper = r1.stackHelper;
+                        stackHelper = axialRenderer.stackHelper;
                         scene = r0.scene;
                         break;
                     case '1':
-                        camera = r1.camera;
-                        stackHelper = r1.stackHelper;
-                        scene = r1.scene;
+                        camera = axialRenderer.camera;
+                        stackHelper = axialRenderer.stackHelper;
+                        scene = axialRenderer.scene;
                         break;
                     case '2':
                         camera = r2.camera;
@@ -534,8 +534,8 @@ window.onload = function () {
                     let ijk =
                         CoreUtils.worldToData(stackHelper.stack.lps2IJK, intersects[0].point);
 
-                    r1.stackHelper.index =
-                        ijk.getComponent((r1.stackHelper.orientation + 2) % 3);
+                    axialRenderer.stackHelper.index =
+                        ijk.getComponent((axialRenderer.stackHelper.orientation + 2) % 3);
                     r2.stackHelper.index =
                         ijk.getComponent((r2.stackHelper.orientation + 2) % 3);
                     r3.stackHelper.index =
@@ -549,7 +549,7 @@ window.onload = function () {
 
             // event listeners
             r0.domElement.addEventListener('dblclick', onDoubleClick);
-            r1.domElement.addEventListener('dblclick', onDoubleClick);
+            axialRenderer.domElement.addEventListener('dblclick', onDoubleClick);
             r2.domElement.addEventListener('dblclick', onDoubleClick);
             r3.domElement.addEventListener('dblclick', onDoubleClick);
 
@@ -567,13 +567,13 @@ window.onload = function () {
                 switch (id) {
                     case '0':
                         camera = r0.camera;
-                        stackHelper = r1.stackHelper;
+                        stackHelper = axialRenderer.stackHelper;
                         scene = r0.scene;
                         break;
                     case '1':
-                        camera = r1.camera;
-                        stackHelper = r1.stackHelper;
-                        scene = r1.scene;
+                        camera = axialRenderer.camera;
+                        stackHelper = axialRenderer.stackHelper;
+                        scene = axialRenderer.scene;
                         break;
                     case '2':
                         camera = r2.camera;
@@ -616,7 +616,7 @@ window.onload = function () {
                 let stackHelper = null;
                 switch (id) {
                     case 'r1':
-                        stackHelper = r1.stackHelper;
+                        stackHelper = axialRenderer.stackHelper;
                         break;
                     case 'r2':
                         stackHelper = r2.stackHelper;
@@ -644,7 +644,7 @@ window.onload = function () {
             }
 
             // event listeners
-            r1.controls.addEventListener('OnScroll', onScroll);
+            axialRenderer.controls.addEventListener('OnScroll', onScroll);
             r2.controls.addEventListener('OnScroll', onScroll);
             r3.controls.addEventListener('OnScroll', onScroll);
 
@@ -677,7 +677,7 @@ window.onload = function () {
                     r0.domElement.clientWidth, r0.domElement.clientHeight);
 
                 // update 2d
-                windowResize2D(r1);
+                windowResize2D(axialRenderer);
                 windowResize2D(r2);
                 windowResize2D(r3);
             }
