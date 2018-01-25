@@ -38,6 +38,7 @@ let redContourHelper = null;
 let redTextureTarget = null;
 let redContourScene = null;
 
+
 // 3d renderer
 const renderer3d = {
     domId: 'r0',
@@ -372,21 +373,23 @@ window.onload = function () {
             /**
              * Update Layer Mix
              */
-            function updateLocalizer(refObj, targetLocalizersHelpers) {
-                let refHelper = refObj.stackHelper;
-                let localizerHelper = refObj.localizerHelper;
+            function updateLocalizer(referenceRenderer, localizerHelpersToDetermineAxisMovement) {
+                let refHelper = referenceRenderer.stackHelper;
+                let localizerHelper = referenceRenderer.localizerHelper;
                 let plane = refHelper.slice.cartesianEquation();
                 localizerHelper.referencePlane = plane;
 
                 // bit of a hack... works fine for this application
-                for (let i = 0; i < targetLocalizersHelpers.length; i++) {
-                    for (let j = 0; j < 3; j++) {
-                        let targetPlane = targetLocalizersHelpers[i]['plane' + (j + 1)];
-                        if (targetPlane &&
-                            plane.x.toFixed(6) === targetPlane.x.toFixed(6) &&
-                            plane.y.toFixed(6) === targetPlane.y.toFixed(6) &&
-                            plane.z.toFixed(6) === targetPlane.z.toFixed(6)) {
-                            targetLocalizersHelpers[i]['plane' + (j + 1)] = plane;
+                for (let i = 0; i < localizerHelpersToDetermineAxisMovement.length; i++) {
+                    const currentPlanesSize = 2;
+                    for (let j = 0; j < currentPlanesSize; j++) {
+                        let currentPlaneToDetermineAxisMovement = localizerHelpersToDetermineAxisMovement[i]['plane' + (j + 1)];
+
+                        if (currentPlaneToDetermineAxisMovement &&
+                            plane.x.toFixed(6) === currentPlaneToDetermineAxisMovement.x.toFixed(6) &&
+                            plane.y.toFixed(6) === currentPlaneToDetermineAxisMovement.y.toFixed(6) &&
+                            plane.z.toFixed(6) === currentPlaneToDetermineAxisMovement.z.toFixed(6)) {
+                            localizerHelpersToDetermineAxisMovement[i]['plane' + (j + 1)] = plane;
                         }
                     }
                 }
