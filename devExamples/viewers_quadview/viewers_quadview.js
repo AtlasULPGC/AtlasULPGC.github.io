@@ -25,7 +25,7 @@ import {setBoundingBoxHelper} from "./boundingBoxHelper";
 import {setTextureTargetFor2dPlanesIn3dViewer} from "./texture";
 import {setContourHelper} from "./contourHelper";
 import {setGui} from "./gui";
-import {setAxialSlice, setCoronalSlice, setSagittalSlice} from "./slicesIn3dRenderer";
+import {setAxialSlice, setCoronalSlice, setPlanes, setSagittalSlice} from "./slicesIn3dRenderer";
 // standard global variables
 let stats;
 let ready = false;
@@ -348,10 +348,9 @@ window.onload = function () {
 // green slice
             setCoronalSlice(coronalRenderer, stack, renderer3d);
 
-            // create new mesh with Localizer shaders
-            let axialPlane = axialRenderer.stackHelper.slice.cartesianEquation();
-            let sagittalPlane = sagittalRenderer.stackHelper.slice.cartesianEquation();
-            let coronalPlane = coronalRenderer.stackHelper.slice.cartesianEquation();
+
+// create new mesh with Localizer shaders
+            let {axialPlane, sagittalPlane, coronalPlane} = setPlanes(axialRenderer, sagittalRenderer, coronalRenderer);
 
             // localizer red slice
             initHelpersLocalizer(axialRenderer, stack, axialPlane, [

@@ -15,4 +15,11 @@ function setCoronalSlice(coronalRenderer, stack, renderer3d) {
     renderer3d.scene.add(coronalRenderer.scene);
 }
 
-export {setAxialSlice, setSagittalSlice, setCoronalSlice};
+function setPlanes(axialRenderer, sagittalRenderer, coronalRenderer) {
+    let axialPlane = axialRenderer.stackHelper.slice.cartesianEquation();
+    let sagittalPlane = sagittalRenderer.stackHelper.slice.cartesianEquation();
+    let coronalPlane = coronalRenderer.stackHelper.slice.cartesianEquation();
+    return {axialPlane, sagittalPlane, coronalPlane};
+}
+
+export {setAxialSlice, setSagittalSlice, setCoronalSlice, setPlanes};
