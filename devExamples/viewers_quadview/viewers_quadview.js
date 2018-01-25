@@ -143,9 +143,9 @@ let data = new Map(dataInfo);
 
 // extra variables to show mesh plane intersections in 2D renderers
 let sceneClip = new THREE.Scene();
-let clipPlane1 = new THREE.Plane(new THREE.Vector3(0, 0, 0), 0);
-let clipPlane2 = new THREE.Plane(new THREE.Vector3(0, 0, 0), 0);
-let clipPlane3 = new THREE.Plane(new THREE.Vector3(0, 0, 0), 0);
+let axialIntersectionPlane = new THREE.Plane(new THREE.Vector3(0, 0, 0), 0);
+let sagittalIntersectionPlane = new THREE.Plane(new THREE.Vector3(0, 0, 0), 0);
+let coronalIntersectionPlane = new THREE.Plane(new THREE.Vector3(0, 0, 0), 0);
 
 function initRenderer3D(renderObj) {
 
@@ -245,8 +245,8 @@ function init() {
             // mesh
             axialRenderer.renderer.clearDepth();
             data.forEach(function (object, key) {
-                object.materialFront.clippingPlanes = [clipPlane1];
-                object.materialBack.clippingPlanes = [clipPlane1];
+                object.materialFront.clippingPlanes = [axialIntersectionPlane];
+                object.materialBack.clippingPlanes = [axialIntersectionPlane];
                 axialRenderer.renderer.render(object.scene, axialRenderer.camera, redTextureTarget, true);
                 axialRenderer.renderer.clearDepth();
                 redContourHelper.contourWidth = object.selected ? 1 : 1;
@@ -265,8 +265,8 @@ function init() {
             // mesh
             sagittalRenderer.renderer.clearDepth();
             data.forEach(function (object, key) {
-                object.materialFront.clippingPlanes = [clipPlane2];
-                object.materialBack.clippingPlanes = [clipPlane2];
+                object.materialFront.clippingPlanes = [sagittalIntersectionPlane];
+                object.materialBack.clippingPlanes = [sagittalIntersectionPlane];
             });
             sagittalRenderer.renderer.render(sceneClip, sagittalRenderer.camera);
             // localizer
@@ -279,8 +279,8 @@ function init() {
             // mesh
             coronalRenderer.renderer.clearDepth();
             data.forEach(function (object, key) {
-                object.materialFront.clippingPlanes = [clipPlane3];
-                object.materialBack.clippingPlanes = [clipPlane3];
+                object.materialFront.clippingPlanes = [coronalIntersectionPlane];
+                object.materialBack.clippingPlanes = [coronalIntersectionPlane];
             });
             coronalRenderer.renderer.render(sceneClip, coronalRenderer.camera);
             // localizer
@@ -376,7 +376,7 @@ window.onload = function () {
 
 
 
-            function updateClipPlane(refObj, clipPlane) {
+            function updateClipPlane(refObj, currentPlaneWhereIntersectionUpdateIsProduced) {
                 const stackHelper = refObj.stackHelper;
                 const camera = refObj.camera;
                 let vertices = stackHelper.slice.geometry.vertices;
@@ -387,26 +387,26 @@ window.onload = function () {
                 let p3 = new THREE.Vector3(vertices[2].x, vertices[2].y, vertices[2].z)
                     .applyMatrix4(stackHelper._stack.ijk2LPS);
 
-                clipPlane.setFromCoplanarPoints(p1, p2, p3);
+                currentPlaneWhereIntersectionUpdateIsProduced.setFromCoplanarPoints(p1, p2, p3);
 
                 let cameraDirection = new THREE.Vector3(1, 1, 1);
                 cameraDirection.applyQuaternion(camera.quaternion);
 
-                if (cameraDirection.dot(clipPlane.normal) > 0) {
-                    clipPlane.negate();
+                if (cameraDirection.dot(currentPlaneWhereIntersectionUpdateIsProduced.normal) > 0) {
+                    currentPlaneWhereIntersectionUpdateIsProduced.negate();
                 }
             }
 
             function onYellowChanged() {
                 updateLocalizer(sagittalRenderer, [axialRenderer.localizerHelper, coronalRenderer.localizerHelper]);
-                updateClipPlane(sagittalRenderer, clipPlane2);
+                updateClipPlane(sagittalRenderer, sagittalIntersectionPlane);
             }
 
             yellowChanged.onChange(onYellowChanged);
 
             function onRedChanged() {
                 updateLocalizer(axialRenderer, [sagittalRenderer.localizerHelper, coronalRenderer.localizerHelper]);
-                updateClipPlane(axialRenderer, clipPlane1);
+                updateClipPlane(axialRenderer, axialIntersectionPlane);
 
                 if (redContourHelper) {
                     redContourHelper.geometry = axialRenderer.stackHelper.slice.geometry;
@@ -417,7 +417,7 @@ window.onload = function () {
 
             function onGreenChanged() {
                 updateLocalizer(coronalRenderer, [axialRenderer.localizerHelper, sagittalRenderer.localizerHelper]);
-                updateClipPlane(coronalRenderer, clipPlane3);
+                updateClipPlane(coronalRenderer, coronalIntersectionPlane);
             }
 
             greenChanged.onChange(onGreenChanged);
