@@ -54,8 +54,16 @@ function setUpCameraWhenInitializingStackHelper(rendererObj, stack, box, canvas)
     rendererObj.camera.fitBox(useBestWidthOrHeightToRecalculateSize, initialZoomFactor);
 }
 
+function centerCamera3dOnStack(stack, r0) {
+    let centerLPS = stack.worldCenter();
+    r0.camera.lookAt(centerLPS.x, centerLPS.y, centerLPS.z);
+    r0.camera.updateProjectionMatrix();
+    return centerLPS;
+}
+
 export {setCamera3d};
 export {calculateWorldCenter};
 export {calculateCameraBox};
 export {calculateCameraCanvas};
 export {setUpCameraWhenInitializingStackHelper};
+export {centerCamera3dOnStack};

@@ -6,7 +6,10 @@ import HelpersBoundingBox from 'base/helpers/helpers.boundingbox';
 import HelpersContour from 'base/helpers/helpers.contour';
 import LoadersVolume from 'base/loaders/loaders.volume';
 import setRenderer3D from './renderer3d';
-import {calculateCameraCanvas, setCamera3d, setUpCameraWhenInitializingStackHelper} from './camera3d';
+import {
+    calculateCameraCanvas, centerCamera3dOnStack, setCamera3d,
+    setUpCameraWhenInitializingStackHelper
+} from './camera3d';
 import setControls3d from 'controls3d';
 import setRenderer2d from './renderer2d';
 import setCamera2d from './camera2d';
@@ -208,7 +211,6 @@ function initHelpersStack(rendererObj, stack) {
 }
 
 
-
 /**
  * Init the quadview
  */
@@ -300,7 +302,6 @@ window.onload = function () {
     init();
 
 
-
     let files = setURLForData();
 
     // load sequence for each file
@@ -316,10 +317,7 @@ window.onload = function () {
             let stack = series.stack[0];
             stack.prepare();
 
-            // center 3d camera/control on the stack
-            let centerLPS = stack.worldCenter();
-            r0.camera.lookAt(centerLPS.x, centerLPS.y, centerLPS.z);
-            r0.camera.updateProjectionMatrix();
+            let centerLPS = centerCamera3dOnStack(stack, r0);
             r0.controls.target.set(centerLPS.x, centerLPS.y, centerLPS.z);
 
             // bouding box
