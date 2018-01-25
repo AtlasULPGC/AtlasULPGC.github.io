@@ -33,7 +33,7 @@ let redTextureTarget = null;
 let redContourScene = null;
 
 // 3d renderer
-const r0 = {
+const renderer3d = {
     domId: 'r0',
     domElement: null,
     renderer: null,
@@ -224,13 +224,13 @@ function init() {
         // we are ready when both meshes have been loaded
         if (ready) {
             // render
-            r0.controls.update();
+            renderer3d.controls.update();
             axialRenderer.controls.update();
             r2.controls.update();
             r3.controls.update();
 
-            r0.light.position.copy(r0.camera.position);
-            r0.renderer.render(r0.scene, r0.camera);
+            renderer3d.light.position.copy(renderer3d.camera.position);
+            renderer3d.renderer.render(renderer3d.scene, renderer3d.camera);
 
             // r1
             axialRenderer.renderer.clear();
@@ -290,7 +290,7 @@ function init() {
     }
 
     // renderers
-    initRenderer3D(r0);
+    initRenderer3D(renderer3d);
     initRenderer2D(axialRenderer);
     initRenderer2D(r2);
     initRenderer2D(r3);
@@ -319,18 +319,18 @@ window.onload = function () {
             let stack = series.stack[0];
             stack.prepare();
 
-            let centerLPS = centerCamera3dOnStack(stack, r0);
+            let centerLPS = centerCamera3dOnStack(stack, renderer3d);
 
 
-            centerControlsOnStack(centerLPS, r0);
+            centerControlsOnStack(centerLPS, renderer3d);
 
 
 // bouding box
-            setBoundingBoxHelper(stack, r0);
+            setBoundingBoxHelper(stack, renderer3d);
 
             // red slice
             initHelpersStack(axialRenderer, stack);
-            r0.scene.add(axialRenderer.scene);
+            renderer3d.scene.add(axialRenderer.scene);
 
 
             redTextureTarget = setTextureTargetFor2dPlanesIn3dViewer(redTextureTarget, axialRenderer);
@@ -342,11 +342,11 @@ window.onload = function () {
 
             // yellow slice
             initHelpersStack(r2, stack);
-            r0.scene.add(r2.scene);
+            renderer3d.scene.add(r2.scene);
 
             // green slice
             initHelpersStack(r3, stack);
-            r0.scene.add(r3.scene);
+            renderer3d.scene.add(r3.scene);
 
             // create new mesh with Localizer shaders
             let plane1 = axialRenderer.stackHelper.slice.cartesianEquation();
@@ -505,9 +505,9 @@ window.onload = function () {
                 let scene = null;
                 switch (id) {
                     case '0':
-                        camera = r0.camera;
+                        camera = renderer3d.camera;
                         stackHelper = axialRenderer.stackHelper;
-                        scene = r0.scene;
+                        scene = renderer3d.scene;
                         break;
                     case '1':
                         camera = axialRenderer.camera;
@@ -548,7 +548,7 @@ window.onload = function () {
             }
 
             // event listeners
-            r0.domElement.addEventListener('dblclick', onDoubleClick);
+            renderer3d.domElement.addEventListener('dblclick', onDoubleClick);
             axialRenderer.domElement.addEventListener('dblclick', onDoubleClick);
             r2.domElement.addEventListener('dblclick', onDoubleClick);
             r3.domElement.addEventListener('dblclick', onDoubleClick);
@@ -566,9 +566,9 @@ window.onload = function () {
                 let scene = null;
                 switch (id) {
                     case '0':
-                        camera = r0.camera;
+                        camera = renderer3d.camera;
                         stackHelper = axialRenderer.stackHelper;
-                        scene = r0.scene;
+                        scene = renderer3d.scene;
                         break;
                     case '1':
                         camera = axialRenderer.camera;
@@ -609,7 +609,7 @@ window.onload = function () {
                 }
             }
 
-            r0.domElement.addEventListener('click', onClick);
+            renderer3d.domElement.addEventListener('click', onClick);
 
             function onScroll(event) {
                 const id = event.target.domElement.id;
@@ -671,10 +671,10 @@ window.onload = function () {
 
             function onWindowResize() {
                 // update 3D
-                r0.camera.aspect = r0.domElement.clientWidth / r0.domElement.clientHeight;
-                r0.camera.updateProjectionMatrix();
-                r0.renderer.setSize(
-                    r0.domElement.clientWidth, r0.domElement.clientHeight);
+                renderer3d.camera.aspect = renderer3d.domElement.clientWidth / renderer3d.domElement.clientHeight;
+                renderer3d.camera.updateProjectionMatrix();
+                renderer3d.renderer.setSize(
+                    renderer3d.domElement.clientWidth, renderer3d.domElement.clientHeight);
 
                 // update 2d
                 windowResize2D(axialRenderer);
@@ -704,7 +704,7 @@ window.onload = function () {
                         0, 0, 1, 0,
                         0, 0, 0, 1);
                     // object.mesh.applyMatrix(RASToLPS);
-                    r0.scene.add(object.mesh);
+                    renderer3d.scene.add(object.mesh);
 
                     object.scene = new THREE.Scene();
 
