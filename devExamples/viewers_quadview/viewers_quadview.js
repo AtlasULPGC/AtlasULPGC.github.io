@@ -83,7 +83,7 @@ const sagittalRenderer = {
 
 
 // 2d coronal renderer
-const r3 = {
+const coronalRenderer = {
     domId: 'r3',
     domElement: null,
     renderer: null,
@@ -227,7 +227,7 @@ function init() {
             renderer3d.controls.update();
             axialRenderer.controls.update();
             sagittalRenderer.controls.update();
-            r3.controls.update();
+            coronalRenderer.controls.update();
 
             renderer3d.light.position.copy(renderer3d.camera.position);
             renderer3d.renderer.render(renderer3d.scene, renderer3d.camera);
@@ -267,18 +267,18 @@ function init() {
             sagittalRenderer.renderer.render(sagittalRenderer.localizerScene, sagittalRenderer.camera);
 
             // r3
-            r3.renderer.clear();
-            r3.renderer.render(r3.scene, r3.camera);
+            coronalRenderer.renderer.clear();
+            coronalRenderer.renderer.render(coronalRenderer.scene, coronalRenderer.camera);
             // mesh
-            r3.renderer.clearDepth();
+            coronalRenderer.renderer.clearDepth();
             data.forEach(function (object, key) {
                 object.materialFront.clippingPlanes = [clipPlane3];
                 object.materialBack.clippingPlanes = [clipPlane3];
             });
-            r3.renderer.render(sceneClip, r3.camera);
+            coronalRenderer.renderer.render(sceneClip, coronalRenderer.camera);
             // localizer
-            r3.renderer.clearDepth();
-            r3.renderer.render(r3.localizerScene, r3.camera);
+            coronalRenderer.renderer.clearDepth();
+            coronalRenderer.renderer.render(coronalRenderer.localizerScene, coronalRenderer.camera);
         }
 
         stats.update();
@@ -293,7 +293,7 @@ function init() {
     initRenderer3D(renderer3d);
     initRenderer2D(axialRenderer);
     initRenderer2D(sagittalRenderer);
-    initRenderer2D(r3);
+    initRenderer2D(coronalRenderer);
 
     // start rendering loop
     animate();
@@ -345,13 +345,13 @@ window.onload = function () {
             renderer3d.scene.add(sagittalRenderer.scene);
 
             // green slice
-            initHelpersStack(r3, stack);
-            renderer3d.scene.add(r3.scene);
+            initHelpersStack(coronalRenderer, stack);
+            renderer3d.scene.add(coronalRenderer.scene);
 
             // create new mesh with Localizer shaders
             let plane1 = axialRenderer.stackHelper.slice.cartesianEquation();
             let plane2 = sagittalRenderer.stackHelper.slice.cartesianEquation();
-            let plane3 = r3.stackHelper.slice.cartesianEquation();
+            let plane3 = coronalRenderer.stackHelper.slice.cartesianEquation();
 
             // localizer red slice
             initHelpersLocalizer(axialRenderer, stack, plane1, [
@@ -361,7 +361,7 @@ window.onload = function () {
                 },
                 {
                     plane: plane3,
-                    color: new THREE.Color(r3.stackHelper.borderColor),
+                    color: new THREE.Color(coronalRenderer.stackHelper.borderColor),
                 },
             ]);
 
@@ -373,12 +373,12 @@ window.onload = function () {
                 },
                 {
                     plane: plane3,
-                    color: new THREE.Color(r3.stackHelper.borderColor),
+                    color: new THREE.Color(coronalRenderer.stackHelper.borderColor),
                 },
             ]);
 
             // localizer green slice
-            initHelpersLocalizer(r3, stack, plane3, [
+            initHelpersLocalizer(coronalRenderer, stack, plane3, [
                 {
                     plane: plane1,
                     color: new THREE.Color(axialRenderer.stackHelper.borderColor),
@@ -415,10 +415,10 @@ window.onload = function () {
             // Green
             let stackFolder3 = gui.addFolder('Coronal (green)');
             let greenChanged = stackFolder3.add(
-                r3.stackHelper,
-                'index', 0, r3.stackHelper.orientationMaxIndex).step(1).listen();
+                coronalRenderer.stackHelper,
+                'index', 0, coronalRenderer.stackHelper.orientationMaxIndex).step(1).listen();
             stackFolder3.add(
-                r3.stackHelper.slice, 'interpolation', 0, 1).step(1).listen();
+                coronalRenderer.stackHelper.slice, 'interpolation', 0, 1).step(1).listen();
 
             /**
              * Update Layer Mix
@@ -468,14 +468,14 @@ window.onload = function () {
             }
 
             function onYellowChanged() {
-                updateLocalizer(sagittalRenderer, [axialRenderer.localizerHelper, r3.localizerHelper]);
+                updateLocalizer(sagittalRenderer, [axialRenderer.localizerHelper, coronalRenderer.localizerHelper]);
                 updateClipPlane(sagittalRenderer, clipPlane2);
             }
 
             yellowChanged.onChange(onYellowChanged);
 
             function onRedChanged() {
-                updateLocalizer(axialRenderer, [sagittalRenderer.localizerHelper, r3.localizerHelper]);
+                updateLocalizer(axialRenderer, [sagittalRenderer.localizerHelper, coronalRenderer.localizerHelper]);
                 updateClipPlane(axialRenderer, clipPlane1);
 
                 if (redContourHelper) {
@@ -486,8 +486,8 @@ window.onload = function () {
             redChanged.onChange(onRedChanged);
 
             function onGreenChanged() {
-                updateLocalizer(r3, [axialRenderer.localizerHelper, sagittalRenderer.localizerHelper]);
-                updateClipPlane(r3, clipPlane3);
+                updateLocalizer(coronalRenderer, [axialRenderer.localizerHelper, sagittalRenderer.localizerHelper]);
+                updateClipPlane(coronalRenderer, clipPlane3);
             }
 
             greenChanged.onChange(onGreenChanged);
@@ -520,9 +520,9 @@ window.onload = function () {
                         scene = sagittalRenderer.scene;
                         break;
                     case '3':
-                        camera = r3.camera;
-                        stackHelper = r3.stackHelper;
-                        scene = r3.scene;
+                        camera = coronalRenderer.camera;
+                        stackHelper = coronalRenderer.stackHelper;
+                        scene = coronalRenderer.scene;
                         break;
                 }
 
@@ -538,8 +538,8 @@ window.onload = function () {
                         ijk.getComponent((axialRenderer.stackHelper.orientation + 2) % 3);
                     sagittalRenderer.stackHelper.index =
                         ijk.getComponent((sagittalRenderer.stackHelper.orientation + 2) % 3);
-                    r3.stackHelper.index =
-                        ijk.getComponent((r3.stackHelper.orientation + 2) % 3);
+                    coronalRenderer.stackHelper.index =
+                        ijk.getComponent((coronalRenderer.stackHelper.orientation + 2) % 3);
 
                     onGreenChanged();
                     onRedChanged();
@@ -551,7 +551,7 @@ window.onload = function () {
             renderer3d.domElement.addEventListener('dblclick', onDoubleClick);
             axialRenderer.domElement.addEventListener('dblclick', onDoubleClick);
             sagittalRenderer.domElement.addEventListener('dblclick', onDoubleClick);
-            r3.domElement.addEventListener('dblclick', onDoubleClick);
+            coronalRenderer.domElement.addEventListener('dblclick', onDoubleClick);
 
             function onClick(event) {
                 const canvas = event.target.parentElement;
@@ -581,9 +581,9 @@ window.onload = function () {
                         scene = sagittalRenderer.scene;
                         break;
                     case '3':
-                        camera = r3.camera;
-                        stackHelper = r3.stackHelper;
-                        scene = r3.scene;
+                        camera = coronalRenderer.camera;
+                        stackHelper = coronalRenderer.stackHelper;
+                        scene = coronalRenderer.scene;
                         break;
                 }
 
@@ -622,7 +622,7 @@ window.onload = function () {
                         stackHelper = sagittalRenderer.stackHelper;
                         break;
                     case 'r3':
-                        stackHelper = r3.stackHelper;
+                        stackHelper = coronalRenderer.stackHelper;
                         break;
                 }
 
@@ -646,7 +646,7 @@ window.onload = function () {
             // event listeners
             axialRenderer.controls.addEventListener('OnScroll', onScroll);
             sagittalRenderer.controls.addEventListener('OnScroll', onScroll);
-            r3.controls.addEventListener('OnScroll', onScroll);
+            coronalRenderer.controls.addEventListener('OnScroll', onScroll);
 
             function windowResize2D(rendererObj) {
                 rendererObj.camera.canvas = {
@@ -679,7 +679,7 @@ window.onload = function () {
                 // update 2d
                 windowResize2D(axialRenderer);
                 windowResize2D(sagittalRenderer);
-                windowResize2D(r3);
+                windowResize2D(coronalRenderer);
             }
 
             window.addEventListener('resize', onWindowResize, false);
