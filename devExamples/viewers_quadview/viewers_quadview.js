@@ -1,6 +1,6 @@
 /* globals Stats, dat*/
 
-import ControlsOrthographic from 'base/controls/controls.trackballortho';
+
 import CoreUtils from 'base/core/core.utils';
 import HelpersBoundingBox from 'base/helpers/helpers.boundingbox';
 import HelpersContour from 'base/helpers/helpers.contour';
@@ -12,6 +12,7 @@ import setCamera3d from './camera3d';
 import setControls3d from 'controls3d';
 import setRenderer2d from './renderer2d';
 import setCamera2d from './camera2d';
+import setControls2d from './controls2d';
 // standard global variables
 let stats;
 let ready = false;
@@ -164,12 +165,9 @@ function initRenderer2D(rendererObj) {
 // camera
     setCamera2d(rendererObj);
 
-    // controls
-    rendererObj.controls = new ControlsOrthographic(
-        rendererObj.camera, rendererObj.domElement);
-    rendererObj.controls.staticMoving = true;
-    rendererObj.controls.noRotate = true;
-    rendererObj.camera.controls = rendererObj.controls;
+
+// controls
+    setControls2d(rendererObj);
 
     // scene
     rendererObj.scene = new THREE.Scene();
