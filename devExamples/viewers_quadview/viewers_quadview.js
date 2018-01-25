@@ -14,7 +14,7 @@ import setCamera2d from './camera2d';
 import setControls2d from './controls2d';
 import setStackHelper from './stackHelper';
 import {calculateWorldCenter} from './camera3d';
-
+import {calculateCameraBox} from "./camera3d";
 // standard global variables
 let stats;
 let ready = false;
@@ -184,12 +184,9 @@ function initHelpersStack(rendererObj, stack) {
 // set camera
     let lpsDims = calculateWorldCenter(stack);
 
-    // box: {halfDimensions, center}
-    let box = {
-        center: stack.worldCenter().clone(),
-        halfDimensions:
-            new THREE.Vector3(lpsDims.x + 10, lpsDims.y + 10, lpsDims.z + 10),
-    };
+
+// box: {halfDimensions, center}
+    let box = calculateCameraBox(stack, lpsDims);
 
     // init and zoom
     let canvas = {

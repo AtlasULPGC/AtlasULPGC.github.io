@@ -24,5 +24,15 @@ function calculateWorldCenter(stack) {
     return lpsDims;
 }
 
+function calculateCameraBox(stack, lpsDims) {
+    let box = {
+        center: stack.worldCenter().clone(),
+        halfDimensions:
+            new THREE.Vector3(lpsDims.x + 10, lpsDims.y + 10, lpsDims.z + 10),
+    };
+    return box;
+}
+
 export {setCamera3d};
 export {calculateWorldCenter};
+export {calculateCameraBox};
