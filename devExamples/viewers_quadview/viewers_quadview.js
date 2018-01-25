@@ -2,7 +2,6 @@
 
 import CamerasOrthographic from 'base/cameras/cameras.orthographic';
 import ControlsOrthographic from 'base/controls/controls.trackballortho';
-import ControlsTrackball from 'base/controls/controls.trackball';
 import CoreUtils from 'base/core/core.utils';
 import HelpersBoundingBox from 'base/helpers/helpers.boundingbox';
 import HelpersContour from 'base/helpers/helpers.contour';
@@ -11,6 +10,7 @@ import HelpersStack from 'base/helpers/helpers.stack';
 import LoadersVolume from 'base/loaders/loaders.volume';
 import setRenderer3D from './renderer3d';
 import setCamera3d from './camera3d';
+import setControls3d from 'controls3d';
 
 // standard global variables
 let stats;
@@ -138,14 +138,9 @@ function initRenderer3D(renderObj) {
 // camera
     setCamera3d(renderObj);
 
-    // controls
-    renderObj.controls = new ControlsTrackball(
-        renderObj.camera, renderObj.domElement);
-    renderObj.controls.rotateSpeed = 5.5;
-    renderObj.controls.zoomSpeed = 1.2;
-    renderObj.controls.panSpeed = 0.8;
-    renderObj.controls.staticMoving = true;
-    renderObj.controls.dynamicDampingFactor = 0.3;
+
+// controls
+    setControls3d(renderObj);
 
     // scene
     renderObj.scene = new THREE.Scene();
@@ -750,10 +745,8 @@ window.onload = function () {
             }
 
             window.addEventListener('resize', onWindowResize, false);
-
             // load meshes on the stack is all set
             let meshesLoaded = 0;
-
             function loadSTLObject(object) {
                 const stlLoader = new THREE.STLLoader();
                 stlLoader.load(object.location, function (geometry) {
