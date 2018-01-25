@@ -42,6 +42,19 @@ function setSagittalSliceBetweenAxialAndCoronal(sagittalRenderer, stack, sagitta
     ]);
 }
 
+function setCoronalSliceBetweenAxialAndSagittal(coronalRenderer, stack, coronalPlane, axialPlane, axialRenderer, sagittalPlane, sagittalRenderer) {
+    initHelpersLocalizer(coronalRenderer, stack, coronalPlane, [
+        {
+            plane: axialPlane,
+            color: new THREE.Color(axialRenderer.stackHelper.borderColor),
+        },
+        {
+            plane: sagittalPlane,
+            color: new THREE.Color(sagittalRenderer.stackHelper.borderColor),
+        },
+    ]);
+}
+
 function setPlanes(axialRenderer, sagittalRenderer, coronalRenderer) {
     let axialPlane = axialRenderer.stackHelper.slice.cartesianEquation();
     let sagittalPlane = sagittalRenderer.stackHelper.slice.cartesianEquation();
@@ -51,7 +64,8 @@ function setPlanes(axialRenderer, sagittalRenderer, coronalRenderer) {
 
 export {
     setAxialSlice, setSagittalSlice, setCoronalSlice, setPlanes,
-    setAxialSliceBetweenSagittalAndCoronal, setSagittalSliceBetweenAxialAndCoronal
+    setAxialSliceBetweenSagittalAndCoronal, setSagittalSliceBetweenAxialAndCoronal,
+    setCoronalSliceBetweenAxialAndSagittal
 }
 
 

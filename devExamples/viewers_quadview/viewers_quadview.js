@@ -26,7 +26,8 @@ import {setTextureTargetFor2dPlanesIn3dViewer} from "./texture";
 import {setContourHelper} from "./contourHelper";
 import {setGui} from "./gui";
 import {
-    setAxialSlice, setAxialSliceBetweenSagittalAndCoronal, setCoronalSlice, setPlanes,
+    setAxialSlice, setAxialSliceBetweenSagittalAndCoronal, setCoronalSlice, setCoronalSliceBetweenAxialAndSagittal,
+    setPlanes,
     setSagittalSlice, setSagittalSliceBetweenAxialAndCoronal
 } from "./slicesIn3dRenderer";
 // standard global variables
@@ -360,21 +361,12 @@ window.onload = function () {
             setAxialSliceBetweenSagittalAndCoronal(axialRenderer, stack, axialPlane, sagittalPlane, sagittalRenderer, coronalPlane, coronalRenderer);
 
 
-
 // localizer yellow slice
             setSagittalSliceBetweenAxialAndCoronal(sagittalRenderer, stack, sagittalPlane, axialPlane, axialRenderer, coronalPlane, coronalRenderer);
 
-            // localizer green slice
-            initHelpersLocalizer(coronalRenderer, stack, coronalPlane, [
-                {
-                    plane: axialPlane,
-                    color: new THREE.Color(axialRenderer.stackHelper.borderColor),
-                },
-                {
-                    plane: sagittalPlane,
-                    color: new THREE.Color(sagittalRenderer.stackHelper.borderColor),
-                },
-            ]);
+
+// localizer green slice
+            setCoronalSliceBetweenAxialAndSagittal(coronalRenderer, stack, coronalPlane, axialPlane, axialRenderer, sagittalPlane, sagittalRenderer);
             let {redChanged, yellowChanged, greenChanged} = setGui(axialRenderer, sagittalRenderer, coronalRenderer);
 
             /**
