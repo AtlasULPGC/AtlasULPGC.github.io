@@ -14,5 +14,11 @@ function orientateStackHelperInTheSameDirectionAsTheCamera(rendererObj) {
     rendererObj.stackHelper.orientation = rendererObj.camera.stackOrientation;
 }
 
+function setInitialStackHelperIndexAtHalf(rendererObj) {
+    rendererObj.stackHelper.index =
+        Math.floor(rendererObj.stackHelper.orientationMaxIndex / 2);
+}
+
 export {setStackHelper};
 export {orientateStackHelperInTheSameDirectionAsTheCamera};
+export {setInitialStackHelperIndexAtHalf};
