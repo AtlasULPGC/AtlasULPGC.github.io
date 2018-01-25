@@ -33,6 +33,15 @@ function calculateCameraBox(stack, lpsDims) {
     return box;
 }
 
+function calculateCameraCanvas(rendererObj) {
+    let canvas = {
+        width: rendererObj.domElement.clientWidth,
+        height: rendererObj.domElement.clientHeight,
+    };
+    return canvas;
+}
+
 export {setCamera3d};
 export {calculateWorldCenter};
 export {calculateCameraBox};
+export {calculateCameraCanvas};
