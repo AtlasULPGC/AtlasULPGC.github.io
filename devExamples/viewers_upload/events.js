@@ -89,7 +89,7 @@ function scrollMovementIsPositive(e) {
 }
 
 function isScrollMovementOnPositiveLimit(stackHelper) {
-    return stackHelper.index >= stackHelper.orientationMaxIndex - 1;
+    return stackHelper.index >= stackHelper.orientationMaxIndex;
 }
 
 function moveOnPositiveDirection(stackHelper) {
