@@ -15,35 +15,7 @@ export default function readMultipleFiles(evt, scene, camera, lut, camUtils, con
     if (areFilesBeingUploaded(evt)) {
         hideUploadButtonAndFileInputExplorer();
     }
-
-    /**
-     * Load sequence
-     */
-
-
-    /**
-     * Load group sequence
-     */
-
-
-    const loadSequenceContainer = [];
-
-    const data = [];
-    const dataGroups = [];
-    // convert object into array
-    for (let i = 0; i < evt.target.files.length; i++) {
-        let dataUrl = CoreUtils.parseUrl(evt.target.files[i].name);
-        if (dataUrl.extension.toUpperCase() === 'MHD' ||
-            dataUrl.extension.toUpperCase() === 'RAW') {
-            dataGroups.push(
-                {
-                    file: evt.target.files[i],
-                    extension: dataUrl.extension.toUpperCase(),
-                });
-        } else {
-            data.push(evt.target.files[i]);
-        }
-    }
+    const {loadSequenceContainer, data, dataGroups} = convertObjectIntoArray(evt);
 
     // check if some files must be loaded together
     if (dataGroups.length === 2) {
@@ -148,4 +120,24 @@ function loadSequenceGroup(files, loader, seriesContainer) {
             window.console.log('oops... something went wrong...');
             window.console.log(error);
         });
+}
+
+function convertObjectIntoArray(evt) {
+    const loadSequenceContainer = [];
+    const data = [];
+    const dataGroups = [];
+    for (let i = 0; i < evt.target.files.length; i++) {
+        let dataUrl = CoreUtils.parseUrl(evt.target.files[i].name);
+        if (dataUrl.extension.toUpperCase() === 'MHD' ||
+            dataUrl.extension.toUpperCase() === 'RAW') {
+            dataGroups.push(
+                {
+                    file: evt.target.files[i],
+                    extension: dataUrl.extension.toUpperCase(),
+                });
+        } else {
+            data.push(evt.target.files[i]);
+        }
+    }
+    return {loadSequenceContainer, data, dataGroups};
 }
