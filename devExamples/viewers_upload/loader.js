@@ -19,15 +19,7 @@ export default function readMultipleFiles(evt, scene, camera, lut, camUtils, con
 
     // check if some files must be loaded together
     if (dataGroups.length === 2) {
-        // if raw/mhd pair
-        const mhdFile = dataGroups.filter(_filterByExtension.bind(null, 'MHD'));
-        const rawFile = dataGroups.filter(_filterByExtension.bind(null, 'RAW'));
-        if (mhdFile.length === 1 &&
-            rawFile.length === 1) {
-            loadSequenceContainer.push(
-                loadSequenceGroup(dataGroups, loader, seriesContainer)
-            );
-        }
+        ifRawMhdPair(dataGroups, loadSequenceContainer, loader, seriesContainer);
     }
 
     // load the rest of the files
@@ -140,4 +132,15 @@ function convertObjectIntoArray(evt) {
         }
     }
     return {loadSequenceContainer, data, dataGroups};
+}
+
+function ifRawMhdPair(dataGroups, loadSequenceContainer, loader, seriesContainer) {
+    const mhdFile = dataGroups.filter(_filterByExtension.bind(null, 'MHD'));
+    const rawFile = dataGroups.filter(_filterByExtension.bind(null, 'RAW'));
+    if (mhdFile.length === 1 &&
+        rawFile.length === 1) {
+        loadSequenceContainer.push(
+            loadSequenceGroup(dataGroups, loader, seriesContainer)
+        );
+    }
 }
