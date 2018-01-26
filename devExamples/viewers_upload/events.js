@@ -12,18 +12,18 @@ function hookCallbacks(stackHelper, controls, camera) {
     };
 
     let stack = stackHelper._stack;
-    // hook up callbacks
+
     controls.addEventListener('OnScroll', function (e) {
-        if (e.delta > 0) {
-            if (stackHelper.index >= stackHelper.orientationMaxIndex - 1) {
+        if (scrollMovementIsPositive(e)) {
+            if (isScrollMovementOnPositiveLimit(stackHelper)) {
                 return false;
             }
-            stackHelper.index += 1;
+            moveOnPositiveDirection(stackHelper);
         } else {
-            if (stackHelper.index <= 0) {
+            if (isScrollMovementOnNegativeLimit(stackHelper)) {
                 return false;
             }
-            stackHelper.index -= 1;
+            moveOnNegativeDirection(stackHelper);
         }
     });
 
@@ -95,4 +95,24 @@ function hookCallbacks(stackHelper, controls, camera) {
     }
 
     document.addEventListener('mousemove', onMouseMove);
+}
+
+function scrollMovementIsPositive(e) {
+    return e.delta > 0;
+}
+
+function isScrollMovementOnPositiveLimit(stackHelper) {
+    return stackHelper.index >= stackHelper.orientationMaxIndex - 1;
+}
+
+function moveOnPositiveDirection(stackHelper) {
+    stackHelper.index += 1;
+}
+
+function isScrollMovementOnNegativeLimit(stackHelper) {
+    return stackHelper.index <= 0;
+}
+
+function moveOnNegativeDirection(stackHelper) {
+    stackHelper.index -= 1;
 }
