@@ -31,18 +31,11 @@ function hookCallbacks(stackHelper, controls, camera) {
      * On window resize callback
      */
     function onWindowResize() {
-        let threeD = document.getElementById('r3d');
-        camera.canvas = {
-            width: threeD.clientWidth,
-            height: threeD.clientHeight,
-        };
-        camera.fitBox(2);
+        let threeD = updateCamera(camera);
 
-        renderer.setSize(threeD.clientWidth, threeD.clientHeight);
+        updateRenderer(threeD);
 
-        // update info to draw borders properly
-        stackHelper.slice.canvasWidth = threeD.clientWidth;
-        stackHelper.slice.canvasHeight = threeD.clientHeight;
+        updateInfoToDrawBorders(stackHelper, threeD);
     }
 
     window.addEventListener('resize', onWindowResize, false);
@@ -52,10 +45,9 @@ function hookCallbacks(stackHelper, controls, camera) {
      * On key pressed callback
      */
     function onWindowKeyPressed(event) {
-        ctrlDown = event.ctrlKey;
-        if (!ctrlDown) {
-            drag.start.x = null;
-            drag.start.y = null;
+        ctrlDown = initDrag(ctrlDown, event);
+        if (isDragStopped(ctrlDown)) {
+            resetDrag(drag);
         }
     }
 
@@ -115,4 +107,37 @@ function isScrollMovementOnNegativeLimit(stackHelper) {
 
 function moveOnNegativeDirection(stackHelper) {
     stackHelper.index -= 1;
+}
+
+function updateCamera(camera) {
+    let threeD = document.getElementById('r3d');
+    camera.canvas = {
+        width: threeD.clientWidth,
+        height: threeD.clientHeight,
+    };
+    camera.fitBox(2);
+    return threeD;
+}
+
+function updateRenderer(threeD) {
+    renderer.setSize(threeD.clientWidth, threeD.clientHeight);
+}
+
+function updateInfoToDrawBorders(stackHelper, threeD) {
+    stackHelper.slice.canvasWidth = threeD.clientWidth;
+    stackHelper.slice.canvasHeight = threeD.clientHeight;
+}
+
+function isDragStopped(ctrlDown) {
+    return !ctrlDown;
+}
+
+function initDrag(ctrlDown, event) {
+    ctrlDown = event.ctrlKey;
+    return ctrlDown;
+}
+
+function resetDrag(drag) {
+    drag.start.x = null;
+    drag.start.y = null;
 }

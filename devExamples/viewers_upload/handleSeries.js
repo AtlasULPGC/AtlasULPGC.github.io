@@ -62,7 +62,7 @@ export default function handleSeries(seriesContainer, loader, scene, camera, lut
 
     let lpsDims = coordinatesToCenterCamera(stack);
     let box = setCameraLens(stack, lpsDims);
-    let canvas = setCanvas();
+    let canvas = setCanvas(); //
 
     setCameraAfterImagesLoad(camera, stack, box, canvas);
     buildGUI(stackHelper, lut, camUtils, camera);
