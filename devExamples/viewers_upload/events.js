@@ -59,29 +59,24 @@ function hookCallbacks(stackHelper, controls, camera) {
      */
     function onMouseMove(event) {
         if (ctrlDown) {
-            if (drag.start.x === null) {
-                drag.start.x = event.clientX;
-                drag.start.y = event.clientY;
+            if (isDragNotStarted(drag)) {
+                setDrag(drag, event);
             }
             let threshold = 15;
 
             stackHelper.slice.intensityAuto = false;
 
-            let dynamicRange = stack.minMax[1] - stack.minMax[0];
-            dynamicRange /= threeD.clientWidth;
+            let dynamicRange = setDynamicRanhetoControlWindowWidthAndHeight(stack);
+            dynamicRange = setDynamicRangeRelatedToCurrentWidnowSize(dynamicRange);
 
-            if (Math.abs(event.clientX - drag.start.x) > threshold) {
-                // window width
-                stackHelper.slice.windowWidth +=
-                    dynamicRange * (event.clientX - drag.start.x);
-                drag.start.x = event.clientX;
+            if (isCtrlMovementAboveTheThresholdInTheXAxis(event, drag, threshold)) {
+                updateWindowWidth(stackHelper, dynamicRange, event, drag);
+                updateDragStart(drag, event);
             }
 
-            if (Math.abs(event.clientY - drag.start.y) > threshold) {
-                // window center
-                stackHelper.slice.windowCenter -=
-                    dynamicRange * (event.clientY - drag.start.y);
-                drag.start.y = event.clientY;
+            if (isCtrlMovementGreaterThanThresholdInTheYAxis(event, drag, threshold)) {
+                updateWindowCenter(stackHelper, dynamicRange, event, drag);
+                updateYAxisDragStart(drag, event);
             }
         }
     }
@@ -140,4 +135,49 @@ function initDrag(ctrlDown, event) {
 function resetDrag(drag) {
     drag.start.x = null;
     drag.start.y = null;
+}
+
+function isDragNotStarted(drag) {
+    return drag.start.x === null;
+}
+
+function setDrag(drag, event) {
+    drag.start.x = event.clientX;
+    drag.start.y = event.clientY;
+}
+
+function setDynamicRanhetoControlWindowWidthAndHeight(stack) {
+    let dynamicRange = stack.minMax[1] - stack.minMax[0];
+    return dynamicRange;
+}
+
+function setDynamicRangeRelatedToCurrentWidnowSize(dynamicRange) {
+    dynamicRange /= threeD.clientWidth;
+    return dynamicRange;
+}
+
+function isCtrlMovementAboveTheThresholdInTheXAxis(event, drag, threshold) {
+    return Math.abs(event.clientX - drag.start.x) > threshold;
+}
+
+function updateWindowWidth(stackHelper, dynamicRange, event, drag) {
+    stackHelper.slice.windowWidth +=
+        dynamicRange * (event.clientX - drag.start.x);
+}
+
+function updateDragStart(drag, event) {
+    drag.start.x = event.clientX;
+}
+
+function isCtrlMovementGreaterThanThresholdInTheYAxis(event, drag, threshold) {
+    return Math.abs(event.clientY - drag.start.y) > threshold;
+}
+
+function updateWindowCenter(stackHelper, dynamicRange, event, drag) {
+    stackHelper.slice.windowCenter -=
+        dynamicRange * (event.clientY - drag.start.y);
+}
+
+function updateYAxisDragStart(drag, event) {
+    drag.start.y = event.clientY;
 }
