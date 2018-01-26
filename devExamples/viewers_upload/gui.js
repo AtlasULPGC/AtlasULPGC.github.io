@@ -7,21 +7,7 @@ export default function buildGUI(stackHelper, lut, camUtils, camera) {
 
     let customContainer = document.getElementById('my-gui-container');
     customContainer.appendChild(gui.domElement);
-
-    let stackFolder = gui.addFolder('Stack');
-    const minWidth = 1;
-    const maxWidth = stack.minMax[1] - stack.minMax[0];
-    stackFolder.add(
-        stackHelper.slice, 'windowWidth', minWidth, maxWidth)
-        .step(1).listen();
-    const minCenter = stack.minMax[0];
-    const maxCenter = stack.minMax[1];
-    stackFolder.add(
-        stackHelper.slice, 'windowCenter', minCenter, maxCenter)
-        .step(1).listen();
-    stackFolder.add(stackHelper.slice, 'intensityAuto').listen();
-    stackFolder.add(stackHelper.slice, 'invert');
-    stackFolder.add(stackHelper.slice, 'interpolation', 0, 1).step(1).listen();
+    let stackFolder = setStackFolder(gui, stack, stackHelper);
 
     // CREATE LUT
     const domTarget = 'my-lut-canvases';
@@ -109,4 +95,24 @@ function setDataObjectToAssociateBrowserVariableAndUserInterface() {
         autoPlace: false,
     });
     return gui;
+}
+
+function setStackFolder(gui, stack, stackHelper) {
+    let stackFolder = gui.addFolder('Stack');
+    const minWidth = 1;
+    const maxWidth = stack.minMax[1] - stack.minMax[0];
+    stackFolder.add(
+        stackHelper.slice, 'windowWidth', minWidth, maxWidth)
+        .step(1).listen();
+
+    const minCenter = stack.minMax[0];
+    const maxCenter = stack.minMax[1];
+    stackFolder.add(
+        stackHelper.slice, 'windowCenter', minCenter, maxCenter)
+        .step(1).listen();
+
+    stackFolder.add(stackHelper.slice, 'intensityAuto').listen();
+    stackFolder.add(stackHelper.slice, 'invert');
+    stackFolder.add(stackHelper.slice, 'interpolation', 0, 1).step(1).listen();
+    return stackFolder;
 }
