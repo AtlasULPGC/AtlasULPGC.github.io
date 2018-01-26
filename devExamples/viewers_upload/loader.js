@@ -13,7 +13,7 @@ export default function readMultipleFiles(evt, scene, camera, lut, camUtils, con
 
 
     if (areFilesBeingUploaded(evt)) {
-        document.getElementById('home-container').style.display = 'none';
+        hideUploadButtonAndFileInputExplorer();
     }
 
     /**
@@ -140,4 +140,8 @@ function _filterByExtension(extension, item) {
 
 function areFilesBeingUploaded(evt) {
     return evt.target.files.length;
+}
+
+function hideUploadButtonAndFileInputExplorer() {
+    document.getElementById('home-container').style.display = 'none';
 }
