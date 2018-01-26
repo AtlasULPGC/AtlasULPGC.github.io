@@ -10,8 +10,9 @@ export default function readMultipleFiles(evt, scene, camera, lut, camUtils, con
 
     let loader = new LoadersVolume(threeD);
     let seriesContainer = [];
-    // hide the upload button
-    if (evt.target.files.length) {
+
+
+    if (areFilesBeingUploaded(evt)) {
         document.getElementById('home-container').style.display = 'none';
     }
 
@@ -135,4 +136,8 @@ function _filterByExtension(extension, item) {
         return true;
     }
     return false;
+}
+
+function areFilesBeingUploaded(evt) {
+    return evt.target.files.length;
 }
