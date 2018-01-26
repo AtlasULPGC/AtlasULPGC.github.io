@@ -9,14 +9,8 @@ export default function buildGUI(stackHelper, lut, camUtils, camera) {
     customContainer.appendChild(gui.domElement);
     let stackFolder = setStackFolder(gui, stack, stackHelper);
 
-    // CREATE LUT
     setLUT(lut, stackFolder, stackHelper);
 
-    const minIndex = 0;
-    const maxIndex = stack.dimensionsIJK.z - 1;
-    let index = stackFolder.add(
-        stackHelper, 'index', minIndex, maxIndex).step(1).listen();
-    stackFolder.open();
 
     // camera
     let cameraFolder = gui.addFolder('Camera');
@@ -91,6 +85,12 @@ function setStackFolder(gui, stack, stackHelper) {
     stackFolder.add(stackHelper.slice, 'intensityAuto').listen();
     stackFolder.add(stackHelper.slice, 'invert');
     stackFolder.add(stackHelper.slice, 'interpolation', 0, 1).step(1).listen();
+    
+    const minIndex = 0;
+    const maxIndex = stack.dimensionsIJK.z - 1;
+    let index = stackFolder.add(
+        stackHelper, 'index', minIndex, maxIndex).step(1).listen();
+    stackFolder.open();
     return stackFolder;
 }
 
