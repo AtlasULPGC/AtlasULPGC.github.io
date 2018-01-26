@@ -24,37 +24,7 @@ export default function readMultipleFiles(evt, scene, camera, lut, camUtils, con
     /**
      * Load group sequence
      */
-    function loadSequenceGroup(files) {
-        const fetchSequence = [];
 
-        for (let i = 0; i < files.length; i++) {
-            fetchSequence.push(
-                new Promise((resolve, reject) => {
-                    const myReader = new FileReader();
-                    // should handle errors too...
-                    myReader.addEventListener('load', function (e) {
-                        resolve(e.target.result);
-                    });
-                    myReader.readAsArrayBuffer(files[i].file);
-                })
-                    .then(function (buffer) {
-                        return {url: files[i].file.name, buffer};
-                    })
-            );
-        }
-
-        return Promise.all(fetchSequence)
-            .then((rawdata) => {
-                return loader.parse(rawdata);
-            })
-            .then(function (series) {
-                seriesContainer.push(series);
-            })
-            .catch(function (error) {
-                window.console.log('oops... something went wrong...');
-                window.console.log(error);
-            });
-    }
 
     const loadSequenceContainer = [];
 
@@ -83,7 +53,7 @@ export default function readMultipleFiles(evt, scene, camera, lut, camUtils, con
         if (mhdFile.length === 1 &&
             rawFile.length === 1) {
             loadSequenceContainer.push(
-                loadSequenceGroup(dataGroups)
+                loadSequenceGroup(dataGroups, loader, seriesContainer)
             );
         }
     }
@@ -138,6 +108,38 @@ function loadSequence(index, files, loader, seriesContainer) {
         })
         .then(function (buffer) {
             return loader.parse({url: files[index].name, buffer});
+        })
+        .then(function (series) {
+            seriesContainer.push(series);
+        })
+        .catch(function (error) {
+            window.console.log('oops... something went wrong...');
+            window.console.log(error);
+        });
+}
+
+function loadSequenceGroup(files, loader, seriesContainer) {
+    const fetchSequence = [];
+
+    for (let i = 0; i < files.length; i++) {
+        fetchSequence.push(
+            new Promise((resolve, reject) => {
+                const myReader = new FileReader();
+                // should handle errors too...
+                myReader.addEventListener('load', function (e) {
+                    resolve(e.target.result);
+                });
+                myReader.readAsArrayBuffer(files[i].file);
+            })
+                .then(function (buffer) {
+                    return {url: files[i].file.name, buffer};
+                })
+        );
+    }
+
+    return Promise.all(fetchSequence)
+        .then((rawdata) => {
+            return loader.parse(rawdata);
         })
         .then(function (series) {
             seriesContainer.push(series);
