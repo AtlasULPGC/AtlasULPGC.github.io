@@ -11,35 +11,16 @@ export default function readMultipleFiles(evt, scene, camera, lut, camUtils, con
     let loader = new LoadersVolume(threeD);
     let seriesContainer = [];
 
-
     if (areFilesBeingUploaded(evt)) {
         hideUploadButtonAndFileInputExplorer();
     }
     const {loadSequenceContainer, data, dataGroups} = convertObjectIntoArray(evt);
 
-    // check if some files must be loaded together
-    if (dataGroups.length === 2) {
-        ifRawMhdPair(dataGroups, loadSequenceContainer, loader, seriesContainer);
-    }
+    readGroupOfFiles(dataGroups, loadSequenceContainer, loader, seriesContainer);
 
-    // load the rest of the files
-    for (let i = 0; i < data.length; i++) {
-        loadSequenceContainer.push(
-            loadSequence(i, data, loader, seriesContainer)
-        );
-    }
+    readFiles(data, loadSequenceContainer, loader, seriesContainer);
 
-    // run the load sequence
-    // load sequence for all files
-    Promise
-        .all(loadSequenceContainer)
-        .then(function () {
-            handleSeries(seriesContainer, loader, scene, camera, lut, camUtils, controls);
-        })
-        .catch(function (error) {
-            window.console.log('oops... something went wrong...');
-            window.console.log(error);
-        });
+    handleFilesLoadedAsSeries(loadSequenceContainer, seriesContainer, loader, scene, camera, lut, camUtils, controls);
 }
 
 function _filterByExtension(extension, item) {
@@ -143,4 +124,30 @@ function ifRawMhdPair(dataGroups, loadSequenceContainer, loader, seriesContainer
             loadSequenceGroup(dataGroups, loader, seriesContainer)
         );
     }
+}
+
+function readFiles(data, loadSequenceContainer, loader, seriesContainer) {
+    for (let i = 0; i < data.length; i++) {
+        loadSequenceContainer.push(
+            loadSequence(i, data, loader, seriesContainer)
+        );
+    }
+}
+
+function readGroupOfFiles(dataGroups, loadSequenceContainer, loader, seriesContainer) {
+    if (dataGroups.length === 2) {
+        ifRawMhdPair(dataGroups, loadSequenceContainer, loader, seriesContainer);
+    }
+}
+
+function handleFilesLoadedAsSeries(loadSequenceContainer, seriesContainer, loader, scene, camera, lut, camUtils, controls) {
+    Promise
+        .all(loadSequenceContainer)
+        .then(function () {
+            handleSeries(seriesContainer, loader, scene, camera, lut, camUtils, controls);
+        })
+        .catch(function (error) {
+            window.console.log('oops... something went wrong...');
+            window.console.log(error);
+        });
 }
