@@ -1,11 +1,9 @@
 import HelpersLut from 'base/helpers/helpers.lut';
 
+
 export default function buildGUI(stackHelper, lut, camUtils, camera) {
     let stack = stackHelper._stack;
-
-    let gui = new dat.GUI({
-        autoPlace: false,
-    });
+    let gui = setDataObjectToAssociateBrowserVariableAndUserInterface();
 
     let customContainer = document.getElementById('my-gui-container');
     customContainer.appendChild(gui.domElement);
@@ -104,4 +102,11 @@ export default function buildGUI(stackHelper, lut, camUtils, camera) {
         camera.fitBox(2);
         updateLabels(camera.directionsLabel, stack.modality);
     });
+}
+
+function setDataObjectToAssociateBrowserVariableAndUserInterface() {
+    let gui = new dat.GUI({
+        autoPlace: false,
+    });
+    return gui;
 }
