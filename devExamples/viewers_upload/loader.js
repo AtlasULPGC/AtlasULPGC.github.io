@@ -19,30 +19,7 @@ export default function readMultipleFiles(evt, scene, camera, lut, camUtils, con
     /**
      * Load sequence
      */
-    function loadSequence(index, files) {
-        return Promise.resolve()
-        // load the file
-            .then(function () {
-                return new Promise(function (resolve, reject) {
-                    let myReader = new FileReader();
-                    // should handle errors too...
-                    myReader.addEventListener('load', function (e) {
-                        resolve(e.target.result);
-                    });
-                    myReader.readAsArrayBuffer(files[index]);
-                });
-            })
-            .then(function (buffer) {
-                return loader.parse({url: files[index].name, buffer});
-            })
-            .then(function (series) {
-                seriesContainer.push(series);
-            })
-            .catch(function (error) {
-                window.console.log('oops... something went wrong...');
-                window.console.log(error);
-            });
-    }
+
 
     /**
      * Load group sequence
@@ -114,7 +91,7 @@ export default function readMultipleFiles(evt, scene, camera, lut, camUtils, con
     // load the rest of the files
     for (let i = 0; i < data.length; i++) {
         loadSequenceContainer.push(
-            loadSequence(i, data)
+            loadSequence(i, data, loader, seriesContainer)
         );
     }
 
@@ -144,4 +121,29 @@ function areFilesBeingUploaded(evt) {
 
 function hideUploadButtonAndFileInputExplorer() {
     document.getElementById('home-container').style.display = 'none';
+}
+
+function loadSequence(index, files, loader, seriesContainer) {
+    return Promise.resolve()
+    // load the file
+        .then(function () {
+            return new Promise(function (resolve, reject) {
+                let myReader = new FileReader();
+                // should handle errors too...
+                myReader.addEventListener('load', function (e) {
+                    resolve(e.target.result);
+                });
+                myReader.readAsArrayBuffer(files[index]);
+            });
+        })
+        .then(function (buffer) {
+            return loader.parse({url: files[index].name, buffer});
+        })
+        .then(function (series) {
+            seriesContainer.push(series);
+        })
+        .catch(function (error) {
+            window.console.log('oops... something went wrong...');
+            window.console.log(error);
+        });
 }
