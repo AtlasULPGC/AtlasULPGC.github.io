@@ -59,8 +59,6 @@ export default function handleSeries(seriesContainer, loader, scene, camera, lut
     stackHelper.border.visible = false;
     scene.add(stackHelper);
 
-    console.log(stackHelper.stack);
-
 
     let lpsDims = coordinatesToCenterCamera(stack);
     let box = setCameraLens(stack, lpsDims);
