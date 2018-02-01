@@ -47,4 +47,36 @@ function doubleClickIsOnSlice(intersects) {
     return intersects.length > 0;
 }
 
-export {checkOnWhatRendererHasBeenTriggeredTheEvent, updateSliceIndex, doubleClickIsOnSlice};
+function onWindowResize(renderer3d, axialRenderer, sagittalRenderer, coronalRenderer) {
+    // update 3D
+    renderer3d.camera.aspect = renderer3d.domElement.clientWidth / renderer3d.domElement.clientHeight;
+    renderer3d.camera.updateProjectionMatrix();
+    renderer3d.renderer.setSize(
+        renderer3d.domElement.clientWidth, renderer3d.domElement.clientHeight);
+
+    // update 2d
+    windowResize2D(axialRenderer);
+    windowResize2D(sagittalRenderer);
+    windowResize2D(coronalRenderer);
+}
+function windowResize2D(rendererObj) {
+    rendererObj.camera.canvas = {
+        width: rendererObj.domElement.clientWidth,
+        height: rendererObj.domElement.clientHeight,
+    };
+    rendererObj.camera.fitBox(2, 1);
+    rendererObj.renderer.setSize(
+        rendererObj.domElement.clientWidth,
+        rendererObj.domElement.clientHeight);
+
+    // update info to draw borders properly
+    rendererObj.stackHelper.slice.canvasWidth =
+        rendererObj.domElement.clientWidth;
+    rendererObj.stackHelper.slice.canvasHeight =
+        rendererObj.domElement.clientHeight;
+    rendererObj.localizerHelper.canvasWidth =
+        rendererObj.domElement.clientWidth;
+    rendererObj.localizerHelper.canvasHeight =
+        rendererObj.domElement.clientHeight;
+}
+export {checkOnWhatRendererHasBeenTriggeredTheEvent, updateSliceIndex, doubleClickIsOnSlice, onWindowResize};

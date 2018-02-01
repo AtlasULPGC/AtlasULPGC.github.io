@@ -33,7 +33,10 @@ import {
     setPlanes,
     setSagittalSlice, setSagittalSliceBetweenAxialAndCoronal
 } from "./slicesIn3dRenderer";
-import {checkOnWhatRendererHasBeenTriggeredTheEvent, doubleClickIsOnSlice, updateSliceIndex} from "./events";
+import {
+    checkOnWhatRendererHasBeenTriggeredTheEvent, doubleClickIsOnSlice, onWindowResize,
+    updateSliceIndex
+} from "./events";
 // standard global variables
 let stats;
 let ready = false;
@@ -441,41 +444,10 @@ window.onload = function () {
             sagittalRenderer.controls.addEventListener('OnScroll', onScroll);
             coronalRenderer.controls.addEventListener('OnScroll', onScroll);
 
-            function windowResize2D(rendererObj) {
-                rendererObj.camera.canvas = {
-                    width: rendererObj.domElement.clientWidth,
-                    height: rendererObj.domElement.clientHeight,
-                };
-                rendererObj.camera.fitBox(2, 1);
-                rendererObj.renderer.setSize(
-                    rendererObj.domElement.clientWidth,
-                    rendererObj.domElement.clientHeight);
 
-                // update info to draw borders properly
-                rendererObj.stackHelper.slice.canvasWidth =
-                    rendererObj.domElement.clientWidth;
-                rendererObj.stackHelper.slice.canvasHeight =
-                    rendererObj.domElement.clientHeight;
-                rendererObj.localizerHelper.canvasWidth =
-                    rendererObj.domElement.clientWidth;
-                rendererObj.localizerHelper.canvasHeight =
-                    rendererObj.domElement.clientHeight;
-            }
 
-            function onWindowResize() {
-                // update 3D
-                renderer3d.camera.aspect = renderer3d.domElement.clientWidth / renderer3d.domElement.clientHeight;
-                renderer3d.camera.updateProjectionMatrix();
-                renderer3d.renderer.setSize(
-                    renderer3d.domElement.clientWidth, renderer3d.domElement.clientHeight);
 
-                // update 2d
-                windowResize2D(axialRenderer);
-                windowResize2D(sagittalRenderer);
-                windowResize2D(coronalRenderer);
-            }
-
-            window.addEventListener('resize', onWindowResize, false);
+            window.addEventListener('resize', onWindowResize(renderer3d, axialRenderer, sagittalRenderer, coronalRenderer), false);
             // load meshes on the stack is all set
             let meshesLoaded = 0;
 
