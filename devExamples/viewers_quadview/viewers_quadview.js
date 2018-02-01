@@ -9,7 +9,7 @@ import {
     calculateCameraCanvas, centerCamera3dOnStack, setCamera3d,
     setUpCameraWhenInitializingStackHelper
 } from './camera3d';
-import {create2dAxialRenderer, setRenderer2d, create2dSagittalRenderer} from './renderer2d';
+import {create2dAxialRenderer, setRenderer2d, create2dSagittalRenderer, create2dCoronalRenderer} from './renderer2d';
 import {setCamera2d, update2dViewersWithNewIntersectionPlanes} from './camera2d';
 import setControls2d from './controls2d';
 import {
@@ -52,23 +52,10 @@ const axialRenderer = create2dAxialRenderer();
 const sagittalRenderer = create2dSagittalRenderer();
 
 
+
+
 // 2d coronal renderer
-const coronalRenderer = {
-    domId: 'r3',
-    domElement: null,
-    renderer: null,
-    color: 0x121212,
-    sliceOrientation: 'coronal',
-    sliceColor: 0x76FF03,
-    targetID: 3,
-    camera: null,
-    controls: null,
-    scene: null,
-    light: null,
-    stackHelper: null,
-    localizerHelper: null,
-    localizerScene: null,
-};
+const coronalRenderer = create2dCoronalRenderer();
 
 // data to be loaded
 let dataInfo = [

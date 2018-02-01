@@ -37,6 +37,25 @@ function create2dSagittalRenderer() {
     };
     return sagittalRenderer;
 }
+function create2dCoronalRenderer() {
+    const coronalRenderer = {
+        domId: 'r3',
+        domElement: null,
+        renderer: null,
+        color: 0x121212,
+        sliceOrientation: 'coronal',
+        sliceColor: 0x76FF03,
+        targetID: 3,
+        camera: null,
+        controls: null,
+        scene: null,
+        light: null,
+        stackHelper: null,
+        localizerHelper: null,
+        localizerScene: null,
+    };
+    return coronalRenderer;
+}
 
 function setRenderer2d(rendererObj) {
     rendererObj.domElement = document.getElementById(rendererObj.domId);
@@ -52,4 +71,4 @@ function setRenderer2d(rendererObj) {
     rendererObj.domElement.appendChild(rendererObj.renderer.domElement);
 }
 
-export {create2dAxialRenderer, setRenderer2d, create2dSagittalRenderer};
+export {create2dAxialRenderer, setRenderer2d, create2dSagittalRenderer, create2dCoronalRenderer};
