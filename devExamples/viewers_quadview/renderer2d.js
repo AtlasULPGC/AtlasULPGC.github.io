@@ -70,5 +70,13 @@ function setRenderer2d(rendererObj) {
     rendererObj.renderer.domElement.id = rendererObj.targetID;
     rendererObj.domElement.appendChild(rendererObj.renderer.domElement);
 }
+function set2dIntersectionPlanes() {
+    const vector3Normal = new THREE.Vector3(0, 0, 0);
+    const distanceFromOriginToPlane = 0;
+    let axialIntersectionPlane = new THREE.Plane(vector3Normal, distanceFromOriginToPlane);
+    let sagittalIntersectionPlane = new THREE.Plane(vector3Normal, distanceFromOriginToPlane);
+    let coronalIntersectionPlane = new THREE.Plane(vector3Normal, distanceFromOriginToPlane);
+    return {axialIntersectionPlane, sagittalIntersectionPlane, coronalIntersectionPlane};
+}
 
-export {create2dAxialRenderer, setRenderer2d, create2dSagittalRenderer, create2dCoronalRenderer};
+export {create2dAxialRenderer, setRenderer2d, create2dSagittalRenderer, create2dCoronalRenderer, set2dIntersectionPlanes};

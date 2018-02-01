@@ -9,7 +9,10 @@ import {
     calculateCameraCanvas, centerCamera3dOnStack, setCamera3d,
     setUpCameraWhenInitializingStackHelper
 } from './camera3d';
-import {create2dAxialRenderer, setRenderer2d, create2dSagittalRenderer, create2dCoronalRenderer} from './renderer2d';
+import {
+    create2dAxialRenderer, setRenderer2d, create2dSagittalRenderer, create2dCoronalRenderer,
+    set2dIntersectionPlanes
+} from './renderer2d';
 import {setCamera2d, update2dViewersWithNewIntersectionPlanes} from './camera2d';
 import setControls2d from './controls2d';
 import {
@@ -66,9 +69,7 @@ let data = new Map(dataInfo);
 
 // extra variables to show mesh plane intersections in 2D renderers
 let sceneClip = new THREE.Scene();
-let axialIntersectionPlane = new THREE.Plane(new THREE.Vector3(0, 0, 0), 0);
-let sagittalIntersectionPlane = new THREE.Plane(new THREE.Vector3(0, 0, 0), 0);
-let coronalIntersectionPlane = new THREE.Plane(new THREE.Vector3(0, 0, 0), 0);
+let {axialIntersectionPlane, sagittalIntersectionPlane, coronalIntersectionPlane} = set2dIntersectionPlanes();
 
 function initRenderer3D(renderObj) {
 
