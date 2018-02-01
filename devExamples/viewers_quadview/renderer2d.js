@@ -37,6 +37,7 @@ function create2dSagittalRenderer() {
     };
     return sagittalRenderer;
 }
+
 function create2dCoronalRenderer() {
     const coronalRenderer = {
         domId: 'r3',
@@ -70,6 +71,7 @@ function setRenderer2d(rendererObj) {
     rendererObj.renderer.domElement.id = rendererObj.targetID;
     rendererObj.domElement.appendChild(rendererObj.renderer.domElement);
 }
+
 function set2dIntersectionPlanes() {
     const vector3Normal = new THREE.Vector3(0, 0, 0);
     const distanceFromOriginToPlane = 0;
@@ -79,4 +81,16 @@ function set2dIntersectionPlanes() {
     return {axialIntersectionPlane, sagittalIntersectionPlane, coronalIntersectionPlane};
 }
 
-export {create2dAxialRenderer, setRenderer2d, create2dSagittalRenderer, create2dCoronalRenderer, set2dIntersectionPlanes};
+function showAxial2dRenderer(axialRenderer) {
+    axialRenderer.renderer.clear();
+    axialRenderer.renderer.render(axialRenderer.scene, axialRenderer.camera);
+}
+
+export {
+    create2dAxialRenderer,
+    setRenderer2d,
+    create2dSagittalRenderer,
+    create2dCoronalRenderer,
+    set2dIntersectionPlanes,
+    showAxial2dRenderer
+};

@@ -11,7 +11,7 @@ import {
 } from './camera3d';
 import {
     create2dAxialRenderer, setRenderer2d, create2dSagittalRenderer, create2dCoronalRenderer,
-    set2dIntersectionPlanes
+    set2dIntersectionPlanes, showAxial2dRenderer
 } from './renderer2d';
 import {setCamera2d, update2dViewersWithNewIntersectionPlanes} from './camera2d';
 import {setControls2d, updateRenderersControls} from "./controls2d";
@@ -141,6 +141,8 @@ function initHelpersStack(rendererObj, stack) {
 }
 
 
+
+
 /**
  * Init the quadview
  */
@@ -158,8 +160,7 @@ function init() {
             renderer3d.renderer.render(renderer3d.scene, renderer3d.camera);
 
             // r1
-            axialRenderer.renderer.clear();
-            axialRenderer.renderer.render(axialRenderer.scene, axialRenderer.camera);
+            showAxial2dRenderer(axialRenderer);
             // mesh
             axialRenderer.renderer.clearDepth();
             data.forEach(function (object, key) {
