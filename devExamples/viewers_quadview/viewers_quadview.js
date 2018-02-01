@@ -163,9 +163,9 @@ function init() {
             showAxial2dRenderer(axialRenderer);
             // mesh
             axialRenderer.renderer.clearDepth();
-            data.forEach(function (object, key) {
-                object.materialFront.clippingPlanes = [axialIntersectionPlane];
-                object.materialBack.clippingPlanes = [axialIntersectionPlane];
+            data.forEach(function (segmentation3DObjectSTL, key) {
+                segmentation3DObjectSTL.materialFront.clippingPlanes = [axialIntersectionPlane];
+                segmentation3DObjectSTL.materialBack.clippingPlanes = [axialIntersectionPlane];
             });
 
             // localizer
