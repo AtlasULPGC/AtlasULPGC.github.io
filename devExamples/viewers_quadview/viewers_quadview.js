@@ -19,7 +19,7 @@ import {
 import {calculateWorldCenter} from './camera3d';
 import {calculateCameraBox} from "./camera3d";
 import {initHelpersLocalizer, updateLocalizer} from "./localizerHelper";
-import {setURLForData} from "./urlData";
+import {setSTL3DSegmentationDataInfo, setURLForData} from "./urlData";
 import {centerControlsOnStack, setControls3d} from "./controls3d";
 import {setBoundingBoxHelper} from "./boundingBoxHelper";
 import {setTextureTargetFor2dPlanesIn3dViewer} from "./texture";
@@ -57,37 +57,10 @@ const sagittalRenderer = create2dSagittalRenderer();
 // 2d coronal renderer
 const coronalRenderer = create2dCoronalRenderer();
 
+
+
 // data to be loaded
-let dataInfo = [
-    ['adi1', {
-        location:
-            'https://cdn.rawgit.com/FNNDSC/data/master/dicom/adi_brain/mesh.stl',
-        label: 'Left',
-        loaded: false,
-        material: null,
-        materialFront: null,
-        materialBack: null,
-        mesh: null,
-        meshFront: null,
-        meshBack: null,
-        color: 0xe91e63,
-        opacity: 0.7,
-    }],
-    ['adi2', {
-        location:
-            'https://cdn.rawgit.com/FNNDSC/data/master/dicom/adi_brain/mesh2.stl',
-        label: 'Right',
-        loaded: false,
-        material: null,
-        materialFront: null,
-        materialBack: null,
-        mesh: null,
-        meshFront: null,
-        meshBack: null,
-        color: 0x03a9f4,
-        opacity: 1,
-    }],
-];
+let dataInfo = setSTL3DSegmentationDataInfo();
 
 let data = new Map(dataInfo);
 

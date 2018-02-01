@@ -19,4 +19,38 @@ function setURLForData() {
     return files;
 }
 
-export {setURLForData};
+function setSTL3DSegmentationDataInfo() {
+    let dataInfo = [
+        ['adi1', {
+            location:
+                'https://cdn.rawgit.com/FNNDSC/data/master/dicom/adi_brain/mesh.stl',
+            label: 'Left',
+            loaded: false,
+            material: null,
+            materialFront: null,
+            materialBack: null,
+            mesh: null,
+            meshFront: null,
+            meshBack: null,
+            color: 0xe91e63,
+            opacity: 0.7,
+        }],
+        ['adi2', {
+            location:
+                'https://cdn.rawgit.com/FNNDSC/data/master/dicom/adi_brain/mesh2.stl',
+            label: 'Right',
+            loaded: false,
+            material: null,
+            materialFront: null,
+            materialBack: null,
+            mesh: null,
+            meshFront: null,
+            meshBack: null,
+            color: 0x03a9f4,
+            opacity: 1,
+        }],
+    ];
+    return dataInfo;
+}
+
+export {setURLForData, setSTL3DSegmentationDataInfo};
