@@ -1,4 +1,24 @@
-export default function setRenderer2d(rendererObj) {
+function create2dAxialRenderer() {
+    const axialRenderer = {
+        domId: 'r1',
+        domElement: null,
+        renderer: null,
+        color: 0x121212,
+        sliceOrientation: 'axial',
+        sliceColor: 0xFF1744,
+        targetID: 1,
+        camera: null,
+        controls: null,
+        scene: null,
+        light: null,
+        stackHelper: null,
+        localizerHelper: null,
+        localizerScene: null,
+    };
+    return axialRenderer;
+}
+
+ function setRenderer2d(rendererObj) {
     rendererObj.domElement = document.getElementById(rendererObj.domId);
     rendererObj.renderer = new THREE.WebGLRenderer({
         antialias: true,
@@ -11,3 +31,5 @@ export default function setRenderer2d(rendererObj) {
     rendererObj.renderer.domElement.id = rendererObj.targetID;
     rendererObj.domElement.appendChild(rendererObj.renderer.domElement);
 }
+
+export {create2dAxialRenderer, setRenderer2d};

@@ -9,7 +9,7 @@ import {
     calculateCameraCanvas, centerCamera3dOnStack, setCamera3d,
     setUpCameraWhenInitializingStackHelper
 } from './camera3d';
-import setRenderer2d from './renderer2d';
+import {create2dAxialRenderer,setRenderer2d}from './renderer2d';
 import {setCamera2d, update2dViewersWithNewIntersectionPlanes} from './camera2d';
 import setControls2d from './controls2d';
 import {
@@ -43,23 +43,10 @@ let redContourScene = null;
 // 3d renderer
 const renderer3d = createRenderer3d();
 
+
+
 // 2d axial renderer
-const axialRenderer = {
-    domId: 'r1',
-    domElement: null,
-    renderer: null,
-    color: 0x121212,
-    sliceOrientation: 'axial',
-    sliceColor: 0xFF1744,
-    targetID: 1,
-    camera: null,
-    controls: null,
-    scene: null,
-    light: null,
-    stackHelper: null,
-    localizerHelper: null,
-    localizerScene: null,
-};
+const axialRenderer = create2dAxialRenderer();
 
 // 2d sagittal renderer
 const sagittalRenderer = {
