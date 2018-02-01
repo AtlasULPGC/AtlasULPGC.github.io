@@ -18,7 +18,27 @@ function create2dAxialRenderer() {
     return axialRenderer;
 }
 
- function setRenderer2d(rendererObj) {
+function create2dSagittalRenderer() {
+    const sagittalRenderer = {
+        domId: 'r2',
+        domElement: null,
+        renderer: null,
+        color: 0x121212,
+        sliceOrientation: 'sagittal',
+        sliceColor: 0xFFEA00,
+        targetID: 2,
+        camera: null,
+        controls: null,
+        scene: null,
+        light: null,
+        stackHelper: null,
+        localizerHelper: null,
+        localizerScene: null,
+    };
+    return sagittalRenderer;
+}
+
+function setRenderer2d(rendererObj) {
     rendererObj.domElement = document.getElementById(rendererObj.domId);
     rendererObj.renderer = new THREE.WebGLRenderer({
         antialias: true,
@@ -32,4 +52,4 @@ function create2dAxialRenderer() {
     rendererObj.domElement.appendChild(rendererObj.renderer.domElement);
 }
 
-export {create2dAxialRenderer, setRenderer2d};
+export {create2dAxialRenderer, setRenderer2d, create2dSagittalRenderer};
