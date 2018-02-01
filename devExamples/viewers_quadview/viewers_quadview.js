@@ -2,9 +2,9 @@
 
 
 import CoreUtils from 'base/core/core.utils';
-import HelpersContour from 'base/helpers/helpers.contour';
 import LoadersVolume from 'base/loaders/loaders.volume';
-import setRenderer3D from './renderer3d';
+import {createRenderer3d, setRenderer3D} from "./renderer3d";
+
 import {
     calculateCameraCanvas, centerCamera3dOnStack, setCamera3d,
     setUpCameraWhenInitializingStackHelper
@@ -41,17 +41,7 @@ let redContourScene = null;
 
 
 // 3d renderer
-const renderer3d = {
-    domId: 'r0',
-    domElement: null,
-    renderer: null,
-    color: 0x212121,
-    targetID: 0,
-    camera: null,
-    controls: null,
-    scene: null,
-    light: null,
-};
+const renderer3d = createRenderer3d();
 
 // 2d axial renderer
 const axialRenderer = {
