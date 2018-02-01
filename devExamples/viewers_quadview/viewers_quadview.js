@@ -14,7 +14,7 @@ import {
     set2dIntersectionPlanes
 } from './renderer2d';
 import {setCamera2d, update2dViewersWithNewIntersectionPlanes} from './camera2d';
-import setControls2d from './controls2d';
+import {setControls2d, updateRenderersControls} from "./controls2d";
 import {
     setStackHelper, orientateStackHelperInTheSameDirectionAsTheCamera,
     setInitialStackHelperIndexAtHalf
@@ -55,11 +55,8 @@ const axialRenderer = create2dAxialRenderer();
 const sagittalRenderer = create2dSagittalRenderer();
 
 
-
-
 // 2d coronal renderer
 const coronalRenderer = create2dCoronalRenderer();
-
 
 
 // data to be loaded
@@ -155,10 +152,7 @@ function init() {
         // we are ready when both meshes have been loaded
         if (ready) {
             // render
-            renderer3d.controls.update();
-            axialRenderer.controls.update();
-            sagittalRenderer.controls.update();
-            coronalRenderer.controls.update();
+            updateRenderersControls(renderer3d, axialRenderer, sagittalRenderer, coronalRenderer);
 
             renderer3d.light.position.copy(renderer3d.camera.position);
             renderer3d.renderer.render(renderer3d.scene, renderer3d.camera);
