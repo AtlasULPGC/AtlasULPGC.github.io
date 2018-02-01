@@ -166,12 +166,6 @@ function init() {
             data.forEach(function (object, key) {
                 object.materialFront.clippingPlanes = [axialIntersectionPlane];
                 object.materialBack.clippingPlanes = [axialIntersectionPlane];
-                axialRenderer.renderer.render(object.scene, axialRenderer.camera, redTextureTarget, true);
-                axialRenderer.renderer.clearDepth();
-                redContourHelper.contourWidth = object.selected ? 1 : 1;
-                redContourHelper.contourOpacity = object.selected ? 1 : .2;
-                axialRenderer.renderer.render(redContourScene, axialRenderer.camera);
-                axialRenderer.renderer.clearDepth();
             });
 
             // localizer
